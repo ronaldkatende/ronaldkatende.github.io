@@ -1,0 +1,17 @@
+RONALD KATENDE — GITHUB PAGES RECOVERY
+
+All website files are FLAT. There are no folders to preserve and the HTML pages contain their own styles and JavaScript.
+
+1. Open: https://github.com/ronaldkatende/ronaldkatende.github.io
+2. Select the branch used for GitHub Pages (normally main).
+3. Add file > Upload files. Upload the CONTENTS of this ZIP, NOT the ZIP itself.
+4. Make sure index.html is visible at the REPOSITORY ROOT after uploading. Commit changes.
+5. Settings > Pages: Source = Deploy from a branch; branch = main; folder = /(root), or use the specific existing GitHub Pages workflow if configured.
+6. Actions tab: verify Pages build/deploy succeeds. Then open https://ronaldkatende.github.io/ and check Publications and CV.
+
+IMPORTANT: If site is configured to publish from /docs rather than /(root), put all files INSIDE docs/ instead, or change Pages settings to /(root).
+IMPORTANT: On GitHub, file names must match case exactly: index.html in lowercase. Changes are not published until committed.
+
+Emergency homepage recovery: uploading just index.html should restore the homepage once GitHub Pages deployment finishes because it contains all its own CSS and JavaScript. Upload other pages and the CV afterwards.
+
+This package was checked locally; current remote GitHub Pages status could not be fetched from this environment.
