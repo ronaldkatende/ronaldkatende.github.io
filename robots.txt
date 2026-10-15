@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ronaldkatende.github.io/sitemap.xml

@@ -1,0 +1,587 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[
+margin=0.60in]{geometry}
+%\linespread{1.35}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{ragged2e}
+\definecolor{Accent}{HTML}{1F4E79}
+\definecolor{TextGray}{HTML}{444444}
+\definecolor{RuleGray}{HTML}{D7DCE2}
+\hypersetup{
+colorlinks=true,
+urlcolor=Accent,
+linkcolor=Accent,
+pdfauthor={Ronald Katende},
+pdftitle={Ronald Katende - Academic Curriculum Vitae}
+}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[R]{\scriptsize Page \thepage}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\linespread{1.1}
+
+\setlist[itemize]{
+leftmargin=1.3em,
+itemsep=1.5pt,
+topsep=2pt,
+parsep=0pt,
+partopsep=0pt
+}
+
+\setlist[enumerate]{
+leftmargin=1.55em,
+itemsep=2.5pt,
+topsep=2pt,
+parsep=0pt,
+partopsep=0pt
+}
+
+\titleformat{\section}
+{\large\bfseries\color{Accent}}
+{}{0pt}{}
+[\vspace{-3pt}\color{RuleGray}\rule{\linewidth}{0.6pt}]
+
+\titlespacing*{\section}{0pt}{7.5pt}{4pt}
+
+\newcommand{\entry}[3]{%
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.17\linewidth} X@{}}
+\textcolor{TextGray}{\textit{#1}}
+&
+\textit{#2}\\[-1pt]
+&
+#3
+\end{tabularx}
+\vspace{1.5pt}
+}
+
+\begin{document}
+
+{\fontsize{21}{23}\selectfont\bfseries RONALD KATENDE, PhD}\\[-1pt]
+
+{\large\color{Accent}\textit{
+Applied Mathematics | Numerical Analysis | Scientific Computing |
+Scientific Machine Learning
+}}\\[4pt]
+
+\small
+Department of Mathematics, Kabale University, Uganda
+\;|\;
+\href{mailto:rkatende@kab.ac.ug}{rkatende@kab.ac.ug}
+\;|\;
+\href{mailto:rkatende92@gmail.com}{rkatende92@gmail.com}
+\\[-1pt]
+\href{https://ronaldkatende.github.io/}{ronaldkatende.github.io}
+\;|\;
+\href{https://orcid.org/0000-0002-8545-1833}
+{ORCID: 0000-0002-8545-1833}
+\;|\;
+\href{https://scholar.google.com/citations?user=SvIwEd8AAAAJ}
+{Google Scholar}
+
+\section{Academic Profile}
+
+Applied mathematician working in numerical analysis, scientific computing,
+partial differential equations, mathematical modelling and scientific
+machine learning. My research asks:
+\textit{What information and computation are sufficient for a reliable scientific decision?}
+
+I study this through stability, inverse problems, numerical linear algebra,
+sparse sensing, reduced-order methods and reliable learning under limited
+information and computation.
+
+\section{Research Programme and Interests}
+
+\textit{\textbf{Computational mathematics and numerical analysis.}}
+Partial differential equations, finite-element and finite-difference methods,
+numerical linear algebra, stability, conditioning, approximation and iterative
+methods.
+
+\textit{\textbf{Scientific machine learning and inverse problems.}}
+Physics-informed neural networks, operator and inverse learning, sparse sensing,
+low-rank and reduced-order methods, uncertainty quantification and
+condition-aware reconstruction.
+
+\textit{\textbf{Learning, computation and representation.}}
+Information requirements for reliable learning and recovery; task-relative
+numerical linear algebra; computational work and span; representation complexity;
+and mathematical limits of learning architectures.
+
+\textit{\textbf{Dynamical systems and scientific modelling.}}
+Differential-equation models, nonlinear dynamics, epidemic systems, scientific
+forecasting and computational modelling, particularly under limited data,
+sensing and computational resources.
+
+% ============================================================
+\section{Academic Appointments}
+
+\entry{2026--present}
+{Lecturer, Department of Mathematics, Kabale University, Uganda}
+{Undergraduate and postgraduate teaching; independent research;
+postgraduate supervision; undergraduate research supervision;
+curriculum development; and departmental and faculty service.}
+
+\entry{2019--2026}
+{Assistant Lecturer, Department of Mathematics, Kabale University, Uganda}
+{Teaching in mathematics, statistics and scientific computing;
+student research supervision; research; and postgraduate teaching
+from 2025.}
+
+\entry{2016--2019}
+{Assistant Lecturer, Uganda Christian University, Uganda}
+{Undergraduate teaching in mathematics, statistics, scientific
+computing and quantitative methods.}
+
+% ============================================================
+\section{Education}
+
+\entry{2025}
+{PhD in Mathematics, Makerere University, Uganda}
+{Specialisation in Scientific Computing and Machine Learning.
+Research collaboration at the University of Bergen, Norway.
+Thesis: \textit{Numerical Analysis of Physics-Informed Neural Networks
+for Solving PDEs}.}
+
+\entry{2017}
+{MSc in Mathematics, Pan African University / JKUAT, Kenya}
+{Dissertation:
+\textit{On the Location of a Free Boundary for American Options}.}
+
+\entry{2014}
+{BSc in Mathematics and Statistics, Makerere University, Uganda}
+{First Class Honours.}
+
+\section{Peer-Reviewed and Accepted Publications}
+
+\begin{enumerate}
+
+\item
+Katende, R.
+Non-Asymptotic Stability and Consistency Guarantees for
+Physics-Informed Neural Networks via Coercive Operator Analysis.
+\textit{Communications in Nonlinear Science and Numerical Simulation}
+159, 109909 (2026).
+\href{https://doi.org/10.1016/j.cnsns.2026.109909}
+{doi:10.1016/j.cnsns.2026.109909}.
+
+\item
+Katende, R. (2026).
+Information contraction and stability under inverse-stable memory clocks in data-driven learning.
+\textit{Research in Mathematics}, 13(1), 2743449.
+\href{https://doi.org/10.1080/27684830.2026.2743449}{doi.org/10.1080/27684830.2026.2743449}
+
+\item
+Katende, R.
+Rethinking Data-Efficient Artificial Intelligence for Low-Resource
+Settings.
+\textit{Machine Learning with Applications}
+23, 100796 (2026).
+\href{https://doi.org/10.1016/j.mlwa.2025.100796}
+{doi:10.1016/j.mlwa.2025.100796}.
+
+\item
+Katende, R., Kasumba, H., Kakuba, G., \& Mango, J. M.
+On the Error Bounds for ReLU Neural Networks.
+\textit{IAENG International Journal of Applied Mathematics}
+54(12), 2602--2611 (2024).
+\href{https://www.iaeng.org/IJAM/issues_v54/issue_12/IJAM_54_12_10.pdf}
+{Article link}.
+
+\item
+Katende, R., Kasumba, H., Kakuba, G., \& Mango, J. M.
+A Proof of Convergence and Equivalence for 1D Finite Element Methods
+and ReLU Neural Networks.
+\textit{Annals of Mathematics and Computer Science}
+25, 97--111 (2024).
+\href{https://doi.org/10.56947/amcs.v25.392}
+{doi:10.56947/amcs.v25.392}.
+
+\item
+Mango, J. M., Katende, R., \& Kasumba, H.
+Adaptive Error-Bounded Hierarchical Matrix Compression for Efficient
+and Accurate Physics-Informed Neural Networks.
+\textit{Engineering Letters}
+33(5), 1605--1622 (2025).
+\href{https://www.engineeringletters.com/issues_v33/issue_5/EL_33_5_38.pdf}
+{Article link}.
+
+\item
+Namugera, F., Katende, R., Kurama, O., \& Magero, J. M.
+Long-Range Epidemic Spreading with Aging in Structured Networks.
+\textit{Physica A: Statistical Mechanics and its Applications}
+676, 130841 (2025).
+\href{https://doi.org/10.1016/j.physa.2025.130841}
+{doi:10.1016/j.physa.2025.130841}.
+
+\item
+Katende, R.
+A Data-Efficient Framework for Analysing Structural Transformation
+in Low- and Middle-Income Economies.
+\textit{Scientific Reports}
+15, 34216 (2025).
+\href{https://doi.org/10.1038/s41598-025-15952-3}
+{doi:10.1038/s41598-025-15952-3}.
+
+\item
+Katende, R.
+Bridging the Macro--Micro Divide through a New Paradigm for Climate
+Resilience Assessment in Data-Scarce Regions.
+\textit{PLOS Climate}
+5(1), e0000662 (2026).
+\href{https://doi.org/10.1371/journal.pclm.0000662}
+{doi:10.1371/journal.pclm.0000662}.
+
+\item
+Katende, R.
+Modeling Resource Conflict and Inequality in Fragile Systems:
+A Spatial Agent-Based Framework with a Uganda Case Study.
+\textit{PLOS ONE}
+21(9), e0357283 (2026).
+\href{https://doi.org/10.1371/journal.pone.0357283}
+{doi:10.1371/journal.pone.0357283}.
+
+\item
+Katende, R.
+Cross-Country Comparative Analysis of Climate Resilience and
+Localized Mapping in Data-Sparse Regions.
+\textit{Frontiers in Environmental Science}
+13, 1495950 (2025).
+\href{https://doi.org/10.3389/fenvs.2025.1495950}
+{doi:10.3389/fenvs.2025.1495950}.
+
+\end{enumerate}
+
+\section{Selected Conference Activity}
+
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.28\linewidth} X@{}}
+
+\textit{DeepMath 2026}
+&
+Accepted poster:
+\textit{When Can Depth Replace Width? A Sharp ReLU Depth--Width
+Frontier with Persistent State}.
+\\[3pt]
+
+\textit{SIAM Applied Linear Algebra 2027}
+&
+\textit{Task-Relative Numerical Linear Algebra:
+Same Spectrum, Different Work};
+contributed lecture submission.
+\\[3pt]
+
+\textit{FLICS 2026}
+&
+Two papers accepted for presentation, Valencia, Spain.
+
+\end{tabularx}
+
+% ============================================================
+\section{Research Funding and Funded Projects}
+
+\begin{itemize}
+
+\item
+\textit{Kabale University Research and Innovation Fund},
+Awardee, 2025--2026.
+
+\item
+\textit{Government of Uganda Research and Innovation Fund},
+Co-Investigator, 2022--2024.
+
+\item
+\textit{Government of Uganda Research and Innovation Fund},
+Co-Investigator, 2023--2025.
+
+
+\end{itemize}
+
+\section{Awards and Fellowships}
+
+\begin{itemize}
+
+\item
+\textit{TWAS Research Award}, 2025.
+
+\item
+\textit{Computational Geometry Fellowship},
+University of Agder, Norway, 2024.
+
+\item
+\textit{Mathematics for Africa Research Prize},
+European Mathematical Society, 2023.
+
+\item
+\textit{CIMPA Fellowship}, 2023.
+
+\end{itemize}
+
+% ============================================================
+\section{Postgraduate Research Supervision}
+
+\begin{itemize}
+\item Two MSc students successfully completed under my supervision/co-supervision;
+three additional MSc researchers supervised or co-supervised in applied
+mathematics, scientific computing and mathematical modelling.
+
+\item Current postgraduate projects include differential-equation modelling,
+physics-informed neural networks, inverse parameter estimation,
+dynamical systems and computational mathematics.
+
+\item Invited to contribute to PhD supervision in mathematical and
+computational research projects.
+
+\item Supervised or guided more than 50 undergraduate research projects in
+mathematics, statistics, modelling and computational methods.
+\end{itemize}
+
+\section{Teaching Experience}
+
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.28\linewidth} X@{}}
+
+\textit{Numerical \& Applied Mathematics}
+&
+Numerical Analysis; Advanced Numerical Methods (PG);
+Differential Equations; Partial Differential Equations;
+Numerical Linear Algebra; Linear Programming.
+\\[3pt]
+
+\textit{Analysis \& Linear Algebra}
+&
+Linear Algebra; Real Analysis; Functional Analysis.
+\\[3pt]
+
+\textit{Probability, Statistics \& Data}
+&
+Probability and Statistics; Statistical Modelling;
+Data Analytics; Applied Data Structures.
+\\[3pt]
+
+\textit{Programming \& Scientific Computing}
+&
+Python Programming (UG/PG); R Programming;
+scientific-computing instruction for mathematics and statistics students.
+
+\end{tabularx}
+
+\vspace{3pt}
+
+\begin{itemize}
+
+\item
+Regular teaching load of more than \textit{11 credit units per semester}.
+
+\item
+Teach across undergraduate and postgraduate programmes in
+mathematics, statistics, numerical methods and scientific computing.
+
+\item
+Delivered intensive Python training in Statistical Modelling
+for MSc Statistics students.
+
+\item
+Delivered a one-month Python and scientific-computing course
+for MSc Computational Mathematics students at Makerere University.
+
+\item
+Experience in student assessment, research-project supervision,
+course development and computational laboratory instruction.
+
+\end{itemize}
+
+% ============================================================
+\section{International Research Experience and Collaboration}
+
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.30\linewidth} X@{}}
+
+\textit{University of Bergen, Norway}
+&
+Research collaboration in scientific machine learning and numerical
+analysis during doctoral research.
+\\[3pt]
+
+\textit{Area Science Park, Trieste, Italy}
+&
+Three-month research visit in 2025 focused on sparse optimisation
+and computation under data scarcity.
+\\[3pt]
+
+\textit{Justus Liebig University Giessen, Germany}
+&
+Invited research visit and academic seminar, 2025.
+\\[3pt]
+
+\textit{University of Havana, Cuba}
+&
+Invited academic visit and seminar, 2023.
+\\[3pt]
+
+\textit{University of Milan}
+&
+Research collaboration and academic engagement.
+\\[3pt]
+
+\textit{University of Rwanda}
+&
+Institutional and academic engagement involving Kabale University
+and the University of Rwanda.
+
+\end{tabularx}
+
+% ============================================================
+\section{Selected Research Prototypes and Applied Work}
+
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.23\linewidth} X@{}}
+
+\textit{AMMED}
+&
+Multi-timescale memory methods for early detection of clinical
+deterioration under explicit false-alarm constraints, with transfer
+testing across independent hospital populations.
+\\[4pt]
+
+\textit{GridTwin Sentinel}
+&
+Low-compute early-warning and decision-support prototype for
+electricity infrastructure combining forecasting, change detection,
+temporal memory, physical consistency checks, network localisation
+and uncertainty.
+\\[4pt]
+
+\textit{Industrial digital twins}
+&
+Sparse-sensor full-field reconstruction, condition-aware sensor
+selection and cross-regime validation for high-dimensional
+physical systems.
+\\[4pt]
+
+\textit{Open research practice}
+&
+Reproducible numerical experiments, version-controlled scientific
+code and research-software development across mathematical,
+machine-learning and scientific-computing projects.
+
+\end{tabularx}
+
+\section{Selected Research Contributions}
+
+\textit{Scientific machine learning.}
+Stability and consistency analysis for physics-informed neural networks, with links to finite-element methods.
+
+\textit{Task-relative computation.}
+Mathematical criteria for when global matrix descriptors fail to capture the work required by a specific numerical task.
+
+\textit{Sparse recovery and sensing.}
+Condition-aware reconstruction from limited measurements, including sensor selection and reduced-order methods.
+
+\textit{Learning under limited information.}
+Information, memory, computation and measurement limits for reliable learning and recovery.
+
+\textit{Applied mathematical modelling.}
+Applications to epidemics, climate, conflict, infrastructure, digital twins and clinical early warning.
+
+% ============================================================
+\section{Academic Leadership and Programme Development}
+
+\begin{itemize}
+
+\item
+Mathematics representative on the Faculty of Science Research Committee,
+Kabale University.
+
+\item
+Coordinator of Innovations and Exhibitions, Department of Mathematics, Kabale University.
+
+\item
+Developed and submitted a proposed academic programme in Computational Science and Industrial Analytics.
+
+\item
+Represented Kabale University at the National Council for Higher Education Innovation Exhibition.
+
+\item
+Contribute to curriculum development, postgraduate supervision,
+departmental research development and academic service.
+
+\end{itemize}
+
+% ============================================================
+\section{Service to the Research Community}
+
+\textit{\textbf{Journal peer review}:}
+\textit{Scientific Data};
+\textit{Neurocomputing};
+\textit{Machine Learning: Science and Technology};
+\textit{International Journal of Machine Learning and Cybernetics};
+\textit{International Journal of Data Science and Analytics};
+\textit{Letters in Spatial and Resource Sciences};
+\textit{Discover Artificial Intelligence};
+\textit{Discover Sustainability};
+\textit{Future Business Journal};
+\textit{Journal of Machine Learning and Data Science}.
+
+\vspace{3pt}
+
+\textit{\textbf{Conference reviewing}:}
+ITU Kaleidoscope;
+Africa at NeurIPS 2026 Workshop
+(three research submissions reviewed).
+
+%% ============================================================
+%\section{Research Metrics}
+%
+%Google Scholar, October 2026:
+%\textit{37 citations};
+%\textit{h-index 3};
+%\textit{i10-index 1}.
+
+% ============================================================
+\section{Technical Competencies}
+
+\begin{tabularx}{\linewidth}
+{@{}>{\raggedright\arraybackslash}p{0.27\linewidth} X@{}}
+
+\textit{Scientific computing}
+&
+Python, MATLAB, R, NumPy, SciPy, PyTorch, scikit-learn,
+Git, Linux and LaTeX.
+\\[3pt]
+
+\textit{Numerical computation}
+&
+Numerical simulation, optimisation, numerical linear algebra,
+differential-equation solvers, inverse computation and
+scientific visualisation.
+\\[3pt]
+
+\textit{Research practice}
+&
+Reproducible computational experiments, research-software
+development, version-controlled workflows and preparation of
+technical and mathematical research outputs.
+
+\end{tabularx}
+
+% ============================================================
+\section{References}
+
+Academic referees available upon request and supplied directly
+where required by the recruiting institution.
+
+\end{document}
