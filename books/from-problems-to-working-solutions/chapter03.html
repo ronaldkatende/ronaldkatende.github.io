@@ -1,0 +1,1692 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Chapter 3 — Data That Can Be Trusted | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html" class="current">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-data">Data That Can Be Trusted</h1>
+<blockquote>
+<p><em>Before asking a computer to discover a pattern, ask how each
+number came to exist. Sampling, measurement, missing records and
+changing definitions can alter a conclusion more than the choice between
+two prediction algorithms.</em></p>
+</blockquote>
+<h2 id="a-number-is-not-the-thing-it-describes">A number is not the
+thing it describes</h2>
+<p>A household survey says that a proportion of households use
+electricity. A satellite image shows light emitted at night. A business
+register counts establishments. Each number may be useful, but none is a
+perfect substitute for the underlying process. A household can have a
+connection but experience frequent outages. An area can be brightly lit
+because streets were electrified even if the number of factories did not
+change. A business may operate without appearing in a current register.
+Numbers are produced by instruments, rules and institutions, and those
+processes leave traces in the data.</p>
+<p>The distinction matters because a model can fit a measured number
+extremely well and still fail to describe the quantity of interest. If
+our question is whether a district needs additional health workers, a
+count of recorded consultations will be misleading if patients turn away
+because the waiting time is already intolerable. If our question is
+whether farmers need better rainfall information, a gridded weather
+product may describe a large area while missing conditions on a
+particular hillside.</p>
+<p>We begin by separating three concepts. The <em>target quantity</em>
+is what we want to know: for example the proportion of households in a
+stated population that had access to electricity during a defined
+period. The <em>measurement</em> is what an instrument, questionnaire or
+administrative process reports. The <em>estimand</em> is the precise
+numerical feature of the target population that an analysis intends to
+estimate, such as a population-weighted proportion for a particular
+survey year.</p>
+<p>These concepts sound abstract until they disagree. A researcher who
+wants a national household proportion but computes the ordinary average
+of an intentionally unbalanced survey sample has answered a different
+question. A researcher who treats an observed medicine issue as a
+patient’s unmet demand has silently changed the meaning of the outcome.
+Good analysis begins by naming the quantity of interest before selecting
+a statistical technique.</p>
+<h2 id="what-a-measurement-equation-tells-us">What a measurement
+equation tells us</h2>
+<p>A simple model of observation is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>=</mo><msub><mi>x</mi><mi>i</mi></msub><mo>+</mo><msub><mi>b</mi><mi>i</mi></msub><mo>+</mo><msub><mi>ε</mi><mi>i</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+y_i=x_i+b_i+\varepsilon_i,
+</annotation></semantics></math></p>
+<div id="eq-measure">
+
+</div>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>i</mi></msub><annotation encoding="application/x-tex">x_i</annotation></semantics></math>
+is the underlying quantity of interest,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>i</mi></msub><annotation encoding="application/x-tex">b_i</annotation></semantics></math>
+represents systematic error and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\varepsilon_i</annotation></semantics></math>
+represents random error. The equation is not a universal law of
+instruments. Some measurements involve thresholds, censoring or
+multiplicative errors instead. Its value lies in separating two ways a
+reported value can be wrong.</p>
+<p>Suppose a temperature sensor reads consistently two degrees above a
+trustworthy reference. That is bias. Repeated readings can also vary
+around their average because of random noise. Taking more readings can
+reduce the uncertainty in an average when noise averages out, but it
+does not automatically remove the two-degree offset. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub><mo>=</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">b_i=b</annotation></semantics></math>
+is constant and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>ε</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbb E[\varepsilon_i]=0</annotation></semantics></math>,
+then for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+readings of a stable quantity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>y</mi><mo accent="true">¯</mo></mover></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>x</mi><mo>+</mo><mi>b</mi><mo>+</mo><mover><mi>ε</mi><mo accent="true">¯</mo></mover><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mover><mi>y</mi><mo accent="true">¯</mo></mover><mo stretchy="true" form="postfix">]</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>x</mi><mo>+</mo><mi>b</mi><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>y</mi><mo accent="true">¯</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>ε</mi><mo accent="true">¯</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+ \overline y&amp;=x+b+\overline\varepsilon,\\
+ \mathbb E[\overline y]&amp;=x+b,\\
+ \operatorname{Var}(\overline y)&amp;=\operatorname{Var}(\overline\varepsilon).
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<p>Under independent errors with common variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>,
+the last variance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">\sigma^2/n</annotation></semantics></math>.
+Under positively correlated errors, the reduction may be smaller.
+Repetition is therefore not the same as calibration, and additional data
+points do not always compensate for poor measurement design.</p>
+<p>An obvious difficulty remains. Without a reference or structural
+restriction, the observed value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">y_i</annotation></semantics></math>
+cannot reveal exactly how much came from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>i</mi></msub><annotation encoding="application/x-tex">x_i</annotation></semantics></math>
+and how much from bias
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>i</mi></msub><annotation encoding="application/x-tex">b_i</annotation></semantics></math>.
+For any arbitrary adjustment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>δ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\delta_i</annotation></semantics></math>,
+the pair
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub><mo>+</mo><msub><mi>δ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i+\delta_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub><mo>−</mo><msub><mi>δ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">b_i-\delta_i</annotation></semantics></math>
+produces the same
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">y_i</annotation></semantics></math>.
+This is a small example of non-identifiability. To distinguish the
+contributions, one needs new information, stronger assumptions or an
+appropriately designed measurement comparison.</p>
+<h2 id="why-the-method-of-collecting-data-changes-the-estimate">Why the
+method of collecting data changes the estimate</h2>
+<p>Imagine a country with two hypothetical regions. Region A contains
+three quarters of households and has an electricity-access proportion of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.30</mn><annotation encoding="application/x-tex">0.30</annotation></semantics></math>;
+Region B contains one quarter and has an access proportion of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.80</mn><annotation encoding="application/x-tex">0.80</annotation></semantics></math>.
+The population proportion is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mn>0.75</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.30</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.25</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.80</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.425</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+P=0.75(0.30)+0.25(0.80)=0.425.
+</annotation></semantics></math></p>
+<div id="eq-popprop">
+
+</div>
+<p>That is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>42.5</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">42.5\%</annotation></semantics></math>,
+not the simple average
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.30</mn><mo>+</mo><mn>0.80</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>2</mn><mo>=</mo><mn>55</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">(0.30+0.80)/2=55\%</annotation></semantics></math>.
+The latter gives the two regions equal weight even though their
+household populations differ.</p>
+<p>Suppose a survey intentionally selects the same number of households
+from each region. This could be sensible: researchers may want enough
+observations to report results for the smaller region. But if we ignore
+the unequal sampling fractions, the combined average will tend toward an
+equal-region estimate instead of the national household estimate. A
+solution is to use survey weights that reflect selection probabilities
+and the actual survey design.</p>
+<p>For observations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>i</mi></msub><mo>∈</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">z_i\in\{0,1\}</annotation></semantics></math>
+and nonnegative weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>i</mi></msub><annotation encoding="application/x-tex">w_i</annotation></semantics></math>,
+a basic weighted proportion is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>P</mi><mo accent="true">̂</mo></mover><mi>w</mi></msub><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>s</mi></mrow></munder><msub><mi>w</mi><mi>i</mi></msub><msub><mi>z</mi><mi>i</mi></msub></mrow><mrow><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>s</mi></mrow></munder><msub><mi>w</mi><mi>i</mi></msub></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat P_w=\frac{\sum_{i\in s}w_i z_i}{\sum_{i\in s}w_i}.
+</annotation></semantics></math></p>
+<div id="eq-weightedprop">
+
+</div>
+<p>For simple unequal-probability sampling, the initial inverse
+inclusion-probability weight is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>π</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">w_i=1/\pi_i</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\pi_i</annotation></semantics></math>
+is the probability that unit
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+enters the sample. Real surveys may adjust these weights for nonresponse
+and calibration; their documentation governs which weight belongs to
+which analysis. The sampling design is not optional metadata. It is part
+of how the observations should be interpreted <span class="citation"
+data-cites="cochran1977 groves2009">(Cochran 1977; Groves et al.
+2009)</span>.</p>
+<h2 id="a-synthetic-survey-that-shows-the-problem">A synthetic survey
+that shows the problem</h2>
+<p>The companion program constructs a <em>fictional finite
+population</em> of 10,000 households: 7,500 in one region and 2,500 in
+another. It draws electricity-access indicators from the two
+hypothetical probabilities, then selects 250 households from each
+region. The simulation is reproducible because its pseudorandom
+generator uses a fixed seed. It is not a sample from Uganda and should
+never be used as evidence about Ugandan electricity access.</p>
+<figure id="fig-weighting">
+<img src="figures/survey_weighting.png"
+alt="An intentionally disproportionate sample from an invented household population. Weighting changes the estimate toward the population composition; the differences here are not empirical estimates for Uganda." />
+<figcaption aria-hidden="true">An intentionally disproportionate sample
+from an invented household population. Weighting changes the estimate
+toward the population composition; the differences here are not
+empirical estimates for Uganda.</figcaption>
+</figure>
+<table>
+<caption>Electricity access in the reproducible synthetic population
+{#tbl-weighting}</caption>
+<thead>
+<tr class="header">
+<th>Quantity</th>
+<th>Access (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Unweighted sample mean</td>
+<td>54.4</td>
+</tr>
+<tr class="even">
+<td>Population-weighted sample mean</td>
+<td>40.6</td>
+</tr>
+<tr class="odd">
+<td>Synthetic finite-population mean (known here)</td>
+<td>42.8</td>
+</tr>
+</tbody>
+</table>
+<p>In this particular simulated sample, the weighted proportion is
+closer to the finite-population value than the unweighted one. That is
+the expected direction in this design, not a universal guarantee for
+every random sample. If a rare subgroup is heavily weighted and has few
+observations, variance can be substantial. A sound analysis reports
+precision, not just the difference between two point estimates.</p>
+<p>What does the code teach that a table of numbers alone cannot? It
+makes the selection mechanism visible. The two regions are sampled at
+different fractions, so treating the combined observations as equally
+representative distorts the target. Changing the random seed will change
+the estimates but not the underlying population-definition problem.</p>
+<h2 id="clustered-observations-and-uncertainty">Clustered observations
+and uncertainty</h2>
+<p>Not every record is an independent piece of evidence. Ten households
+interviewed within one village may share electricity infrastructure,
+weather, local prices or exposure to the same interviewer. Their answers
+can be more similar to one another than answers drawn from different
+villages. Treating every household as an independent draw can make
+confidence intervals too narrow.</p>
+<p>A familiar approximation for a cluster sample with roughly equal
+cluster size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+and intracluster correlation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>c</mi></msub><annotation encoding="application/x-tex">\rho_c</annotation></semantics></math>
+is the design effect</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>DEFF</mo><mo>≈</mo><mn>1</mn><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>ρ</mi><mi>c</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{DEFF}\approx1+(m-1)\rho_c.
+</annotation></semantics></math></p>
+<div id="eq-deff">
+
+</div>
+<p>It illustrates how dependence inflates variance relative to
+independent observations. It is not a substitute for using the actual
+stratification, clustering and weights in a real survey. When survey
+software offers design-based standard errors, the analyst should specify
+the relevant primary sampling units, strata and weights from the
+technical documentation.</p>
+<p>The same caution applies to spatial and temporal prediction. If
+observations from one monitor or one school appear in both training and
+test sets, model performance may be overly optimistic because the test
+data are not as independent as the intended future application. We will
+study validation designs more fully in later chapters. For now the
+lesson is that the unit supplying independent information is not always
+the row of a spreadsheet.</p>
+<h2 id="missing-does-not-mean-zero">Missing does not mean zero</h2>
+<p>A dataset is rarely complete. Sensors fail, people decline to answer,
+administrative files omit facilities, and some quantities are never
+recorded. Replacing every blank with zero can create a plausible-looking
+dataset that answers the wrong question.</p>
+<p>Consider a health centre recording daily medicine issues. A blank on
+a day of equipment failure means that the number issued is unknown. A
+recorded zero may mean that no medicine was issued. If the facility had
+no stock, a zero issue count may conceal patient demand. These
+possibilities have different implications for forecasting and stock
+planning. Before cleaning anything, the analyst must know what a missing
+value means in the originating system.</p>
+<p>The framework associated with <span class="citation"
+data-cites="rubin1976">Rubin (1976)</span> distinguishes missing
+completely at random (MCAR), missing at random (MAR) and missing not at
+random (MNAR). These terms describe assumptions about how the
+probability of missingness depends on observed and unobserved
+information. They do not label a dataset automatically, and they cannot
+generally be determined from observed records alone.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">R_i=1</annotation></semantics></math>
+if a value is observed and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">R_i=0</annotation></semantics></math>
+if it is missing,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>i</mi></msub><annotation encoding="application/x-tex">X_i</annotation></semantics></math>
+denote fully observed information, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Y_i</annotation></semantics></math>
+the quantity that may be missing. A simplified description is:</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mrow><mtext mathvariant="normal">MCAR: </mtext><mspace width="0.333em"></mspace></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><msub><mi>Y</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mrow><mtext mathvariant="normal">MAR: </mtext><mspace width="0.333em"></mspace></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><msub><mi>Y</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mrow><mtext mathvariant="normal">MNAR: </mtext><mspace width="0.333em"></mspace></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo>∣</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><msub><mi>Y</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> can still depend on </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>Y</mi><mi>i</mi></msub><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> after conditioning on </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>X</mi><mi>i</mi></msub><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+\text{MCAR: }&amp;\Pr(R_i=1\mid X_i,Y_i)=\Pr(R_i=1),\\
+\text{MAR: }&amp;\Pr(R_i=1\mid X_i,Y_i)=\Pr(R_i=1\mid X_i),\\
+\text{MNAR: }&amp;\Pr(R_i=1\mid X_i,Y_i)\text{ can still depend on }Y_i\text{ after conditioning on }X_i.
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<p>These expressions should be interpreted within a clearly stated
+joint-data model. For instance, if remote facilities have more missing
+measurements and remoteness is recorded, the probability of missingness
+may depend on an observed characteristic. If outages are more likely on
+precisely the days when consumption is highest and that consumption is
+unobserved, the problem may involve nonignorable missingness.</p>
+<h2 id="an-elementary-sensitivity-calculation-for-missing-values">An
+elementary sensitivity calculation for missing values</h2>
+<p>Suppose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>o</mi></msub><annotation encoding="application/x-tex">n_o</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+measurements are observed. We wish to estimate the mean of an underlying
+quantity known to lie between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>o</mi></msub><annotation encoding="application/x-tex">S_o</annotation></semantics></math>
+be the sum of observed values. Without assuming anything about the
+missing values beyond these bounds, the full-sample mean must lie
+within</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><msub><mi>S</mi><mi>o</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo>−</mo><msub><mi>n</mi><mi>o</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>L</mi></mrow><mi>n</mi></mfrac><mspace width="0.278em"></mspace><mo>≤</mo><mspace width="0.278em"></mspace><mover><mi>y</mi><mo accent="true">¯</mo></mover><mspace width="0.278em"></mspace><mo>≤</mo><mspace width="0.278em"></mspace><mfrac><mrow><msub><mi>S</mi><mi>o</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>n</mi><mo>−</mo><msub><mi>n</mi><mi>o</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>U</mi></mrow><mi>n</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{S_o+(n-n_o)L}{n}\;\leq\;\overline y\;\leq\;\frac{S_o+(n-n_o)U}{n}.
+</annotation></semantics></math></p>
+<div id="eq-bounds">
+
+</div>
+<p>This bound is simple but useful: it states what the data
+<em>guarantee</em> under the declared range assumption. It may be wide.
+A wide interval is sometimes the correct scientific result because the
+missing observations matter too much.</p>
+<p>Take ten households, of which six report electricity access and two
+report no access; the remaining two responses are missing. Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">n=10</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>o</mi></msub><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">n_o=8</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mi>o</mi></msub><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">S_o=6</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">L=0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">U=1</annotation></semantics></math>.
+The household proportion in the ten-record group could be between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.6</mn><annotation encoding="application/x-tex">0.6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.8</mn><annotation encoding="application/x-tex">0.8</annotation></semantics></math>.
+Reporting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mi>/</mi><mn>8</mn><mo>=</mo><mn>0.75</mn></mrow><annotation encoding="application/x-tex">6/8=0.75</annotation></semantics></math>
+assumes that the missing households can be ignored for this purpose.
+That might be reasonable under suitable assumptions, but it is not
+forced by the records. With two missing responses, the original data
+permit a range of outcomes.</p>
+<p>A more advanced analysis might use multiple imputation or a joint
+model. Those methods make additional assumptions that should be
+inspected, not treated as a way of making missingness disappear. When
+the decision is sensitive to the missing values, collecting a small
+amount of better data may be more valuable than applying a sophisticated
+imputation method.</p>
+<h2
+id="measurement-error-selection-and-the-difference-between-prediction-and-explanation">Measurement
+error, selection and the difference between prediction and
+explanation</h2>
+<p>Selection bias and measurement error can reinforce each other.
+Suppose internet-connected facilities submit reports regularly, while
+facilities with poor connectivity submit only when electricity is
+available. A dataset of completed submissions will not necessarily
+describe all facilities equally. A predictive model trained on these
+records may work especially well on the same well-connected facilities
+and poorly elsewhere.</p>
+<p>Measurement error also changes which relationships a model can
+identify. Suppose night-time brightness
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+increases as either manufacturing activity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+or electrification
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+increases. A conceptual model could be</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mi>α</mi><mi>M</mi><mo>+</mo><mi>β</mi><mi>E</mi><mo>+</mo><mi>ε</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+L=\alpha M+\beta E+\varepsilon.
+</annotation></semantics></math></p>
+<div id="eq-lights">
+
+</div>
+<p>Without independent information on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>,
+an observed increase in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+cannot uniquely identify the change in manufacturing activity. This is
+not a weakness that a more powerful learner can automatically overcome;
+it is a lack of distinguishing information. A useful empirical study
+would test whether additional measurements such as business counts,
+electricity connections or production records reduce the ambiguity,
+while respecting the dates and spatial units of each source.</p>
+<p>Equation <a href="chapter03.html#eq-lights">equation</a> is an
+illustrative linear decomposition, not an empirically established
+relationship for Uganda. It is included to show why data integration may
+be necessary. An analyst should not claim firm openings or production
+growth from brightness changes unless independent outcome data support
+those claims.</p>
+<h2 id="time-and-geography-are-part-of-a-variables-meaning">Time and
+geography are part of a variable’s meaning</h2>
+<p>A monthly rainfall total and a daily rainfall gauge measurement
+cannot be compared without aligning periods. Similarly, an
+administrative count organised by districts in one year cannot simply be
+joined to a later map after district boundaries have changed. A variable
+is not adequately documented by a column name such as
+<code>population</code> or <code>cases</code>. The record needs a
+geography, time, unit, definition and source.</p>
+<p>There are at least three common failures of alignment. First, data
+from different periods are treated as contemporaneous. A business census
+measured in one year is used to validate satellite observations from
+another year without explaining the mismatch. Second, polygon boundaries
+differ across files and records are assigned to the wrong areas. Third,
+multiple measurements are aggregated at different levels without
+considering what is lost. A district mean may conceal large variation
+between villages, and village means do not automatically behave like
+individual household observations.</p>
+<p>When two datasets cannot be aligned exactly, the researcher should
+choose a defensible common unit, disclose the loss of detail and conduct
+sensitivity checks where possible. Forced matching can produce a larger
+dataset but weaker evidence. The temptation to maximise row counts must
+not replace the obligation to understand what each row represents.</p>
+<h2 id="a-real-data-laboratory-ugandas-national-panel-survey">A
+real-data laboratory: Uganda’s National Panel Survey</h2>
+<p>The World Bank’s Living Standards Measurement Study–Integrated
+Surveys on Agriculture (LSMS-ISA) programme includes the Uganda National
+Panel Survey, with publicly listed downloadable rounds including 2018–19
+and 2019–20 <span class="citation" data-cites="worldbankLSMS">(World
+Bank 2026)</span>. The programme documentation describes the survey as a
+panel rather than a census. It records household and agricultural
+information through a survey design, not through a complete enumeration
+of every household in Uganda.</p>
+<p>The laboratory proposed here asks a limited, meaningful question:
+<em>How do selected household characteristics, agricultural activities
+and reported electricity access vary across the survey population, and
+how sensitive are descriptive estimates to weighting and missing
+records?</em> The chapter does not present numerical findings from that
+survey because the microdata have not been downloaded, harmonised or
+analysed as part of this manuscript draft.</p>
+<p>The task begins with source selection. Students should select a
+clearly documented survey round, download the questionnaire, codebook,
+sampling documentation and public microdata under the applicable
+conditions. They should then construct a variable table that states the
+household identifier, relevant electricity-access variable, relevant
+agricultural variable, weight, stratum, cluster and permitted geographic
+classification. The exact variable names must be taken from the chosen
+round’s codebook; guessing them from a different year is
+unacceptable.</p>
+<h3 id="establish-the-unit-of-analysis">Establish the unit of
+analysis</h3>
+<p>Is the target quantity a household proportion, a person-weighted
+proportion, the proportion of farms, or the proportion of sampled plots?
+They are not the same. If electricity access is reported at household
+level, combining a household-level access indicator with plot-level
+observations can duplicate some households unless the records are
+carefully structured. The analysis should state which unit each estimate
+represents.</p>
+<p>For a household proportion, begin with the estimated weighted
+fraction using the appropriate household-level survey weight and the
+survey’s documentation. Then calculate the naive unweighted mean as a
+comparison. Report the number of observed households and the proportion
+with missing access responses. Differences between weighted and
+unweighted estimates are findings about the sample and design, not proof
+that weights fix every possible bias.</p>
+<h3 id="check-what-changes-between-rounds">Check what changes between
+rounds</h3>
+<p>Panel datasets can be valuable for studying change, but changes in
+questionnaire wording, sampling frames and definitions may prevent a
+simple like-for-like comparison. Repeated households can contribute
+information about within-household change, while new entrants and
+attrition raise additional questions. Do not treat two nationally
+weighted cross-sections as identical to a balanced household panel.
+Distinguish the estimand before choosing the calculation.</p>
+<p>A careful exercise might compare electricity-access proportions in
+two survey rounds after confirming that the question, response coding
+and weights support that comparison. It should report survey uncertainty
+and attrition considerations. It must not present the resulting
+descriptive difference as a causal effect of an electrification policy
+without an appropriate identification strategy.</p>
+<h3 id="prepare-outputs-that-someone-can-audit">Prepare outputs that
+someone can audit</h3>
+<p>The laboratory should produce a data dictionary, record-count flow,
+missingness table, weighted and unweighted descriptive estimates,
+appropriately calculated uncertainty intervals and a short limitations
+note. If geographic identifiers are coarsened for confidentiality, map
+only the geography that the release permits. Household point locations
+must not be inferred or reconstructed from restricted information.</p>
+<p>A sensible workflow is to preserve the raw downloads in an unchanged
+input directory and create processed outputs through scripts. Every
+transformation should be traceable. This discipline is consistent with
+general reproducible-computation guidance <span class="citation"
+data-cites="sandve2013">(Sandve et al. 2013)</span>. A public tutorial
+should never redistribute restricted microdata merely because the author
+was able to access them.</p>
+<h2 id="when-do-we-have-enough-data-to-decide">When do we have enough
+data to decide?</h2>
+<p>There is no universal minimum number of rows that makes a dataset
+adequate. Adequacy depends on the intended decision and on whether the
+information distinguishes the alternatives. A thousand repeated
+measurements of the same biased sensor may provide less useful
+information than ten calibrated measurements from locations that reveal
+the missing mechanism.</p>
+<p>Suppose a manager must decide whether to install another water-flow
+meter. The relevant question is not simply “Can we predict water use
+accurately?” It is whether the present observations can distinguish a
+leak from legitimate consumption well enough to place the new meter or
+target a repair. If several physical explanations fit the observed
+totals, the Data Readiness Assessment should identify the ambiguity and
+what additional observation would resolve it.</p>
+<p>A useful assessment has six dimensions:</p>
+<ol type="1">
+<li><p><em>Meaning.</em> Are the target, units, time period and
+population defined precisely?</p></li>
+<li><p><em>Coverage.</em> Which places, people and times are represented
+or systematically excluded?</p></li>
+<li><p><em>Measurement.</em> How were observations recorded, and what
+biases or detection limits are plausible?</p></li>
+<li><p><em>Alignment.</em> Can the datasets be combined at the required
+spatial and temporal scale?</p></li>
+<li><p><em>Uncertainty.</em> Are sampling error, missingness and
+possible model failures described?</p></li>
+<li><p><em>Decision relevance.</em> Could the measured information
+actually change a feasible action?</p></li>
+</ol>
+<p>The final dimension connects this chapter back to Chapter 1. Data are
+not trustworthy merely because they are clean, and a model is not useful
+merely because it predicts an available label. The available
+measurements must support the question someone needs answered.</p>
+<h2 id="trace-a-number-backwards-before-using-it">Trace a number
+backwards before using it</h2>
+<p>A spreadsheet reports “electricity access = 0.72” for a district.
+What, precisely, does that mean? It could mean that 72 percent of
+sampled households reported a grid connection, that 72 percent of
+households had access to some electricity source, or that an analyst
+used a model to estimate access for every small area in the district.
+These are not minor differences. A solar engineer, a survey statistician
+and a public administrator could all use the phrase “electricity access”
+while referring to different measurements.</p>
+<p>A useful data investigation runs backwards from the number to the
+observation that created it. Who defined access? Was the respondent
+asked about a physical connection, actual hours of supply, or the
+ability to use electricity when needed? Was the unit a household,
+building, service point or electricity meter? How were people selected?
+When was the question asked, and were answers revised later? If access
+was inferred from night-time brightness rather than measured
+independently, it cannot serve as an independent test of a
+satellite-based electrification estimate.</p>
+<p>This trail of meaning is often called <em>data provenance</em>. It
+records where a value came from, which transformations it underwent, and
+which decisions were made while preparing it. A data dictionary is an
+initial part of that record; a reproducible processing script is
+another. The purpose is not bureaucratic completeness. It is to discover
+when two apparently identical columns mean different things.</p>
+<h3 id="an-observation-is-a-chain-of-transformations">An observation is
+a chain of transformations</h3>
+<p>Write an unobserved quantity of interest as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.
+A measurement device, questionnaire or administrative process produces
+raw record
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+and a sequence of cleaning and aggregation steps produces the value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+used in analysis:</p>
+<p>$$</p>
+<p>XRC(R)A(C(R))=Y.</p>
+<p>$$</p>
+<p>The arrows are not all deterministic. People may misremember,
+instruments may drift, records may be missing, and staff may interpret
+questions differently. Cleaning can introduce additional decisions.
+Aggregation loses some distinctions by design. When we write a
+regression using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>,
+we inherit assumptions from every link in this chain, whether or not the
+regression code acknowledges them.</p>
+<p>Imagine rainfall observations from a gauge that reports once per day.
+If the gauge is not emptied consistently, its reading may represent
+water accumulated over more than twenty-four hours. Replacing an
+unusually high measurement with the median may make a plot smoother
+while removing a real storm event. A data-quality procedure should first
+ask how the observation was produced and whether an anomaly is
+plausible. Statistical unusualness is not the same as error.</p>
+<h2 id="measurement-uncertainty-is-not-only-random-noise">Measurement
+uncertainty is not only random noise</h2>
+<p>The elementary equation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>X</mi><mo>+</mo><mi>b</mi><mo>+</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">Y=X+b+\varepsilon</annotation></semantics></math>
+distinguishes bias
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+from random noise
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>.
+Its usefulness depends on what information we have about those terms.
+Repeating the same measurement may reduce random variation in an
+average, but it does not remove a constant calibration bias. A survey
+administered in only one language may systematically miss some types of
+misunderstanding, even with a large sample. A satellite pixel may
+integrate light from roads, homes and industrial buildings and cannot
+label their contributions merely because its value is precise.</p>
+<p>Consider independent repeated measurements
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>j</mi></msub><mo>=</mo><mi>X</mi><mo>+</mo><mi>b</mi><mo>+</mo><msub><mi>ε</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">Y_j=X+b+\varepsilon_j</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>ε</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbb E[\varepsilon_j]=0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ε</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(\varepsilon_j)=\sigma^2</annotation></semantics></math>.
+Their mean satisfies</p>
+<p>$$</p>
+<p>E[Y]=X+b,(Y)=.</p>
+<p>$$</p>
+<p>As
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+grows, the variance shrinks, but the bias remains. It would be a mistake
+to claim that repeated measurement makes the estimate accurate without
+independently assessing the instrument’s calibration. The distinction
+between precision, accuracy and traceability is central to the <span
+class="citation" data-cites="jcgm2008">Guides in Metrology (2008)</span>
+guidance on measurement uncertainty.</p>
+<h3 id="independent-errors-and-common-errors">Independent errors and
+common errors</h3>
+<p>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">\sigma^2/n</annotation></semantics></math>
+formula relies on independent errors. If every reading shares a random
+calibration component
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
+and separate random components
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\epsilon_j</annotation></semantics></math>,
+write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>j</mi></msub><mo>=</mo><mi>X</mi><mo>+</mo><mi>U</mi><mo>+</mo><msub><mi>ϵ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">Y_j=X+U+\epsilon_j</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>U</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>τ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(U)=\tau^2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ϵ</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(\epsilon_j)=\sigma^2</annotation></semantics></math>.
+Then</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>Y</mi><mo accent="true">¯</mo></mover><mo>−</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>τ</mi><mn>2</mn></msup><mo>+</mo><mfrac><msup><mi>σ</mi><mn>2</mn></msup><mi>n</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(\overline Y-X)=\tau^2+\frac{\sigma^2}{n}.
+</annotation></semantics></math></p>
+<div id="eq-commonnoise">
+
+</div>
+<p>Collecting more readings cannot remove the common component. For
+example, hundreds of measurements from a thermometer calibrated
+incorrectly do not provide hundreds of independent checks of its
+calibration. This is a general warning for dense digital datasets: high
+frequency does not automatically mean high information.</p>
+<h3 id="propagation-of-measurement-uncertainty">Propagation of
+measurement uncertainty</h3>
+<p>Suppose we calculate a rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>1000</mn><mi>c</mi><mi>/</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">r=1000c/p</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+is a recorded count and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
+a population estimate. If both have small errors, a first-order
+approximation gives</p>
+<p>$$</p>
+<p>(r)()^2!(c) +()^2!(p) -2(c,p).</p>
+<p>$$</p>
+<p>One cannot merely ignore population uncertainty because the
+denominator appears in a spreadsheet cell that looks exact. The
+covariance term matters if both count and population depend on common
+sampling or modelling procedures. This calculation is a local
+approximation, not an all-purpose confidence interval; ratios with
+uncertain denominators can behave badly when the denominator is near
+zero.</p>
+<figure id="fig-sharederror">
+<img src="figures/shared_measurement_error.png"
+alt="The fallacy of treating shared calibration error as independent random noise. Repeating readings reduces the independent component but not the common offset. The parameters are hypothetical." />
+<figcaption aria-hidden="true">The fallacy of treating shared
+calibration error as independent random noise. Repeating readings
+reduces the independent component but not the common offset. The
+parameters are hypothetical.</figcaption>
+</figure>
+<h2 id="sampling-the-population-is-not-the-spreadsheet">Sampling: the
+population is not the spreadsheet</h2>
+<p>The target population is the collection about which we want to make a
+claim. The observed sample is the collection we happen to have. These
+coincide only in a true census of the stated population with complete
+and correct enumeration, which itself can be difficult to achieve. Many
+datasets that arrive as “national” contain records from a designed
+sample, not every household. A useful analysis makes the target,
+sampling unit, coverage period and selection probability explicit.
+Classical design-based methods are developed in <span class="citation"
+data-cites="cochran1977">Cochran (1977)</span>, <span class="citation"
+data-cites="kish1965">Kish (1965)</span>, <span class="citation"
+data-cites="lohr2019">Lohr (2019)</span> and <span class="citation"
+data-cites="groves2009">Groves et al. (2009)</span>.</p>
+<h3 id="where-sampling-weights-come-from">Where sampling weights come
+from</h3>
+<p>Suppose a finite population contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+units and unit
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+is included with known probability
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>i</mi></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\pi_i&gt;0</annotation></semantics></math>.
+For a population total
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">T=\sum_{i=1}^N y_i</annotation></semantics></math>,
+the Horvitz–Thompson estimator is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>T</mi><mo accent="true">̂</mo></mover><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">T</mi></mrow></msub><mo>=</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>s</mi></mrow></munder><mfrac><msub><mi>y</mi><mi>i</mi></msub><msub><mi>π</mi><mi>i</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat T_{\mathrm{HT}}=\sum_{i\in s}\frac{y_i}{\pi_i}.
+</annotation></semantics></math></p>
+<div id="eq-ht">
+
+</div>
+<p>Under the stated probability design,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>I</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><msub><mi>π</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb E[I_i]=\pi_i</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>i</mi></msub><annotation encoding="application/x-tex">I_i</annotation></semantics></math>
+is the indicator that the unit was selected. Therefore</p>
+<p>$$</p>
+<p>E[T_{}]=<em>{i=1}^NE[I_i] =</em>{i=1}^N y_i=T.</p>
+<p>$$</p>
+<p>The proof explains the weights: a sampled unit represents itself and
+others with similar inclusion probability. It also explains why weights
+are not optional decorations attached to a survey file. Ignoring
+disproportionate inclusion probabilities changes the target
+implicitly.</p>
+<p>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+is known,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>T</mi><mo accent="true">̂</mo></mover><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">T</mi></mrow></msub><mi>/</mi><mi>N</mi></mrow><annotation encoding="application/x-tex">\widehat T_{\mathrm{HT}}/N</annotation></semantics></math>
+estimates a population mean. If it is estimated too, a ratio estimator
+may be used:</p>
+<p>$$</p>
+<p>_R=.</p>
+<p>$$</p>
+<p>This ratio is widely used but is not exactly design-unbiased in
+finite samples merely because the total estimator is unbiased. It
+requires appropriate design-based variance estimation. The choice
+between total, proportion, mean and ratio estimators should match the
+target quantity and the published survey design.</p>
+<h3
+id="stratification-clustering-and-multi-stage-selection">Stratification,
+clustering and multi-stage selection</h3>
+<p>A survey might first select districts, then enumeration areas, then
+households. Its records may contain strata, clusters and weights. Two
+households from the same enumeration area may resemble each other
+because they share roads, electricity infrastructure and local
+conditions. Ten records from one area therefore need not provide the
+information of ten independently sampled areas.</p>
+<p>The design effect approximation introduced earlier describes one
+route by which dependence enlarges uncertainty. For a wider account of
+multilevel structure and modelling choices, see <span class="citation"
+data-cites="gelman2007">Gelman and Hill (2007)</span>. For real
+multi-stage surveys it is better to use the actual sample design rather
+than insert an arbitrary intracluster correlation. Also distinguish the
+count of <em>records</em> from the count of independent primary sampling
+units. A table containing thousands of household rows may still contain
+relatively few independent clusters for a particular analysis. No
+confidence-interval algorithm can create independent sampled areas that
+were not observed.</p>
+<h3 id="weights-can-affect-both-estimates-and-precision">Weights can
+affect both estimates and precision</h3>
+<p>A descriptive measure of how unequal weights reduce a sample’s
+effective size is</p>
+<p>$$</p>
+<p>n_{,w}=.</p>
+<p>$$</p>
+<p>By Cauchy–Schwarz,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">f</mi></mrow><mo>,</mo><mi>w</mi></mrow></msub><mo>≤</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">n_{\mathrm{eff},w}\leq n</annotation></semantics></math>,
+with equality for equal positive weights. For example, with four sample
+weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>9</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1,1,1,9)</annotation></semantics></math>,
+the effective-size expression is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>12</mn><mn>2</mn></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>81</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>144</mn><mi>/</mi><mn>84</mn><mo>≈</mo><mn>1.71</mn></mrow><annotation encoding="application/x-tex">12^2/(1+1+1+81)=144/84\approx1.71</annotation></semantics></math>,
+much smaller than the four observed records. This is an instructive
+warning about concentration of weights. It is not the full survey
+effective sample size, because stratification, clustering, calibration
+and the particular estimator also matter.</p>
+<h2 id="nonresponse-changes-the-meaning-of-a-comparison">Nonresponse
+changes the meaning of a comparison</h2>
+<p>A field team may interview most households in a district and miss the
+rest. The completed records are not automatically a random subset of the
+intended sample. People can be absent for reasons related to employment,
+migration, income or access to services. If response probabilities
+differ in ways that matter for an estimate, simply computing the average
+among respondents may be biased.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>i</mi></msub><annotation encoding="application/x-tex">R_i</annotation></semantics></math>
+be the response indicator and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Y_i</annotation></semantics></math>
+the target outcome. The observed mean estimates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>R</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E[Y\mid R=1]</annotation></semantics></math>.
+The intended population mean is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E[Y]</annotation></semantics></math>.
+Their difference can be written</p>
+<p>$$</p>
+<p>E[YR=1]-E[Y] =</p>
+<p>$$</p>
+<p>when expectations are well defined. To see this, note that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>R</mi><mi>Y</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>R</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E[RY]=\Pr(R=1)\mathbb E[Y\mid R=1]</annotation></semantics></math>,
+while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>R</mi><mi>Y</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>R</mi><mo stretchy="true" form="postfix">]</mo></mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Cov}(R,Y)=\mathbb E[RY]-\mathbb E[R]\mathbb E[Y]</annotation></semantics></math>.
+The formula makes the danger transparent: nonresponse creates selection
+bias when response and the outcome are associated.</p>
+<p>This identity does not tell us the missing covariance from observed
+outcomes alone. It tells us what we need to reason about. Did
+connectivity affect response? Was nonresponse higher in remote areas?
+Can auxiliary variables from the sampling frame explain the differences?
+If we assume responses are missing at random conditional on recorded
+covariates, weighting or imputation may help. If missingness depends on
+the unobserved value even after conditioning, sensitivity analysis and
+transparent uncertainty are needed. <span class="citation"
+data-cites="rubin1976">Rubin (1976)</span> and <span class="citation"
+data-cites="littlerubin2019">Little and Rubin (2019)</span> provide the
+statistical foundations.</p>
+<h3 id="a-sharp-worst-case-bound-for-a-proportion">A sharp worst-case
+bound for a proportion</h3>
+<p>When an outcome is binary, we can give an honest bound even without a
+model for nonresponse. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>o</mi></msub><annotation encoding="application/x-tex">n_o</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+sampled units respond, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+respondents report access, the proportion among all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+intended records lies between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">r/n</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo>+</mo><mi>n</mi><mo>−</mo><msub><mi>n</mi><mi>o</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">(r+n-n_o)/n</annotation></semantics></math>,
+if every missing outcome might be either zero or one. With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>60</mn></mrow><annotation encoding="application/x-tex">r=60</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>o</mi></msub><mo>=</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">n_o=80</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">n=100</annotation></semantics></math>,
+the range is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.60</mn><mo>,</mo><mn>0.80</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0.60,0.80]</annotation></semantics></math>.
+The observed-respondent proportion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.75</mn><annotation encoding="application/x-tex">0.75</annotation></semantics></math>
+sits inside it. A narrower interval requires assumptions or additional
+observations. For a properly weighted complex survey, the analogous
+exercise must respect the sampling weights and target estimand.</p>
+<p>A good analyst might decide to call back a small targeted sample of
+nonrespondents rather than argue endlessly about competing imputation
+models. Whether such follow-up is permissible and worthwhile depends on
+ethics, costs and how strongly the uncertain observations affect the
+intended decision.</p>
+<h2 id="imputation-is-an-estimate-not-a-repair-of-the-past">Imputation
+is an estimate, not a repair of the past</h2>
+<p>Missing observations can be filled with model-based values for some
+analyses. But an imputed number was not observed, and it should not be
+copied into a public administrative record as though it were. Imputation
+must be traceable. At minimum keep the original value, an indicator of
+missingness, the imputation method and the resulting analytic value
+separately.</p>
+<p>Consider a linear relationship
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>α</mi><mo>+</mo><mi>β</mi><mi>X</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y=\alpha+\beta X+\epsilon</annotation></semantics></math>.
+If missing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+values are replaced by their conditional predictions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>α</mi><mo accent="true">̂</mo></mover><mo>+</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mi>X</mi></mrow><annotation encoding="application/x-tex">\widehat\alpha+\widehat\beta X</annotation></semantics></math>,
+the filled-in values omit the individual residual variability. A single
+deterministic imputation can make the distribution artificially
+concentrated and understate uncertainty if the completed data are
+analysed as though all values were observed. Multiple imputation
+introduces variation across plausible completed datasets under an
+explicit missing-data model; it still does not defeat nonidentifiability
+under unsupported assumptions. <span class="citation"
+data-cites="littlerubin2019">Little and Rubin (2019)</span> give a
+rigorous treatment.</p>
+<h3
+id="why-predictive-quality-is-not-sufficient-to-justify-imputation">Why
+predictive quality is not sufficient to justify imputation</h3>
+<p>Suppose a model predicts observed household expenditure well. Does
+that mean its predictions are valid for households that did not respond?
+Not necessarily. The observed households may differ systematically from
+the missing group. High cross-validated accuracy among respondents
+measures prediction on a restricted distribution. It does not verify the
+distribution of unobserved incomes. A meaningful assessment asks whether
+the missingness assumptions are credible and how the final estimate
+changes under alternatives.</p>
+<p>A useful report should show at least the fraction missing for each
+important field, variation by geography and subgroup, the complete-case
+estimate, the imputed estimate where justified, uncertainty that
+reflects the imputation process, and a sensitivity analysis where
+nonignorable missingness is plausible. Reporting only the model’s
+accuracy is inadequate.</p>
+<h2
+id="measurement-error-can-make-a-real-relationship-look-weaker">Measurement
+error can make a real relationship look weaker</h2>
+<p>Suppose the true relationship between an outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+and a predictor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>α</mi><mo>+</mo><mi>β</mi><mi>X</mi><mo>+</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">Y=\alpha+\beta X+\varepsilon</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
+mean-zero and independent of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.
+We do not observe
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+directly; instead
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mi>X</mi><mo>+</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">W=X+U</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>U</mi><annotation encoding="application/x-tex">U</annotation></semantics></math>
+is classical independent mean-zero measurement error. The slope from a
+simple regression of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+tends, under the usual conditions, toward</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>W</mi></msub><mo>=</mo><mi>β</mi><mfrac><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>U</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\beta_W=\beta\frac{\operatorname{Var}(X)}{\operatorname{Var}(X)+\operatorname{Var}(U)}.
+</annotation></semantics></math></p>
+<div id="eq-attenuation">
+
+</div>
+<p>The multiplier is between zero and one, so the estimated slope is
+attenuated toward zero. One might wrongly conclude that the relationship
+is weak even when the true relationship is substantial. This is an
+example of a model that converges statistically to the wrong target as
+more data are added. For error-in-variables methods and broader cases
+see <span class="citation" data-cites="carroll2006">Carroll et al.
+(2006)</span> and <span class="citation" data-cites="fuller1987">Fuller
+(1987)</span>.</p>
+<p>For example, if the variance of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>9</mn><annotation encoding="application/x-tex">9</annotation></semantics></math>
+and the error variance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>,
+the multiplier is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>9</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>9</mn><mo>+</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.75</mn></mrow><annotation encoding="application/x-tex">9/(9+3)=0.75</annotation></semantics></math>.
+A true slope of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2</mn><annotation encoding="application/x-tex">2</annotation></semantics></math>
+produces a limiting naive slope of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1.5</mn><annotation encoding="application/x-tex">1.5</annotation></semantics></math>.
+This calculation rests on the classical additive-error assumptions.
+Differential, correlated, systematic or spatially structured errors may
+behave differently. The equation is not a general correction formula for
+every dataset.</p>
+<h3 id="why-an-independent-reference-is-valuable">Why an independent
+reference is valuable</h3>
+<p>If we have repeated measurements or a credible validation subsample,
+we may estimate measurement-error parameters. Without such data, the
+decomposition of observed variation into true variation and noise may be
+underdetermined. This explains why a few expensive but trustworthy
+reference measurements can be essential even in a project with millions
+of cheap proxy observations.</p>
+<p>The same issue appears when satellite brightness is used to infer
+activity. Brightness is not a direct reading of firm counts. It is an
+observation affected by many sources of light, local electrification,
+land use, atmospheric effects and measurement processing. To argue that
+it predicts an economic quantity well, we need independent outcome data
+and a validation design matched to the intended use. To argue that
+changes in brightness reveal <em>growth</em>, we need temporal business
+data, not merely a satellite time series. No amount of smoothness in the
+brightness image resolves that distinction by itself.</p>
+<h2 id="alignment-when-two-correct-datasets-disagree">Alignment: when
+two correct datasets disagree</h2>
+<p>Two datasets can each be internally correct and still be
+inappropriate to join. An electricity survey may refer to households
+present during a field period, while an administrative connection
+register counts meters installed by the end of the calendar year. A
+satellite product may provide monthly radiance for pixels with variable
+observation quality. A manufacturing census may count establishments
+using a definition that changed between rounds. Matching these files on
+a district name does not make their measurements equivalent.</p>
+<h3 id="temporal-alignment-as-part-of-study-design">Temporal alignment
+as part of study design</h3>
+<p>Before combining sources, construct a timeline showing the period
+represented by every variable. Distinguish a measurement date from a
+reference period. A survey collected in February may ask about income
+over the previous twelve months; an electricity record may be a stock at
+31 December; a satellite composite may average nights within a calendar
+year. Any temporal mismatch should be stated in the design, with
+sensitivity checks if the research question makes it important.</p>
+<p>A related danger is information leakage. If a model is intended to
+guide a decision on 1 June, its inputs must be information available by
+1 June. A later revised annual statistic may improve a retrospective fit
+but cannot serve as a genuine prospective input. A split into random
+training and test records does not protect against this error. We must
+split according to when the data would actually have become
+available.</p>
+<h3 id="geography-is-not-just-a-label">Geography is not just a
+label</h3>
+<p>Suppose an administrative boundary changes so that one sub-county
+becomes two. If we count establishments in one year’s boundaries and
+households in another year’s boundaries, the derived rate may be
+meaningless. A defensible harmonisation chooses a common geography,
+documents which units were combined or excluded, and checks that
+extensive quantities, such as counts, have been aggregated
+appropriately.</p>
+<p>Different variables aggregate differently. Counts add across disjoint
+areas; averages generally require suitable weights; rates require their
+numerator and denominator to be aggregated before division. For example,
+combining two areas with 20 businesses in 1,000 residents and 30
+businesses in 9,000 residents gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>50</mn><mi>/</mi><mn>10</mn><mo>,</mo><mn>000</mn><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">50/10{,}000=5</annotation></semantics></math>
+businesses per 1,000 residents. Averaging the original rates,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>20</mn><mo>+</mo><mn>3.33</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>2</mn><mo>≈</mo><mn>11.67</mn></mrow><annotation encoding="application/x-tex">(20+3.33)/2\approx11.67</annotation></semantics></math>,
+would be wrong for the combined population. This is a mathematical
+error, not merely a problem of map formatting.</p>
+<h2 id="a-data-dictionary-that-can-survive-a-new-analyst">A data
+dictionary that can survive a new analyst</h2>
+<p>A practical data dictionary records more than column names. Each
+field should identify its concept, unit, type, geographical and temporal
+reference, allowed values, missing-value codes, collection mechanism,
+source file, processing rule and any restrictions on sharing. Where the
+field is derived, retain the formula and the source columns.</p>
+<table>
+<caption>Illustrative data-dictionary entries for a household
+electricity study {#tbl-3_2}</caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Meaning and validation rule</th>
+<th>Important caution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hh_id</code></td>
+<td>Anonymous analysis identifier; unique within the correct round</td>
+<td>Not a public household address</td>
+</tr>
+<tr class="even">
+<td>texttt{access}</td>
+<td>Defined categorical or binary electricity-access measure</td>
+<td>Define source and reference period</td>
+</tr>
+<tr class="odd">
+<td>texttt{weight}</td>
+<td>Documented survey analysis weight</td>
+<td>Use the correct round and domain</td>
+</tr>
+<tr class="even">
+<td>texttt{psu}</td>
+<td>Primary sampling unit code where disclosed</td>
+<td>May be restricted or altered for privacy</td>
+</tr>
+<tr class="odd">
+<td>texttt{wave}</td>
+<td>Survey round identifier</td>
+<td>Round definitions and samples may change</td>
+</tr>
+<tr class="even">
+<td>texttt{region}</td>
+<td>Geographic reporting category</td>
+<td>Do not assume village resolution</td>
+</tr>
+</tbody>
+</table>
+<p>These are <em>illustrative field names</em>, not a claim that an
+actual Uganda National Panel Survey file has precisely these columns.
+Before running the real-data laboratory, inspect the published metadata,
+codebooks and access terms. The <span class="citation"
+data-cites="worldbankLSMS">World Bank (2026)</span> documentation
+provides the survey programme and links to round-specific information.
+The exact variables and available geographic identifiers must be
+established from the downloaded files, not guessed from an attractive
+template.</p>
+<h2 id="a-defensible-audit-of-the-uganda-national-panel-survey">A
+defensible audit of the Uganda National Panel Survey</h2>
+<p>The National Panel Survey is a valuable teaching example because it
+brings together household and agricultural information with survey
+design decisions. The published 2019/20 documentation describes the
+sampling framework and survey instruments, while changes in later
+surveys require special care in longitudinal comparisons. The World Bank
+project documents indicate that the UNPS 2019/20 sample contained 3,098
+households and that a later refresh affected the sample design; these
+are design facts from documentation, not results we computed from
+microdata <span class="citation"
+data-cites="wbUNPSreport worldbankLSMS">(World Bank 2023,
+2026)</span>.</p>
+<h3 id="start-with-the-actual-documentation">Start with the actual
+documentation</h3>
+<p>Download the specific round’s basic information document and
+questionnaire; identify the unit of observation, sampling stages,
+strata, weights, repeated-visit structure and geographic levels that may
+be publicly reported. Make a one-page record of the instrument
+definition of electricity access. The fact that an item has a familiar
+name does not guarantee that its meaning is stable across rounds. Check
+changes in response coding and whether an apparently missing household
+is a nonresponse, an out-of-scope record or a household no longer
+followed.</p>
+<h3 id="separate-four-kinds-of-output">Separate four kinds of
+output</h3>
+<p>First, produce a <em>data inventory</em>: files, observation counts,
+key identifiers, variable types and missing-value codes. Second, produce
+a <em>weighted descriptive estimate</em> using the survey’s approved
+design variables, accompanied by an appropriate uncertainty interval.
+Third, produce a <em>quality table</em> showing nonresponse and
+inconsistencies that could alter interpretation. Fourth, produce a
+<em>limitations memo</em> identifying what cannot be estimated at the
+desired geographic scale or with the available variables. A refusal to
+publish an unsupported village-level map is a valid outcome of a careful
+analysis.</p>
+<h3 id="a-reproducible-notebook-skeleton">A reproducible notebook
+skeleton</h3>
+<p>The following code is a <em>template</em>, not an executable analysis
+of UNPS. It requires actual file paths and variable names from the
+chosen round’s codebook. A notebook that silently guesses names could
+produce an apparently complete table based on wrong columns.</p>
+<p>import pandas as pd</p>
+<pre><code># Replace these placeholders only after inspecting the real codebook.
+DATAFILE = &quot;path_to_authorized_household_file.csv&quot;
+ID = &quot;verified_household_identifier&quot;
+WEIGHT = &quot;verified_household_weight&quot;
+ACCESS = &quot;verified_access_variable&quot;
+
+# Raw input must remain unchanged; avoid printing identifiers.
+df = pd.read_csv(DATAFILE)
+assert df[ID].notna().all()
+assert df[WEIGHT].notna().all()
+assert (df[WEIGHT] &gt; 0).all()
+# Before this step, inspect skip codes and recode only documented values.
+assert df[ACCESS].dropna().isin([0, 1]).all()</code></pre>
+<p>valid = df[ACCESS].notna() est = (df.loc[valid, WEIGHT] *
+df.loc[valid, ACCESS]).sum() est /= df.loc[valid, WEIGHT].sum()
+print(“Weighted respondent proportion:”, est) # Do not label this a
+design-valid national estimate until # response handling, survey strata
+and primary sampling units # have been incorporated as the official
+documentation requires.</p>
+<p>This skeleton intentionally stops short of reporting a national
+confidence interval. A full analysis needs survey-aware variance
+estimation and possibly the correct treatment of panel design, attrition
+and calibration. It is better to leave a clearly identified
+computational requirement than to print a polished but unjustified
+interval.</p>
+<h2 id="how-a-data-error-reaches-a-decision">How a data error reaches a
+decision</h2>
+<p>Most textbook examples stop after identifying a biased measurement.
+Operational work must ask whether that bias changes what someone does.
+Suppose two communities are candidates for installing a backup water
+system. Their true unmet demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>A</mi></msub><mo>=</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">D_A=80</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>B</mi></msub><mo>=</mo><mn>60</mn></mrow><annotation encoding="application/x-tex">D_B=60</annotation></semantics></math>
+units, but a reporting failure causes community A’s estimate to be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>D</mi><mo accent="true">̂</mo></mover><mi>A</mi></msub><mo>=</mo><mn>50</mn></mrow><annotation encoding="application/x-tex">\widehat D_A=50</annotation></semantics></math>.
+If the planner allocates the system to the community with the highest
+reported demand, the apparent ranking selects B. The error changes the
+decision, not just a plot.</p>
+<p>The decision cost of such an error depends on the capacity of the
+system, the people served, the alternative arrangements and the
+consequences of failing to supply water. When data resources are
+limited, prioritising the measurement whose errors are most likely to
+change the decision can be more sensible than attempting to perfect
+every column. This is the bridge back to the value-of-information
+argument in Chapter 1. The purpose of better data is not simply to
+obtain a more impressive goodness-of-fit statistic. It is to reduce the
+chance of a consequential wrong decision.</p>
+<h2 id="responsible-data-use-is-a-technical-requirement">Responsible
+data use is a technical requirement</h2>
+<p>Public access to a file does not imply permission to publish
+identifiable records. A survey may release regional categories while
+withholding fine coordinates to reduce disclosure risk. A hospital may
+permit analysis of de-identified stock records but not patient-level
+histories. Good data engineering should therefore use access controls,
+minimal fields, appropriate aggregation, secure storage and documented
+retention policies from the start. A technically elegant model built
+from data obtained without authority is not a successful project.</p>
+<p>Reproducibility and confidentiality sometimes pull in different
+directions. The proper response is to separate what can be made
+public—code, documentation, synthetic demonstration data, safe
+aggregates—from what must remain protected. A public notebook can still
+be independently examined for its calculations even if every restricted
+observation cannot be shared. <span class="citation"
+data-cites="sandve2013">Sandve et al. (2013)</span> set out principles
+for reproducible computational analysis that remain useful here, but
+reproducibility never overrides the rights of the people represented in
+the data.</p>
+<h3 id="a-practical-readiness-decision">A practical readiness
+decision</h3>
+<p>At the end of a dataset audit, we should be willing to write one of
+four conclusions. The data may be ready for the stated decision under
+clearly documented limits. They may be ready for descriptive analysis
+but not for the proposed predictive claim. They may be usable only after
+targeted additional collection or independent validation. Or they may be
+inadequate, making the responsible choice to stop or reformulate the
+question. These outcomes are not grades for the analyst; they are
+consequences of how much the evidence can support.</p>
+<p>A useful readiness record asks: Are the required variables defined?
+Do we know who and what the sample represents? Are dates and boundaries
+aligned? Are measurement errors and missingness understood well enough?
+Can we validate the central claim independently? Does the dataset’s
+permission support the proposed use? If a critical answer is no, the
+report must say what extra observation would be needed and why.</p>
+<h2 id="extended-laboratory-a-data-audit-before-modelling">Extended
+laboratory: a data audit before modelling</h2>
+<p>The laboratory begins with a <em>constructed teaching dataset</em>,
+not a real national survey. Create two groups of households with
+different probabilities of electricity access and select them at unequal
+sampling fractions, as in the existing companion program. Record the
+true finite-population proportion, unweighted sample proportion,
+weighted estimate, and the fraction missing after imposing two different
+response mechanisms. Then introduce an independent random measurement
+error and a shared calibration error into a continuous quantity,
+confirming equation <a href="chapter03.html#eq-commonnoise">equation</a>
+numerically.</p>
+<p>The experiment should not end when the numbers match a formula.
+Explain in ordinary language why the weighted and unweighted estimates
+differ; which assumption was broken by the imposed response mechanism;
+why the average of many biased readings is still biased; and what
+additional data would let the analyst estimate the calibration error. Do
+not claim that the constructed missingness mechanism can be diagnosed
+reliably from the completed file alone: its truth is known to us only
+because we wrote the simulation.</p>
+<p>import numpy as np rng = np.random.default_rng(2026) true_value =
+10.0 shared = rng.normal(0, 1.2) # common calibration error repeat_error
+= rng.normal(0, 0.5, 100) measurements = true_value + shared +
+repeat_error print(“Mean of repeated readings:”, measurements.mean())
+print(“Known shared error in this simulation:”, shared)</p>
+<p>Run the example with 10, 100 and 10,000 repeated readings, preserving
+the same randomly sampled shared offset for a fair comparison. The
+independent error in the mean should shrink; the shared offset remains.
+The exercise is about the logic of measurement, not about recovering the
+precise reference value from these observations.</p>
+<h5 id="further-exercises.">Further exercises.</h5>
+<p>Prove the Horvitz–Thompson total estimator is unbiased under known
+positive inclusion probabilities. Derive the nonresponse bias identity
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>R</mi><mi>Y</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E[RY]</annotation></semantics></math>.
+Explain why using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>σ</mi><mn>2</mn></msup><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">\operatorname{Var}(\bar Y)=\sigma^2/n</annotation></semantics></math>
+with correlated readings is unsafe. Construct two latent states that
+produce the same measured satellite brightness but different
+establishment counts. Show, using numerator and denominator totals, why
+an unweighted average of district rates does not generally equal the
+national rate. Describe a permission-preserving plan for making a
+restricted-data analysis reproducible.</p>
+<h2
+id="case-study-when-an-apparently-complete-dataset-is-not-ready">Case
+study: when an apparently complete dataset is not ready</h2>
+<p>Imagine a district planning office asks for a map of household
+electricity access to help locate backup power investments. Three files
+are available: household survey estimates, a list of electricity
+connections and night-time satellite brightness. At first glance the
+request seems straightforward. Merge the files by location, fit a model
+and draw the map. Each step, however, hides a different question about
+what the data mean.</p>
+<p>The household survey may measure whether sampled households report
+access to an electricity source. Connection records may count meters,
+some serving several households and others disconnected or inactive.
+Night-time brightness detects emitted light, much of which may come from
+roads, shops or public facilities. The three sources are related to
+electrification, but they do not measure the same thing. A high
+correlation between two of them is not sufficient proof that either is
+an unbiased estimate of the target measure.</p>
+<h3 id="start-with-a-question-that-has-a-unit">Start with a question
+that has a unit</h3>
+<p>Suppose the policy question is: “Which eligible service areas have
+the greatest proportion of households without dependable electricity for
+evening health services?” This already contains several definitions that
+need work. Is the unit a household or a clinic? Does dependable mean
+connected, available for a minimum number of hours, or sufficient to
+power critical equipment? Are service areas administrative polygons,
+electricity network zones or a fixed travel distance around facilities?
+A household connection is not proof that a clinic can operate a
+cold-chain refrigerator through an outage. The outcome should be defined
+by what the decision requires.</p>
+<p>If the team instead asks, “Which small areas have the lowest
+proportion of households reporting grid access?” a household survey may
+help, but only at the spatial resolution supported by its design and
+confidentiality provisions. The first question may require facility load
+and outage measurements, while the second may use documented household
+responses. A model should not silently answer one question while its
+title promises the other.</p>
+<h3 id="the-data-inventory-meeting">The data-inventory meeting</h3>
+<p>A productive first meeting does not need a computer screen. Place the
+source documents on a table and write down each dataset’s unit, dates,
+definition, coverage, selection mechanism, spatial precision and
+permission. For survey estimates, note the sampling strata and weights.
+For administrative connections, check duplicate meter records and the
+status date. For satellite radiance, record the compositing period and
+quality flags. Mark any definition that cannot yet be reconciled.</p>
+<p>A preliminary alignment table might read:</p>
+<div class="center">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Unit recorded</th>
+<th>Question it can address directly</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Household survey</td>
+<td>Sampled household response</td>
+<td>Reported access in supported survey domains</td>
+</tr>
+<tr class="even">
+<td>Connection register</td>
+<td>Meter or customer account</td>
+<td>Administrative connections under its status definition</td>
+</tr>
+<tr class="odd">
+<td>Night-time lights</td>
+<td>Georeferenced radiance pixel</td>
+<td>Observed light emissions in the selected period</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The table is intentionally cautious. It does not claim any of these
+sources measures reliable clinic electricity. If the planner really
+needs that outcome, the proper next action may be a targeted meter and
+outage survey at candidate facilities rather than a more elaborate
+satellite model.</p>
+<h2 id="an-identification-calculation-before-fitting-a-regression">An
+identification calculation before fitting a regression</h2>
+<p>Write a deliberately simplified brightness model as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mi>α</mi><mi>H</mi><mo>+</mo><mi>β</mi><mi>I</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">L=\alpha H+\beta I+\epsilon</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+is household electrification,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
+represents industrial or commercial lighting, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>
+represents other influences. Even if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+are known and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\epsilon=0</annotation></semantics></math>,
+a single observed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+cannot uniquely recover two unknown components. For example, with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mi>β</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\alpha=\beta=1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">L=100</annotation></semantics></math>,
+both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>H</mi><mo>,</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>80</mn><mo>,</mo><mn>20</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(H,I)=(80,20)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>50</mn><mo>,</mo><mn>50</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(50,50)</annotation></semantics></math>
+are consistent. If the decision depends on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>,
+the distinction matters; if it depends only on total brightness, it may
+not.</p>
+<p>One independent measure of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+may allow the other component to be estimated, depending on error and
+modelling assumptions. Alternatively, multiple measurements that respond
+differently to the components may help. But adding more measurements of
+exactly the same mixture does not necessarily resolve it. The key is
+independent <em>distinguishing information</em>, not sheer volume. This
+is why measurement design should precede model selection.</p>
+<h3 id="a-small-linear-algebra-example">A small linear-algebra
+example</h3>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>H</mi><mo>,</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">z=(H,I)^\top</annotation></semantics></math>
+and suppose two measurement instruments produce</p>
+<p>$$</p>
+y=Az,A=
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{pmatrix}1&amp;1\\1&amp;2\end{pmatrix}</annotation></semantics></math>
+<p>.</p>
+<p>$$</p>
+<p>The determinant is one, so the noiseless measurements identify both
+components uniquely. From
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">y_1=100</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>2</mn></msub><mo>=</mo><mn>130</mn></mrow><annotation encoding="application/x-tex">y_2=130</annotation></semantics></math>
+we obtain
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">I=30</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>=</mo><mn>70</mn></mrow><annotation encoding="application/x-tex">H=70</annotation></semantics></math>.
+Now replace the second row by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo>,</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(2,2)</annotation></semantics></math>.
+The resulting measurements are linearly dependent; the determinant
+becomes zero, and the second instrument contributes no new independent
+equation. Even millions of noiseless repeated observations of these two
+mixtures cannot separate the components. In practice, nonzero
+determinant is only the beginning: if the rows are nearly proportional,
+measurement noise can be strongly amplified. The condition number of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+becomes relevant for assessing stability.</p>
+<p>This simple example should be read as an argument about information,
+not as a literal physical model of electricity and satellite light. Real
+brightness relationships are nonlinear, spatially mixed and affected by
+many sources. Their complexity strengthens rather than weakens the need
+to test what the observations can distinguish.</p>
+<h2 id="three-validation-designs-with-different-meanings">Three
+validation designs with different meanings</h2>
+<p>Suppose the team has an outcome record for a set of areas and wishes
+to predict it from satellite radiance. A random split of individual
+household rows into training and testing data can give an optimistic
+answer when neighbouring households share infrastructure and the same
+underlying imagery. A district-level holdout asks a more demanding
+question: can the method predict in districts it did not see during
+fitting? A time-based holdout asks whether it works in a later period
+using only information available earlier. These are different tests of
+generalisation.</p>
+<p>A model can perform well under one test and badly under another
+without any contradiction. The model may have learned persistent
+features of familiar districts that do not transfer elsewhere. It may
+rely on relationships that change when electrification expands. Or it
+may be accurate at the district level while too uncertain for village
+decisions. The evaluation should match the application, and its spatial
+units should be stated before model tuning.</p>
+<h3 id="a-simple-leakage-thought-experiment">A simple leakage thought
+experiment</h3>
+<p>Suppose we have ten observations from each of fifty districts. Every
+observation has a district-specific feature
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mi>j</mi></msub><annotation encoding="application/x-tex">u_j</annotation></semantics></math>
+plus individual noise. A flexible model that sees eight observations
+from each district during training may infer
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mi>j</mi></msub><annotation encoding="application/x-tex">u_j</annotation></semantics></math>
+and predict the other two rather well. But when asked about a new
+district, the same model has never seen its
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mi>j</mi></msub><annotation encoding="application/x-tex">u_j</annotation></semantics></math>.
+Its performance may deteriorate sharply. A random-row test answered the
+question “Can I predict another observation from an already represented
+district?” It did not answer “Can I predict a district that has never
+been represented?” Neither question is inherently wrong; only one may
+match the planned use.</p>
+<p>For a spatial interpolation task, also inspect error against distance
+from the nearest training measurement. Two held-out areas in the same
+district can have very different proximity to observed sensors. Grouped
+validation is therefore necessary but not always sufficient: the design
+should reflect the geography, timing and operating conditions of the
+final application.</p>
+<h2 id="when-an-estimate-is-too-uncertain-for-a-map">When an estimate is
+too uncertain for a map</h2>
+<p>Maps can make uncertainty look small. A continuous colour scale fills
+every polygon, even when some areas have weak evidence. A map with
+bright colours and precise numbers may communicate confidence that no
+statistical method actually established. Before publishing, ask how the
+map was produced, what each pixel or polygon means, and how uncertainty
+changes with location.</p>
+<p>Suppose area A has an estimated electricity-access proportion of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.70</mn><annotation encoding="application/x-tex">0.70</annotation></semantics></math>
+with a broad uncertainty interval
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.35</mn><mo>,</mo><mn>0.90</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0.35,0.90]</annotation></semantics></math>
+and area B has an estimate of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.60</mn><annotation encoding="application/x-tex">0.60</annotation></semantics></math>
+with interval
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.55</mn><mo>,</mo><mn>0.65</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0.55,0.65]</annotation></semantics></math>.
+Ranking A above B by the point estimates alone would hide substantial
+ambiguity. If the decision depends on a threshold of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.65</mn><annotation encoding="application/x-tex">0.65</annotation></semantics></math>,
+then the uncertainty is consequential. A responsible map may display a
+separate panel for uncertainty, distinguish unobserved areas, or refuse
+a precise ranking where the evidence does not support one.</p>
+<p>When combining survey estimates with modelled spatial surfaces, do
+not interpret the resulting fine pixels as independently observed
+households. A map can display a conditional model prediction at fine
+resolution; it does not thereby create a fine-resolution household
+census. A reader should be able to trace every geographic claim to its
+unit of support.</p>
+<h2 id="a-complete-data-readiness-report">A complete data-readiness
+report</h2>
+<p>The district team can finish with a useful report even without a
+final predictive map. The report should identify the decision, list
+every dataset and its limitations, describe what can be estimated at a
+permitted resolution, and specify what extra information would resolve
+the most consequential ambiguity. It should separate three categories of
+findings: directly observed records, statistical estimates conditional
+on explicit assumptions, and planning scenarios based on unverified
+conditions.</p>
+<p>A defensible conclusion might be: “The survey supports descriptive
+estimates at its authorised reporting level. Night-time lights and
+connection registers provide relevant but non-equivalent information. We
+cannot yet estimate reliable clinic power availability from these
+sources. A targeted study of outage duration and facility demand is
+required before selecting battery capacities.” This conclusion may be
+less visually impressive than a high-resolution map, but it gives the
+decision-maker a clear next step and explains why it matters.</p>
+<h3 id="a-final-audit-exercise">A final audit exercise</h3>
+<p>Ask students to prepare two documents. The first is a one-page data
+dictionary for a published survey field of their choice, using only the
+codebook and legitimate documentation. The second is a Data Readiness
+Assessment describing an intended decision, available evidence, three
+sources of uncertainty, one validation design and one claim they would
+refuse to make. Require a reference for each definition taken from an
+external source. Allow the final recommendation to be “do not deploy
+yet.”</p>
+<p>The assessment should reward the clarity of the reasoning and the
+connection between data and decision. A student who identifies a fatal
+mismatch in measurement units and explains how to correct it has solved
+an important part of the problem even if no advanced model has been
+fitted. A student who produces a sophisticated prediction without
+checking what the outcome means has not.</p>
+<h2 id="worked-investigations-what-the-data-can-really-support">Worked
+investigations: what the data can really support</h2>
+<p>The exercises below begin with apparently simple calculations and end
+by asking whether the result has the meaning its author claims. This is
+the habit we want readers to acquire before they begin fitting elaborate
+predictive models.</p>
+<h3
+id="investigation-1-calculate-a-survey-total-with-unequal-inclusion-probabilities">Investigation
+1: calculate a survey total with unequal inclusion probabilities</h3>
+<p>Suppose a tiny population contains four units with target values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo>,</mo><mn>20</mn><mo>,</mo><mn>30</mn><mo>,</mo><mn>40</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(10,20,30,40)</annotation></semantics></math>.
+Their inclusion probabilities are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mi>/</mi><mn>2</mn><mo>,</mo><mn>1</mn><mi>/</mi><mn>2</mn><mo>,</mo><mn>1</mn><mi>/</mi><mn>4</mn><mo>,</mo><mn>1</mn><mi>/</mi><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1/2,1/2,1/4,1/4)</annotation></semantics></math>.
+The actual population total is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>100</mn><annotation encoding="application/x-tex">100</annotation></semantics></math>.
+Imagine that a probability sample happens to contain units 1 and 3. A
+naive sum of observed values is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>10</mn><mo>+</mo><mn>30</mn><mo>=</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">10+30=40</annotation></semantics></math>,
+which is neither a population total nor a representative estimate of one
+without a selection argument. The Horvitz–Thompson estimator gives</p>
+<p>$$</p>
+<p>T=+=20+120=140.</p>
+<p>$$</p>
+<p>This particular sample overestimates the true total. There is no
+contradiction with design unbiasedness: unbiasedness concerns the mean
+of the estimator over repeated samples from the specified design, not
+the equality of every sample estimate to the truth. We also need the
+joint inclusion probabilities to calculate its exact design variance. A
+sampling weight does not guarantee that every realised weighted estimate
+is close to the target.</p>
+<p>An analyst should not invent weights as the inverse of a convenient
+demographic percentage. They must come from an understood sampling
+design and any documented adjustments for nonresponse or calibration.
+Where the survey provides official weights, use those with its stated
+domains and replicate or cluster information as appropriate.</p>
+<h3
+id="investigation-2-a-confidence-interval-with-and-without-finite-population-correction">Investigation
+2: a confidence interval with and without finite-population
+correction</h3>
+<p>Under simple random sampling without replacement of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+elements from a finite population of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>,
+the sample mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>y</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar y</annotation></semantics></math>
+has estimated variance</p>
+<p>$$</p>
+<p>(y)=(1-),</p>
+<p>$$</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>s</mi><mn>2</mn></msup><annotation encoding="application/x-tex">s^2</annotation></semantics></math>
+is the sample variance with denominator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math>.
+Suppose a student samples
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">n=100</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">N=1{,}000</annotation></semantics></math>
+households and obtains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">s=12</annotation></semantics></math>
+units. The estimated standard error is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>0.1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>144</mn><mi>/</mi><mn>100</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt><mo>=</mo><msqrt><mn>1.296</mn></msqrt><mo>≈</mo><mn>1.138</mn></mrow><annotation encoding="application/x-tex">\sqrt{(1-0.1)(144/100)}=\sqrt{1.296}\approx1.138</annotation></semantics></math>.
+Ignoring the finite-population correction would give
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1.2</mn><annotation encoding="application/x-tex">1.2</annotation></semantics></math>.
+The difference is modest here, but it becomes substantial when a large
+fraction of a small population is sampled.</p>
+<p>This calculation is not a valid confidence interval for an actual
+clustered survey merely because it contains a square root and familiar
+sample sizes. It assumes simple random sampling without replacement and
+a suitable approximation for the sampling distribution. In multi-stage
+or stratified surveys, the variance calculation must respect the actual
+design. One can use an elegantly implemented formula for the wrong
+sampling design and obtain an unjustifiably narrow interval.</p>
+<h3
+id="investigation-3-why-the-average-of-regional-rates-may-be-wrong">Investigation
+3: why the average of regional rates may be wrong</h3>
+<p>Two districts record
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>30</mn><annotation encoding="application/x-tex">30</annotation></semantics></math>
+cases among
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">1{,}000</annotation></semantics></math>
+people and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>30</mn><annotation encoding="application/x-tex">30</annotation></semantics></math>
+among
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>9</mn><mo>,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">9{,}000</annotation></semantics></math>
+people. Their rates per thousand are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>30</mn><annotation encoding="application/x-tex">30</annotation></semantics></math>
+and about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3.33</mn><annotation encoding="application/x-tex">3.33</annotation></semantics></math>.
+The unweighted average of district rates is about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>16.67</mn><annotation encoding="application/x-tex">16.67</annotation></semantics></math>
+per thousand. The combined area, however, has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>60</mn><annotation encoding="application/x-tex">60</annotation></semantics></math>
+cases among
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>10</mn><mo>,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">10{,}000</annotation></semantics></math>
+people, or six per thousand. The unweighted average treats the districts
+as equally large, which is not the target when estimating the
+population-weighted rate.</p>
+<p>The correct combination follows from counts:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>30</mn><mo>+</mo><mn>30</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1000</mn><mo>+</mo><mn>9000</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>×</mo><mn>1000</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">r=(30+30)/(1000+9000)\times1000=6</annotation></semantics></math>.
+An arithmetic mean of area rates could be appropriate for a different
+question, such as the mean rate across an equally weighted collection of
+administrative units. The problem is not the arithmetic but failure to
+state what is being averaged. We should distinguish the mean of district
+rates from the rate among residents in the combined region.</p>
+<h3
+id="investigation-4-missing-outcomes-and-the-price-of-a-single-number">Investigation
+4: missing outcomes and the price of a single number</h3>
+<p>A sample of one hundred facilities is asked whether an essential
+medicine was available throughout the previous month. Sixty-five report
+yes, twenty report no and fifteen do not answer. The observed-respondent
+proportion is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>65</mn><mi>/</mi><mn>85</mn><mo>≈</mo><mn>0.765</mn></mrow><annotation encoding="application/x-tex">65/85\approx0.765</annotation></semantics></math>.
+But among all one hundred selected facilities, the proportion with
+availability lies between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.65</mn><annotation encoding="application/x-tex">0.65</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.80</mn><annotation encoding="application/x-tex">0.80</annotation></semantics></math>
+without further assumptions. The upper bound assigns all fifteen
+nonrespondents a yes; the lower assigns them a no. Neither bound is a
+claim about the response mechanism.</p>
+<p>What extra evidence might narrow the range? A permitted follow-up of
+nonrespondents, a reliable inventory record, or auxiliary covariates
+with a credible missing-at-random argument. What would not narrow the
+range honestly? Reporting three decimal places on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>65</mn><mi>/</mi><mn>85</mn></mrow><annotation encoding="application/x-tex">65/85</annotation></semantics></math>
+or fitting a flexible model that treats imputed answers as observed
+facts. The missing observations have not become known simply because a
+numerical procedure produces values for them.</p>
+<h3
+id="investigation-5-a-large-sample-from-one-faulty-measuring-system">Investigation
+5: a large sample from one faulty measuring system</h3>
+<p>Suppose a sensor has independent random error with standard deviation
+one and a shared calibration error with standard deviation two. The
+error variance of the mean of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+readings is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>+</mo><mn>1</mn><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">4+1/n</annotation></semantics></math>
+rather than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">5/n</annotation></semantics></math>.
+With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">n=100</annotation></semantics></math>,
+the variance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>4.01</mn><annotation encoding="application/x-tex">4.01</annotation></semantics></math>,
+so the standard deviation of the average’s error is about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2.0025</mn><annotation encoding="application/x-tex">2.0025</annotation></semantics></math>.
+If we mistakenly treated all error as independent, we would calculate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mrow><mn>5</mn><mi>/</mi><mn>100</mn></mrow></msqrt><mo>≈</mo><mn>0.224</mn></mrow><annotation encoding="application/x-tex">\sqrt{5/100}\approx0.224</annotation></semantics></math>,
+an enormous understatement. This example captures why thousands of
+readings from one instrument can offer little protection against shared
+bias.</p>
+<p>The solution is not simply to average harder. A calibration
+reference, independent instruments or an external validation design may
+be needed. The number of observations should never be reported without
+considering how they were generated and which components of error are
+shared.</p>
+<h3
+id="investigation-6-a-real-data-proposal-with-a-justified-refusal">Investigation
+6: a real-data proposal with a justified refusal</h3>
+<p>A student proposes to estimate village-level electricity access from
+the Uganda National Panel Survey and to validate it using night-time
+satellite imagery. The survey has a national design, and its published
+domains do not automatically give representative household estimates for
+every village. Satellite brightness also measures emitted light, not
+household access as defined in the questionnaire. The validation is
+therefore ambiguous, both geographically and conceptually.</p>
+<p>A stronger plan would first select a target that the survey can
+support under its documented design, then investigate what the lighting
+data predict at an appropriate aggregation. If the aim is village-level
+allocation, the student should describe the additional village-level
+ground measurements required to validate the estimates rather than
+simply asserting that a model will be able to resolve them. The correct
+scientific conclusion may be that the proposed data do not yet support
+the requested resolution. Being able to explain that limitation is a
+substantial achievement, not an admission of technical failure.</p>
+<h2 id="laboratory-3-reproduce-the-sampling-illustration">Laboratory 3:
+reproduce the sampling illustration</h2>
+<p>The code companion produces Figure <a
+href="chapter03.html#fig-weighting">figure</a> and Table <a
+href="chapter03.html#tbl-weighting">table</a>. Reproduce them before
+attempting the National Panel Survey laboratory. Change the relative
+region populations and sample allocations, then explain when equal
+observation weights would and would not be appropriate. Repeat the
+synthetic experiment with different seeds to see how random variation
+and weighting interact.</p>
+<p>Next, introduce missingness in the artificial sample. First, remove
+responses completely at random. Then remove more responses from the
+higher-access region or from households without access. Compare the
+complete-case average and population truth. This exercise shows that the
+pattern of missingness matters; it does not establish which missing-data
+mechanism operates in any real survey.</p>
+<p>The full real-data version is a protocol rather than a completed
+result in this draft. Once the chosen round’s files are obtained
+legitimately, an independent student should be able to follow the data
+dictionary, processing script and recorded version to reproduce the
+descriptive tables. The final publication should include the actual
+outputs only after the code has been executed and checked on the
+documented public data.</p>
+<h2 class="unnumbered" id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A sensor reports a stable reading with small random variation.
+Explain why collecting one hundred more readings might not remove a
+fixed calibration error.</p></li>
+<li><p>For the two-region population in equation <a
+href="chapter03.html#eq-popprop">equation</a>, calculate the proportion
+if Region A contains 60% rather than 75% of households. Explain which
+quantity changed.</p></li>
+<li><p>From equation <a
+href="chapter03.html#eq-weightedprop">equation</a>, derive the result
+when all weights are equal. State the population condition under which
+equal weights are appropriate for the intended estimator.</p></li>
+<li><p>Ten responses contain six “yes”, two “no” and two missing
+entries. Derive the bounds in equation <a
+href="chapter03.html#eq-bounds">equation</a>, and explain what
+assumption would be necessary to report only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>75</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">75\%</annotation></semantics></math>.</p></li>
+<li><p>Give examples of MCAR, MAR and MNAR in a school attendance
+dataset. Explain why inspecting the observed attendance records alone
+may not prove the mechanism.</p></li>
+<li><p>A dashboard reports a change in a district’s number of firms, but
+the district boundary changed in the second year. Specify the checks
+needed before claiming growth.</p></li>
+<li><p><em>Project exercise.</em> Find the documentation for one
+publicly available survey dataset. Write a Data Readiness Assessment for
+a narrow descriptive question without performing any analysis that
+exceeds the dataset’s permitted level of disclosure.</p></li>
+</ol>
+<h5 id="what-this-chapter-establishes.">What this chapter
+establishes.</h5>
+<p>Evidence has a history: measurements were produced in a particular
+place, at a particular time, under particular rules. A defensible
+solution acknowledges that history and tests its implications. The next
+part of the book can now introduce prediction and optimisation without
+pretending that a larger model is automatically a better answer.</p>
+</article><div class="page-links"><a href="chapter02.html">← Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding →</a></div><p class="notice">Educational working edition. Synthetic calculations and demonstrations are not evidence of field impact. <a href="full-original-manuscript.pdf">Read the complete original PDF</a>.</p></main></div><script src="search.js"></script></body></html>

@@ -1,0 +1,1057 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Chapter 8 — Reliable Health Services and Essential Supplies | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html" class="current">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-health">Reliable Health Services and Essential Supplies</h1>
+<blockquote>
+<p><em>A medicine stock-out is not simply a forecasting error. It may
+involve uncertain demand, delayed procurement, incomplete records,
+finite storage and decisions made under a limited budget. This chapter
+develops an inventory model that distinguishes observed dispensing from
+true need, derives reorder policies and shows how to evaluate them
+without confusing a retrospective simulation with demonstrated
+improvement in patient care.</em></p>
+</blockquote>
+<h2 id="what-a-stock-out-revealsand-what-it-conceals">What a stock-out
+reveals—and what it conceals</h2>
+<p>A patient arrives at a health centre needing an essential medicine.
+The medicine is not available. The register records no tablet dispensed.
+If an analyst treats recorded dispensing as demand, the day’s demand
+appears to be zero. A forecasting model trained on that ledger may
+therefore learn that fewer medicines are needed precisely during the
+periods when shortages are worst. This is more than an inconvenient
+missing value. It is a measurement process in which stock availability
+constrains what the records can reveal.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+denote units requested or clinically indicated in period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+inventory available, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+units actually issued. Without substitutions or other complications,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo><msub><mi>I</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y_t=\min(D_t,I_t)</annotation></semantics></math>,
+so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>D</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">Y_t\le D_t</annotation></semantics></math>.
+When
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>t</mi></msub><mo>&lt;</mo><msub><mi>D</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">I_t&lt;D_t</annotation></semantics></math>,
+the observed issue
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+is a censored version of demand. A model that explains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+well can still underestimate what the facility needs to avoid future
+stock-outs. This observation should be central to the chapter because it
+connects Chapter 3’s measurement warnings with Chapter 6’s
+machine-learning caution and Chapter 5’s optimisation.</p>
+<h3 id="the-consequences-have-multiple-owners">The consequences have
+multiple owners</h3>
+<p>Patients experience delays, return visits, private purchases or
+interrupted treatment. Staff experience frustration and emergency
+ordering. The facility may waste supplies through overordering or
+expiry, while the district budget carries the financial cost of tying up
+too much working capital. These outcomes need not move together. A
+policy that minimises average stock value can cause frequent shortages;
+a policy that keeps every item at a very high level can be unaffordable
+and increase expiry losses. The objective must state the trade-off and
+distinguish non-negotiable clinical safety requirements from costs that
+can be traded in a model.</p>
+<p>The WHO Service Availability and Readiness Assessment provides an
+established framework for examining facility readiness and tracer
+commodities, but it is not a longitudinal transaction ledger of medicine
+issues, orders and lead times at a particular Ugandan clinic <span
+class="citation" data-cites="whoSARA">(World Health Organization
+2015)</span>. The main measured-data study therefore requires
+authorised, de-identified operational records. Such records are not
+included with this book; their availability must not be implied.</p>
+<h2 id="the-inventory-balance-is-a-conservation-equation">The inventory
+balance is a conservation equation</h2>
+<p>For a single medicine, define
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+as usable stock just before period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+begins,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+as receipts during the period,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+as units actually dispensed, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>t</mi></msub><annotation encoding="application/x-tex">W_t</annotation></semantics></math>
+as losses from expiry or damage. The recorded balance is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub><mo>+</mo><msub><mi>R</mi><mi>t</mi></msub><mo>−</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><msub><mi>W</mi><mi>t</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+I_{t+1}=I_t+R_t-Y_t-W_t.
+</annotation></semantics></math></p>
+<div id="eq-inventory-balance">
+
+</div>
+<p>Every term has units of medicine units, tablets or packs, with
+conversion factors recorded explicitly. The equality assumes no
+unrecorded transfer, theft, counting error or retrospective correction.
+If those events occur, the balance discrepancy should be investigated
+rather than hidden in a generic noise term. The right-hand side must
+satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">I_{t+1}\ge0</annotation></semantics></math>
+under a feasible dispensing process. Conservation is a necessary quality
+check, not evidence that the demand record is complete.</p>
+<p>Suppose a facility starts a day with 30 packs, receives ten,
+dispenses 28 and writes off two expired packs. Its closing stock should
+be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mo>+</mo><mn>10</mn><mo>−</mo><mn>28</mn><mo>−</mo><mn>2</mn><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">30+10-28-2=10</annotation></semantics></math>
+packs. If the register reports 14, at least one recorded component, unit
+conversion or timing convention requires reconciliation. A sophisticated
+forecast of tomorrow’s stock cannot repair today’s unexplained four-pack
+discrepancy.</p>
+<h2 id="on-hand-stock-on-order-stock-and-backorders">On-hand stock,
+on-order stock and backorders</h2>
+<p>A reorder policy should not depend only on what is physically
+present. Suppose 20 packs are on hand and 100 are already ordered but
+will arrive next week. Ordering another 100 today may be unnecessary if
+the next delivery is reliable. Define inventory position as</p>
+<p>$$</p>
+<p>P_t=I_t+O_t-B_t,</p>
+<p>$$</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>O</mi><mi>t</mi></msub><annotation encoding="application/x-tex">O_t</annotation></semantics></math>
+is outstanding ordered stock and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>t</mi></msub><annotation encoding="application/x-tex">B_t</annotation></semantics></math>
+is backordered demand, if the system permits backorders. This is a
+bookkeeping identity under the chosen convention; lost demand that never
+enters a backorder ledger is not represented by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>t</mi></msub><annotation encoding="application/x-tex">B_t</annotation></semantics></math>.
+In healthcare, certain unmet needs cannot safely be treated as
+backorders that can simply wait. Each product requires a clinically
+informed representation of what happens when it is unavailable.</p>
+<p>Order lead time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+is the interval from placing an order until the stock becomes usable. It
+may include approval, supplier preparation, transport and inspection. A
+single average lead time does not describe repeated delays or long-tail
+disruption. An effective policy must consider both the typical lead time
+and its uncertainty.</p>
+<h2 id="deriving-a-reorder-point-rather-than-guessing-one">Deriving a
+reorder point rather than guessing one</h2>
+<p>Assume daily demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+is independent and identically distributed with mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>D</mi></msub><annotation encoding="application/x-tex">\mu_D</annotation></semantics></math>
+and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>D</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_D^2</annotation></semantics></math>,
+and lead time is a fixed integer
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>.
+Demand accumulated during lead time is</p>
+<p>$$</p>
+<p>D^{(L)}=<em>{k=1}^{L}D</em>{t+k}, E[D^{(L)}]=L_D,
+(D^{(L)})=L_D^2.</p>
+<p>$$</p>
+<p>The final variance equality requires independence; with
+autocorrelation, covariance terms must be added. If a normal
+approximation is defensible and a cycle-service probability of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">1-\alpha</annotation></semantics></math>
+is desired, an illustrative reorder point is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>L</mi><msub><mi>μ</mi><mi>D</mi></msub><mo>+</mo><msub><mi>z</mi><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow></msub><msub><mi>σ</mi><mi>D</mi></msub><msqrt><mi>L</mi></msqrt><mi>.</mi></mrow><annotation encoding="application/x-tex">
+r=L\mu_D+z_{1-\alpha}\sigma_D\sqrt L.
+</annotation></semantics></math></p>
+<div id="eq-rop">
+
+</div>
+<p>The first term covers expected lead-time demand; the second is a
+safety-stock allowance. The standard normal quantile
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow></msub><annotation encoding="application/x-tex">z_{1-\alpha}</annotation></semantics></math>
+is not an ethical statement about acceptable clinical shortages. Its
+value must be selected with the service and checked against actual
+demand behaviour. Skewed, intermittent and nonstationary demand may make
+the normal approximation poor <span class="citation"
+data-cites="silver2017 zipkin2000">(Silver, Pyke, and Thomas 2017;
+Zipkin 2000)</span>.</p>
+<p><em>Example.</em> Suppose observed and verified daily demand averages
+12 packs with standard deviation four packs, lead time is five
+independent days, and a one-sided 95% normal service target is used.
+Then expected lead-time demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>60</mn><annotation encoding="application/x-tex">60</annotation></semantics></math>,
+and the standard deviation is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><msqrt><mn>5</mn></msqrt><mo>≈</mo><mn>8.94</mn></mrow><annotation encoding="application/x-tex">4\sqrt5\approx8.94</annotation></semantics></math>.
+With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>0.95</mn></msub><mo>≈</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z_{0.95}\approx1.645</annotation></semantics></math>,
+the reorder point is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>60</mn><mo>+</mo><mn>1.645</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>8.94</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>74.7</mn></mrow><annotation encoding="application/x-tex">60+1.645(8.94)\approx74.7</annotation></semantics></math>,
+rounded to 75 packs. If demand is underestimated because days with zero
+stock are recorded as zero demand, this calculation can give false
+reassurance. The arithmetic is correct only under the demand and
+lead-time assumptions.</p>
+<h3 id="when-lead-time-itself-is-random">When lead time itself is
+random</h3>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+be a positive integer-valued random lead time independent of the daily
+demands, with mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E[L]</annotation></semantics></math>
+and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Var}(L)</annotation></semantics></math>.
+The law of total variance gives</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>σ</mi><mi>D</mi><mn>2</mn></msubsup><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><msubsup><mi>μ</mi><mi>D</mi><mn>2</mn></msubsup><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(D^{(L)})=\sigma_D^2\mathbb E[L]+\mu_D^2\operatorname{Var}(L).
+</annotation></semantics></math></p>
+<div id="eq-random-lead">
+
+</div>
+<p><em>Proof.</em> Conditional on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>,
+the accumulated demand has mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><msub><mi>μ</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">L\mu_D</annotation></semantics></math>
+and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><msubsup><mi>σ</mi><mi>D</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">L\sigma_D^2</annotation></semantics></math>.
+Therefore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∣</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∣</mo><mi>L</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Var}(D^{(L)})=\mathbb E[\operatorname{Var}(D^{(L)}\mid L)]+\operatorname{Var}(\mathbb E[D^{(L)}\mid L])</annotation></semantics></math>,
+yielding the formula. ◻</p>
+<p>The second term can dominate when supplier delays vary greatly.
+Replacing a volatile lead time with its mean erases a risk that a
+predictive demand model cannot correct. If demand and lead time are
+dependent, the displayed formula needs modification and should not be
+used uncritically.</p>
+<h2 id="service-levels-are-not-the-same-as-stock-out-days">Service
+levels are not the same as stock-out days</h2>
+<p>A cycle-service level is the probability that demand is met during a
+replenishment cycle without a stock-out. A fill rate is the fraction of
+demanded units supplied without delay. The percentage of days with any
+stock-out is a third measure. These are not interchangeable. A facility
+may have only one stock-out day but fail to meet a large fraction of
+demand on that day. Alternatively it may experience frequent short gaps
+with relatively few missed units. Where clinical severity differs across
+medicines, a common service target may also be inappropriate.</p>
+<p>For a horizon of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+periods, define total unmet demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><msub><mo>∑</mo><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mi>Y</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">U=\sum_t(D_t-Y_t)</annotation></semantics></math>.
+The empirical unit fill rate, when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+is genuinely observed, is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>U</mi><mi>/</mi><msub><mo>∑</mo><mi>t</mi></msub><msub><mi>D</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">1-U/\sum_tD_t</annotation></semantics></math>.
+If actual demand is unknown during shortages, the denominator is
+unidentified and the ratio is not calculable from the issues ledger
+alone. Reporting a high fill rate based only on recorded dispensing then
+becomes circular. An honest report may supply lower bounds, uncertainty
+ranges or explicitly measured patient requests from an additional
+source.</p>
+<h2 id="the-order-up-to-policy-and-its-limitations">The order-up-to
+policy and its limitations</h2>
+<p>A periodic review policy places an order intended to raise inventory
+position to a target
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>.
+The nominal order at review is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mi>t</mi></msub><mo>=</mo><mo>max</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>S</mi><mo>−</mo><msub><mi>P</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Q_t=\max\{0,S-P_t\}</annotation></semantics></math>.
+Under deterministic lead time and known demand the target can be chosen
+to cover the review interval plus lead time. With uncertain demand, the
+target incorporates a protection level. Rounding to supplier pack sizes,
+minimum order quantities, delivery limits and cold-chain storage
+requirements can make the idealised formula infeasible.</p>
+<p><em>Proposition.</em> For fixed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>max</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>S</mi><mo>−</mo><mi>P</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Q(P)=\max\{0,S-P\}</annotation></semantics></math>
+is nonincreasing in inventory position
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>.
+Increasing available or on-order stock cannot increase the suggested
+order under this rule.</p>
+<p><em>Proof.</em> Both the function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>−</mo><mi>P</mi></mrow><annotation encoding="application/x-tex">S-P</annotation></semantics></math>
+and its maximum with zero are nonincreasing in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>.
+Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>&gt;</mo><msub><mi>P</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">P_2&gt;P_1</annotation></semantics></math>
+implies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≤</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q(P_2)\le Q(P_1)</annotation></semantics></math>. ◻</p>
+<p>The proposition is a small property worth testing in software. If a
+programmer implements a rule that increases suggested orders when
+on-order inventory increases, the implementation may have reversed a
+sign or misunderstood the inventory position. Formal invariants are
+useful even for simple tools.</p>
+<h2
+id="choosing-a-forecasting-baseline-for-intermittent-demand">Choosing a
+forecasting baseline for intermittent demand</h2>
+<p>Some supplies are used almost daily; others are requested
+irregularly. A moving average may be adequate for frequently issued
+products but poor for an item with many periods of zero use and
+occasional large requests. Intermittent-demand methods seek to separate
+the size of nonzero demand from the interval between occurrences.
+Croston’s original approach is historically important, but later work
+examined its bias and modifications <span class="citation"
+data-cites="croston1972 syntetos2005">(Croston 1972; Syntetos and Boylan
+2005)</span>. No forecasting family should be chosen solely because a
+medicine appears “specialised”. The observed zeros must first be
+classified as genuine zero need, non-reporting, stock-out censoring or
+another cause.</p>
+<p>A practical comparison includes a documented current ordering rule, a
+fixed minimum-stock rule, a moving-average forecast, an
+intermittent-demand baseline when appropriate, and a probabilistic
+forecast if data justify it. A machine-learning model may be added, but
+should not be presumed superior. If the historical data cover only a few
+orders, an elaborate model may learn the supplier’s past mistakes rather
+than underlying need.</p>
+<h2 id="optimisation-across-multiple-medicines">Optimisation across
+multiple medicines</h2>
+<p>A facility may need to allocate scarce budget among several medicines
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mi>j</mi></msub><annotation encoding="application/x-tex">q_j</annotation></semantics></math>
+be order quantity,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>j</mi></msub><annotation encoding="application/x-tex">c_j</annotation></semantics></math>
+unit cost,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mi>j</mi></msub><annotation encoding="application/x-tex">v_j</annotation></semantics></math>
+storage volume and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+available purchasing budget. At a minimum,</p>
+<p>$$</p>
+<p>_jc_jq_jB,_jv_jq_jV,q_j.</p>
+<p>$$</p>
+<p>Products may be restricted to integer pack counts. Additional
+conditions can represent minimum clinical stocks, expiry horizons,
+temperature-sensitive storage and supplier pack sizes. One formulation
+minimises expected shortage and holding costs:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>min</mo><mi>q</mi></munder><munder><mo>∑</mo><mi>j</mi></munder><mi>𝔼</mi><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>h</mi><mi>j</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>q</mi><mi>j</mi></msub><mo>−</mo><msub><mi>D</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msup><mo>+</mo><msub><mi>p</mi><mi>j</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>j</mi></msub><mo>−</mo><msub><mi>q</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msup><mo stretchy="true" form="postfix">]</mo></mrow><mspace width="1.0em"></mspace><mtext mathvariant="normal">subject to budget and capacity constraints</mtext><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\min_q\sum_j\mathbb E\!\left[h_j(q_j-D_j)^++p_j(D_j-q_j)^+\right]
+\quad\text{subject to budget and capacity constraints}.
+</annotation></semantics></math></p>
+<div id="eq-inventory-opt">
+
+</div>
+<p>The notation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>+</mo></msup><mo>=</mo><mo>max</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">x^+=\max\{x,0\}</annotation></semantics></math>
+separates surplus stock from shortage. The coefficients
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>j</mi></msub><mo>,</mo><msub><mi>p</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">h_j,p_j</annotation></semantics></math>
+represent modelled consequences; for essential medicines, a shortage
+penalty is not a substitute for explicit clinical safety constraints or
+ethical oversight. The model can rank feasible plans under stated
+assumptions, but cannot infer those values from routine spreadsheets
+alone.</p>
+<p>For a single product without constraints, the classical newsvendor
+model yields a critical fractile: if excess stock costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>o</mi></msub><annotation encoding="application/x-tex">C_o</annotation></semantics></math>
+per unit and unmet demand costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>u</mi></msub><annotation encoding="application/x-tex">C_u</annotation></semantics></math>
+per unit, order to the smallest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+for which
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>D</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≥</mo><msub><mi>C</mi><mi>u</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>C</mi><mi>o</mi></msub><mo>+</mo><msub><mi>C</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F_D(q)\ge C_u/(C_o+C_u)</annotation></semantics></math>,
+under the standard continuous-demand assumptions <span class="citation"
+data-cites="zipkin2000 silver2017">(Zipkin 2000; Silver, Pyke, and
+Thomas 2017)</span>. This formula illustrates why a forecast and a cost
+assessment must be considered together. It does not justify assigning
+arbitrary large monetary values to patient harm.</p>
+<h2 id="evaluating-policies-in-the-correct-order">Evaluating policies in
+the correct order</h2>
+<p>A responsible study first checks that the baseline ledger reconciles.
+It then establishes which demand observations are reliable and what
+happened during stock-outs. Next it documents the current rule,
+lead-time distribution and cost assumptions. Only then does it compare
+alternative policies. Historical replay can be useful, but if orders
+would have changed under the new policy, some counterfactual receipts,
+stock-outs and hence recorded demand would also have changed. A
+retrospective simulation needs an explicit demand model and should be
+labelled as such.</p>
+<p>The minimum evaluation uses a rolling time split: choose a past
+cutoff, fit forecasts only on information then available, simulate or
+assess decisions over a subsequent period, and repeat. Compare stock-out
+days, unmet demand where identifiable, expiry, average inventory,
+emergency orders, cost and required working capital. Report sensitivity
+to delayed deliveries and sudden demand increases. A policy that wins
+only under a narrow assumed lead-time distribution is not robust
+evidence for deployment.</p>
+<h3 id="the-problem-of-demand-not-recorded-during-shortages">The problem
+of demand not recorded during shortages</h3>
+<p>When only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo><msub><mi>I</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y_t=\min(D_t,I_t)</annotation></semantics></math>
+is observed,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+is known exactly on days when stock is sufficient, but on a stock-out
+day we know only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>≥</mo><msub><mi>Y</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">D_t\ge Y_t</annotation></semantics></math>
+without further observations. The demand distribution may therefore be
+unidentifiable from the issue ledger alone. Patient requests,
+prescriptions, referral records or replenishment patterns might provide
+additional information, but each has its own missingness and operational
+bias.</p>
+<p><em>Proposition.</em> Fix a day with available inventory
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">I&gt;0</annotation></semantics></math>
+and observed issues
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">Y=I</annotation></semantics></math>.
+Both latent demands
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">D=I</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mi>I</mi><mo>+</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">D=I+100</annotation></semantics></math>
+produce the same observed issue
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mo>,</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y=\min(D,I)</annotation></semantics></math>.
+Therefore this single issue observation cannot identify the amount of
+unmet demand.</p>
+<p><em>Proof.</em> For both candidate demands, the minimum with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
+equals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>.
+The observation is compatible with at least two distinct latent demand
+quantities, so no unique determination follows. ◻</p>
+<p>This proof is intentionally elementary. It prevents a sophisticated
+modelling technique from making a claim the available measurements
+cannot support. Where sufficient additional records do not exist, report
+bounds and scenario results instead of fabricated ground truth.</p>
+<h2 id="a-simulation-with-transparent-assumptions">A simulation with
+transparent assumptions</h2>
+<p>The companion programme <code>code/ch08_inventory.py</code> creates
+an explicitly artificial daily demand sequence, a supplier lead-time
+scenario and two simple replenishment policies. It preserves daily
+demand separately from actual dispensing so that unmet need can be
+computed honestly in the teaching simulation. It records receipts,
+available stock, dispensed units, shortages and orders, then checks
+conservation. Readers can change the lead time and demand pattern,
+compare policies and see how conclusions depend on assumptions.</p>
+<p>A valuable exercise deliberately hides the artificial demand on
+stock-out days and recomputes a forecast using only dispensing. Because
+the simulated ground truth is known to the programme, the reader can
+measure the resulting bias. In a real facility, the ground truth is
+usually not available, so this exercise must not be presented as
+validation of an empirical correction method. The distinction between
+the teaching simulation and an authorised operational study should
+appear in every table and caption.</p>
+<figure id="fig-ch8-stock">
+<img src="figures/ch08_inventory.png"
+alt="Invented demand and fixed review/lead-time assumptions; each policy sees the same artificial demand sequence. This comparison checks the mechanics of a policy simulator, not changes in a real health-centre stock-out rate." />
+<figcaption aria-hidden="true">Invented demand and fixed
+review/lead-time assumptions; each policy sees the same artificial
+demand sequence. This comparison checks the mechanics of a policy
+simulator, not changes in a real health-centre stock-out
+rate.</figcaption>
+</figure>
+<h2 id="designing-the-human-facing-stock-planning-tool">Designing the
+human-facing stock-planning tool</h2>
+<p>An acceptable prototype should produce a suggested order and an
+explanation: stock on hand, outstanding orders, verified lead-time
+assumptions, demand estimate, safety allowance, budget effect and the
+possibility that demand is censored. Staff should be able to inspect and
+override the recommendation, with the reason recorded. If the tool’s
+input is missing or contradictory, withholding an automated
+recommendation may be safer than outputting a confident number.</p>
+<p>An institution needs a procedure for inventory counts, corrections,
+back-ups, monthly review and software updates. Chapter 7’s offline-first
+ideas apply immediately: dispensing should remain recordable when the
+network is unavailable; duplicate synchronisation should not double the
+stock deduction; each adjustment must have an audit trail. For
+controlled or sensitive medication records, access and privacy
+requirements are operational obligations, not optional additions after a
+pilot.</p>
+<h2 id="from-a-promising-simulation-to-a-measured-health-benefit">From a
+promising simulation to a measured health benefit</h2>
+<p>A policy improvement in simulation is not proof of fewer real
+stock-outs. A prospective study would record the pre-existing process,
+implementation fidelity, staff time, supplier behaviour, stock balances,
+patient consequences and any unintended workload. Depending on the
+number of facilities and feasibility, a staged pilot, a carefully
+designed comparison or another appropriate evaluation may be possible.
+The study would need ethics and institutional permissions where patient
+information or care delivery is involved. Even if average stock-outs
+fall after deployment, concurrent changes in budgets or procurement
+schedules may explain part of the change <span class="citation"
+data-cites="hernan2020 oberkampf2010">(Hernán and Robins 2020; Oberkampf
+and Roy 2010)</span>.</p>
+<p>The public demonstration should use de-identified or synthetic
+information. Identifiable patient-level records cannot be published
+merely because they would make the book’s example appear more realistic.
+A validated prototype with a partner is Level B evidence under the
+book’s convention; demonstrated benefits require evaluation appropriate
+to the actual operational outcome.</p>
+<h2
+id="a-deeper-look-at-stock-out-censoring-and-statistical-identification">A
+deeper look at stock-out censoring and statistical identification</h2>
+<p>The data problem in inventory control deserves more careful treatment
+than simply filling in missing rows. On an in-stock day, an observed
+issue may be a reasonable proxy for requested quantity, subject to
+dispensing practice. On a stock-out day, observed issues provide a lower
+bound on demand. The missing amount is not absent by random accident: it
+is missing because a shortage prevented it from being observed through
+the dispensing channel. This is a form of informative censoring that can
+make ordinary complete-case estimation unreliable <span class="citation"
+data-cites="littlerubin2019">(Little and Rubin 2019)</span>.</p>
+<p>Suppose the observed pair is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>,</mo><msub><mi>I</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Y_t,I_t)</annotation></semantics></math>
+and assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo><msub><mi>I</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y_t=\min(D_t,I_t)</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>&lt;</mo><msub><mi>I</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">Y_t&lt;I_t</annotation></semantics></math>,
+the observation is consistent with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">D_t=Y_t</annotation></semantics></math>
+under the simplified model. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">Y_t=I_t</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>≥</mo><msub><mi>I</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">D_t\ge I_t</annotation></semantics></math>.
+Thus a likelihood contribution for a parametric demand distribution with
+density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mi>θ</mi></msub><annotation encoding="application/x-tex">f_\theta</annotation></semantics></math>
+and distribution function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mi>θ</mi></msub><annotation encoding="application/x-tex">F_\theta</annotation></semantics></math>
+may take the form</p>
+<p>$$</p>
+L_t()=
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msub><mi>f</mi><mi>θ</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>Y</mi><mi>t</mi></msub><mo>&lt;</mo><msub><mi>I</mi><mi>t</mi></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn><mo>−</mo><msub><mi>F</mi><mi>θ</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>I</mi><mi>t</mi><mo>−</mo></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub><mo>,</mo></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{cases}
+f_\theta(Y_t),&amp;Y_t&lt;I_t,\\
+1-F_\theta(I_t^-),&amp;Y_t=I_t,
+\end{cases}</annotation></semantics></math>
+<p>$$</p>
+<p>with appropriate adaptations for discrete quantities and the adopted
+observation convention. The second case is a tail probability, not the
+density at the observed issued quantity. Treating censored observations
+as exact demand values distorts the likelihood.</p>
+<p>A likelihood method still needs assumptions about the demand
+distribution, the timing of available stock and the completeness of
+records. If stock-outs are systematically correlated with epidemics,
+supplier failures or reporting practice, a simple independent-demand
+model may be badly wrong. Additional records about patient requests or
+clinical orders can be much more valuable than a more elaborate fitting
+algorithm.</p>
+<h2 id="ordering-under-nonstationary-demand">Ordering under
+nonstationary demand</h2>
+<p>Demand may vary with rainfall, seasonal disease patterns, treatment
+guidelines or changes in clinic attendance. A moving average reacts
+slowly to abrupt changes, while a highly adaptive forecast can overreact
+to measurement noise. The choice is therefore a bias-variance and
+decision-cost question. A safe evaluation uses rolling historical
+origins and compares whether orders based on each forecast would have
+been feasible under the observed procurement rules.</p>
+<p>One can represent a changing mean demand by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>=</mo><msub><mi>μ</mi><mi>t</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">D_t=\mu_t+\epsilon_t</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\mu_t</annotation></semantics></math>
+itself evolving over time. State-space or regression models can
+incorporate known predictors, but such predictors must be available at
+the order date. If a weekly disease bulletin is published after orders
+were placed, its realised values cannot legitimately enter those orders
+in retrospective evaluation. The same information-timing discipline
+appears in Chapter 4, but inventory decisions make the consequences
+directly visible.</p>
+<h2 id="why-a-zero-demand-period-may-mean-several-things">Why a zero
+demand period may mean several things</h2>
+<p>Consider a specialist medicine with issues
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>8</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>3</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0,0,8,0,0,3,0,0)</annotation></semantics></math>.
+One explanation is intermittent patient need; another is that the
+medicine was unavailable for several periods; a third is that issues
+were recorded weekly while the timeline shows days. Each mechanism
+suggests a different forecast and policy. A data dictionary,
+stock-on-hand ledger, issue timestamps and reporting calendar are
+therefore prerequisites for a trustworthy intermittent-demand
+analysis.</p>
+<p>A model of zero-inflated demand may distinguish the occurrence of a
+demand event from its size. But its apparent fit to issue data cannot
+validate the latent demand process if stock-outs were not recorded. The
+most useful improvement may be a simple new field in the register:
+“patient requests not filled.” Recording it accurately and consistently
+can transform the identifiability of a later analysis, though privacy
+and staff workload must be evaluated before adding any field.</p>
+<h2 id="comparing-stock-rules-with-a-consistent-simulator">Comparing
+stock rules with a consistent simulator</h2>
+<p>A simulation should define the order of events in each day. For
+example: (1) deliveries scheduled for the morning arrive, (2) expiring
+packs are removed, (3) patient demand occurs, (4) available stock is
+issued, and (5) orders are placed for future delivery. If another
+simulator places deliveries after demand, it may report different
+stock-outs even with identical random numbers and parameters. The
+sequence is part of the model and belongs in the published code.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub><mo>+</mo><msub><mi>R</mi><mi>t</mi></msub><mo>−</mo><msub><mi>W</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t=I_t+R_t-W_t</annotation></semantics></math>
+be stock available after receipts and write-offs. Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><mo>min</mo><mo stretchy="false" form="prefix">{</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo><msub><mi>A</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Y_t=\min\{D_t,A_t\}</annotation></semantics></math>
+and unmet demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>t</mi></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mi>A</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msup></mrow><annotation encoding="application/x-tex">U_t=(D_t-A_t)^+</annotation></semantics></math>.
+The closing inventory is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>A</mi><mi>t</mi></msub><mo>−</mo><msub><mi>Y</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">I_{t+1}=A_t-Y_t</annotation></semantics></math>.
+An invariant is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">I_{t+1}\ge0</annotation></semantics></math>,
+and conservation requires
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>+</mo><msub><mi>W</mi><mi>t</mi></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub><mo>+</mo><msub><mi>R</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">I_{t+1}+Y_t+W_t=I_t+R_t</annotation></semantics></math>.
+Test these properties for every simulated period. A simulation that
+occasionally creates negative inventory or discards deliveries cannot
+support a comparison of reorder policies.</p>
+<p>An illustrative baseline may order a fixed number of packs every
+week; a second policy may order up to an inventory-position target
+whenever the position falls below a threshold. The comparison should use
+the same generated demand and lead-time scenarios for both policies to
+reduce arbitrary differences caused by simulation randomness. If a
+method appears superior only because it was assigned a more favourable
+sequence of disruptions, the comparison is not fair.</p>
+<h2
+id="economic-cost-and-clinical-consequence-should-not-be-conflated">Economic
+cost and clinical consequence should not be conflated</h2>
+<p>Inventory holding cost may include storage, cold-chain electricity,
+financing and expiry. Emergency procurement may add transport and
+administrative expenses. Those are quantities that can often be priced.
+Clinical harm from a stock-out is more complicated and cannot
+responsibly be reduced to a convenient invented shilling value without
+justification. A multi-criteria report may therefore present financial
+cost alongside stock-out days, unmet units, number of affected patients
+and staff workload, with clinical safety requirements specified
+separately.</p>
+<p>The point is not to avoid optimisation. It is to prevent the model
+from concealing ethical choices inside an opaque cost function. A
+transparent constrained formulation may minimise ordinary inventory
+expenditure subject to a minimum service level for essential items.
+Another context may call for explicit high shortage penalties. In either
+case, the decision-maker must know what assumptions produced the
+recommendation.</p>
+<h2
+id="what-evidence-would-support-an-actual-operational-improvement">What
+evidence would support an actual operational improvement?</h2>
+<p>Before a field pilot, assemble a historical dataset that reconciles
+stock balances and documents lead times and stock-outs. Record how staff
+currently decide what to order. A useful prototype can then produce
+side-by-side recommendations and be reviewed without automatically
+changing clinical practice. Record whether staff understand the output,
+what corrections they make and the time required to operate the tool.
+This is a legitimate feasibility study even if no measured stock-out
+reduction has yet been established.</p>
+<p>If an authorised pilot changes ordering, prospectively monitor
+relevant outcomes and possible confounders such as supplier disruptions,
+funding changes or seasonal demand. A comparison design is preferable
+when practical and ethical, but a small pilot may support only
+feasibility and descriptive improvement. The reported claim should match
+the evaluation actually performed. A mathematical demonstration is Level
+A; a validated operational prototype may be Level B; demonstrated
+benefit to service delivery requires a suitable Level C evaluation.</p>
+<h2
+id="extended-case-study-the-medicine-that-disappears-from-the-record">Extended
+case study: the medicine that disappears from the record</h2>
+<p>Consider a fictional district health centre that dispenses an
+essential medicine in packs. The manager has a monthly ledger showing
+openings, receipts, issues and closing stock. The immediate request is
+to predict next month’s issues and recommend an order. A student may be
+tempted to import the spreadsheet, fit a forecasting model and minimise
+RMSE. That procedure could be computationally correct and operationally
+dangerous if the medicine was unavailable during several weeks. The full
+investigation begins by reconstructing how the records were
+produced.</p>
+<h3 id="step-one-reconcile-the-stock-ledger">Step one: reconcile the
+stock ledger</h3>
+<p>For each period, calculate opening stock plus receipts minus recorded
+issues and write-offs. Compare the result with closing stock. If the
+difference is not zero, investigate transfers, damaged stock, returns,
+unit conversions and delayed entries. A negative recorded balance is a
+warning about the ledger or event order. The analyst should preserve
+original records and add documented correction fields; replacing raw
+figures without an audit trail prevents later verification.</p>
+<p>The numerical exercise can begin with an invented five-day sequence.
+Initial inventory is 20 packs; receipts are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>10</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>15</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,10,0,0,15)</annotation></semantics></math>;
+recorded dispensing is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>8</mn><mo>,</mo><mn>7</mn><mo>,</mo><mn>6</mn><mo>,</mo><mn>9</mn><mo>,</mo><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(8,7,6,9,4)</annotation></semantics></math>;
+write-offs are zero. Under a simple receipt-before-dispensing
+convention, successive closing stocks are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>,</mo><mn>15</mn><mo>,</mo><mn>9</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">12,15,9,0,11</annotation></semantics></math>.
+The fourth day has zero closing stock. That alone does not prove unmet
+demand occurred: the clinic might have dispensed exactly its available
+stock. To determine whether any patient was turned away, further
+information is needed.</p>
+<h3 id="step-two-distinguish-issues-from-need">Step two: distinguish
+issues from need</h3>
+<p>Suppose patients requested twelve packs on day four, while only nine
+were available. The ledger records nine dispensed. The remaining three
+are unfilled demand. On a day with no stock and five requests, the
+ledger would record zero dispensed despite five units of demand. These
+two facts demonstrate why an issue forecast is not automatically a
+demand forecast.</p>
+<p>If patient request records do not exist, the magnitude of missing
+demand is unidentified without assumptions. A model might infer latent
+demand from days when stock was available, but it should present
+uncertainty and acknowledge the unverifiable extrapolation to stock-out
+days. A credible data-improvement proposal may be to document unmet
+requests and clinically justified substitutes. The new recording
+practice should be tested for staff burden and privacy, since a data
+field that cannot be reliably maintained does not solve the measurement
+problem.</p>
+<h3
+id="step-three-choose-the-simplest-ordering-rule-that-can-be-evaluated">Step
+three: choose the simplest ordering rule that can be evaluated</h3>
+<p>Begin with the facility’s present ordering rule. For example, it
+might request 60 packs every second Monday, subject to budget approval.
+Then compare a fixed minimum-stock rule and a periodic order-up-to
+target. Both need an explicit convention for lead time, outstanding
+orders and receipt timing. The analyst should write the policy in
+sentences before coding it. Otherwise two implementations that share the
+same name may take different actions when a delivery is delayed.</p>
+<p>For a policy with target
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>,
+let inventory position before review be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_t</annotation></semantics></math>.
+The proposed order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mi>t</mi></msub><mo>=</mo><mo>max</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>S</mi><mo>−</mo><msub><mi>P</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">Q_t=\max\{0,S-P_t\}</annotation></semantics></math>
+is not necessarily the quantity finally purchased. The supplier may
+require complete cartons, the budget may cap purchases, or several
+medicines may compete for one transport trip. A deployment tool should
+distinguish <em>recommended</em> from <em>approved</em> and
+<em>received</em> quantities. A simulated stock balance that assumes
+every recommendation arrives on time is rarely a defensible model of a
+constrained supply chain.</p>
+<h3 id="step-four-compare-under-exactly-the-same-circumstances">Step
+four: compare under exactly the same circumstances</h3>
+<p>To compare policies fairly, use a common sequence of underlying
+demand and supplier disruptions. The policies may make different orders
+and therefore experience different stock-outs, but they must face
+equivalent externally generated conditions. Record stock-out days,
+unfilled demand, average stock, expiry and emergency orders. Include
+procurement cost and any storage restriction. Do not count a policy’s
+avoided shortage as proven patient benefit unless the connection to
+patient outcomes has actually been measured.</p>
+<p>A meaningful sensitivity analysis changes lead time, shortage
+severity, seasonality and budget. A policy that wins when suppliers
+deliver in five days might lose when delivery frequently takes fifteen.
+A policy requiring a large inventory buffer may be impossible when the
+facility has insufficient secure storage. The final recommendation
+should identify the assumptions under which it remains feasible and the
+measurements that would most reduce uncertainty.</p>
+<h2 id="a-teaching-calculation-linking-order-decisions-to-uncertainty">A
+teaching calculation linking order decisions to uncertainty</h2>
+<p>Assume an illustrative medicine has daily demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+with mean ten packs and standard deviation three, and supplier lead time
+is seven days. Under independent daily demand, expected lead-time demand
+is 70 packs and its standard deviation is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><msqrt><mn>7</mn></msqrt><mo>≈</mo><mn>7.94</mn></mrow><annotation encoding="application/x-tex">3\sqrt7\approx7.94</annotation></semantics></math>.
+An approximately normal 90% one-sided reorder point is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>70</mn><mo>+</mo><mn>1.282</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>7.94</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>80.2</mn></mrow><annotation encoding="application/x-tex">70+1.282(7.94)\approx80.2</annotation></semantics></math>,
+so one might select 81 packs before considering pack sizes. If lead time
+doubles to fourteen days, expected demand becomes 140 and standard
+deviation becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><msqrt><mn>14</mn></msqrt><mo>≈</mo><mn>11.2</mn></mrow><annotation encoding="application/x-tex">3\sqrt{14}\approx11.2</annotation></semantics></math>,
+giving a reorder point around 155. The change arises largely from the
+longer period that must be covered, not merely from the safety term.</p>
+<p>If supplier lead time is itself uncertain, use equation <a
+href="chapter08.html#eq-random-lead">equation</a> only when its
+independence assumptions are plausible. For example, disruptions caused
+by heavy rainfall may coincide with higher disease demand; then lead
+time and demand are dependent. Using a formula that assumes independence
+can understate risk. A scenario model with explicitly defined joint
+disruptions may be more honest until enough operational data exist to
+estimate dependence.</p>
+<h2 id="when-a-sophisticated-forecast-can-make-the-plan-worse">When a
+sophisticated forecast can make the plan worse</h2>
+<p>Suppose a machine-learning model fits historical dispensing with
+exceptional accuracy by learning that reported issues fall during
+periods when stock is zero. It then predicts low demand for the same
+season next year. An optimisation model treats those predictions as true
+demand and recommends smaller orders. The resulting plan may perpetuate
+the stock-out. The problem is not repaired by lower cross-validation
+error against historical issues: the target variable was the wrong
+quantity.</p>
+<p>This is a useful teaching counterexample because it demonstrates the
+limits of model complexity. The correct first intervention may be
+improving demand observation, separating stock-out periods and setting a
+conservative policy for essential supplies. Only after those issues have
+been addressed does it make sense to test whether more flexible
+forecasting improves decisions.</p>
+<h2 id="a-prospective-evaluation-protocol">A prospective evaluation
+protocol</h2>
+<p>The next stage requires a willing facility and a documented baseline.
+Record stock counts, issues, unmet requests where feasible, lead times,
+budgets and emergency purchases for a sufficiently long period to
+describe the relevant variation. Allow staff to review the tool’s
+suggestions without automatically accepting them. Collect usability
+information: time needed to enter data, frequency of corrections, trust
+in the explanation and the cost of maintaining the system.</p>
+<p>If the pilot proceeds to changing orders, the evaluation should
+specify its primary outcome and how unrelated changes will be handled. A
+decline in stock-outs might arise from higher procurement funding,
+improved supplier availability or reduced disease demand rather than the
+software. If comparison facilities or staggered adoption are feasible,
+they may strengthen inference, but a small pilot may still be best
+described as a feasibility assessment. A serious book should teach
+readers how to report a limited result accurately rather than pressure
+every project to claim impact.</p>
+<h2 id="a-tool-the-facility-could-keep-using">A tool the facility could
+keep using</h2>
+<p>The desired deliverable is not an unreviewable prediction dashboard.
+It is a modest planning system that displays stock on hand, open orders,
+recent verified need, delivery-time assumptions, proposed quantity,
+expected budget use and the reason for any warning. It should flag
+contradictory data and retain authorised overrides. If electricity or
+internet connectivity fails, the local transactions should preserve
+records and synchronise without duplication once the service
+returns.</p>
+<p>The system’s ongoing cost includes time to reconcile stock, training
+staff, backup, equipment maintenance and the administrative work of
+ordering. A method whose calculations are free but whose data
+requirements overwhelm staff is not an affordable solution. The right
+measure of success is whether the process helps people make dependable
+supply decisions over time, not whether an algorithm produces an
+impressive graph at the end of a student project.</p>
+<h2
+id="mathematical-workshop-the-newsvendor-rule-from-first-principles">Mathematical
+workshop: the newsvendor rule from first principles</h2>
+<p>A basic one-period inventory problem captures a central trade-off.
+Before demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+becomes known, the manager chooses stock quantity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q\ge0</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mi>D</mi></mrow><annotation encoding="application/x-tex">q&gt;D</annotation></semantics></math>,
+the excess incurs holding or expiry cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>o</mi></msub><annotation encoding="application/x-tex">C_o</annotation></semantics></math>
+per unit. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>&gt;</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">D&gt;q</annotation></semantics></math>,
+the shortage incurs cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mi>u</mi></msub><annotation encoding="application/x-tex">C_u</annotation></semantics></math>
+per unfilled unit. Expected cost is</p>
+<p>$$</p>
+<p>G(q)=C_oE[(q-D)^+]+C_uE[(D-q)^+].</p>
+<p>$$</p>
+<p>Assume continuous demand distribution function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>
+with sufficient regularity. Differentiating under the expectation
+gives</p>
+<p>$$</p>
+<p>G’(q)=C_oF(q)-C_u{1-F(q)}.</p>
+<p>$$</p>
+<p>Setting the derivative to zero yields
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>q</mi><mo>*</mo></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>C</mi><mi>u</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>C</mi><mi>o</mi></msub><mo>+</mo><msub><mi>C</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F(q^*)=C_u/(C_o+C_u)</annotation></semantics></math>.
+The derivative is nondecreasing because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>
+is nondecreasing, so a quantile satisfying the condition minimises
+expected cost. The result is not a universal target for essential
+medicines: it assumes a one-period decision, a meaningful shortage cost
+and a demand distribution that adequately describes the future.
+Constraints on cash, suppliers and service levels can alter the feasible
+optimum.</p>
+<h3 id="a-numerical-illustration">A numerical illustration</h3>
+<p>Suppose demand is uniformly distributed between 0 and 100 packs,
+overstock costs one unit and shortage costs four units. The critical
+fractile is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.8</mn></mrow><annotation encoding="application/x-tex">4/(4+1)=0.8</annotation></semantics></math>,
+so the optimal unconstrained order is 80 packs. If shortage cost is
+increased to nine, the target rises to the 90th percentile, 90 packs.
+This is a mathematically valid sensitivity result under the illustrative
+distribution. It does not tell a real pharmacy that a missed treatment
+is worth four or nine monetary units; such consequences need separate
+and responsible assessment.</p>
+<h2 id="service-levels-under-discrete-demand">Service levels under
+discrete demand</h2>
+<p>Medicine packs are discrete. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+takes integer values, the optimal order under the one-period model is
+the smallest integer
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+satisfying
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≥</mo><msub><mi>C</mi><mi>u</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>C</mi><mi>o</mi></msub><mo>+</mo><msub><mi>C</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">F(q)\ge C_u/(C_o+C_u)</annotation></semantics></math>,
+with possible ties. A normal approximation to demand can be useful for
+sufficiently regular high-volume items, but discrete or intermittent
+demand may require direct empirical distributions or suitable count
+models. Replacing every demand distribution with a Gaussian can produce
+negative simulated demand, an obvious physical contradiction that should
+be handled explicitly rather than silently clipped without
+explanation.</p>
+<p>For an item with many true zero-demand days, the distribution may
+have a point mass at zero and a long right tail. A mean forecast alone
+hides both features. An order chosen as the mean demand can perform
+poorly when shortage consequences are asymmetric. This is why
+probabilistic forecasting and decision-oriented evaluation often matter
+more than small changes in point-prediction error.</p>
+<h2 id="the-inventory-position-and-the-order-pipeline">The inventory
+position and the order pipeline</h2>
+<p>The inventory position
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mi>I</mi><mo>+</mo><mi>O</mi><mo>−</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">P=I+O-B</annotation></semantics></math>
+contains outstanding orders that are not yet physically available.
+Suppose on-hand stock is 30, outstanding confirmed orders total 50, and
+there are no backorders. With an order-up-to target of 100, suggested
+additional order is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>100</mn><mo>−</mo><mn>80</mn><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">100-80=20</annotation></semantics></math>,
+not 70. A naive programme using only on-hand stock would overorder by
+50. If outstanding orders are delayed or unreliable, the decision
+becomes more complicated: the planner must represent possible delivery
+failure rather than pretend that the existing order is certain to
+arrive.</p>
+<p>For daily updating, use a pipeline indexed by expected receipt day. A
+new order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Q_t</annotation></semantics></math>
+scheduled with lead time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi>t</mi></msub><annotation encoding="application/x-tex">L_t</annotation></semantics></math>
+adds
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Q_t</annotation></semantics></math>
+to the receipt queue at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><msub><mi>L</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">t+L_t</annotation></semantics></math>.
+At each day, receipts are drawn from the scheduled queue before demand
+is served under the chosen event order. The implementation should test
+that every placed order arrives at most once in the simulation. If
+deliveries may be partial or lost, the model must represent those
+outcomes explicitly.</p>
+<h2 id="a-worked-policy-stress-test">A worked policy stress test</h2>
+<p>Consider a pharmacy whose normal demand is ten packs daily. A fixed
+order of 70 packs every seven days matches mean usage in a perfectly
+reliable seven-day cycle, but supplies no buffer for lead-time delays or
+demand variation. If the delivery scheduled for day seven arrives on day
+ten, the facility may experience shortage before the next order is
+received. An order-up-to policy with a higher target can reduce
+shortages, but it also increases average inventory. Compare the
+alternatives under a common sequence of demand and delayed receipts,
+calculating every day’s stock, dispensed units and unmet need.</p>
+<p>The result should report at least two competing outcomes. If target
+100 reduces unfilled units relative to target 70 but raises mean closing
+stock, neither policy is universally “better” without a cost or service
+requirement. If a medicine has a short expiry horizon, higher average
+stock can translate into waste. If the cold-chain capacity is limited,
+target 100 may be infeasible. A sound comparison never announces victory
+on one metric while hiding the trade-off in the other.</p>
+<h2 id="reconciliation-as-a-software-property">Reconciliation as a
+software property</h2>
+<p>Suppose opening stock is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>,
+receipts
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>,
+issues
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>,
+write-offs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>t</mi></msub><annotation encoding="application/x-tex">W_t</annotation></semantics></math>,
+and closing stock
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><annotation encoding="application/x-tex">I_{t+1}</annotation></semantics></math>.
+Every valid inventory transaction should satisfy</p>
+<p>$$</p>
+<p>I_t+R_t=Y_t+W_t+I_{t+1}.</p>
+<p>$$</p>
+<p>A unit test can generate nonnegative feasible events and verify the
+identity to machine precision for numeric models, or exactly for integer
+pack counts. If the test fails, the code or bookkeeping is wrong. The
+test does not establish that the opening balance or receipts were
+measured accurately; that requires physical counts and authorised
+records. The distinction mirrors Chapter 2’s separation between
+verifying equations and validating their representation of the
+world.</p>
+<h2 id="how-a-clinician-and-a-programmer-should-work-together">How a
+clinician and a programmer should work together</h2>
+<p>A mathematically consistent reorder rule might suggest substituting
+one medication for another when stock is low. That is not a safe
+decision for a generic optimisation algorithm. Clinical substitution
+depends on indications, dosage, contraindications and professional
+authority. Such choices must be specified by qualified clinicians and
+regulatory requirements, not learned solely from historical stock
+records. The software should support human-approved workflows rather
+than invent clinical equivalences.</p>
+<p>The same applies to prioritising scarce medicines. A shortage penalty
+in a mathematical objective may summarise a planning preference, but
+cannot represent all consequences for patients. For essential items,
+hard minimum-stock or escalation rules may be more appropriate. The role
+of the book’s mathematics is to make these decisions clearer and more
+accountable, not to replace professional judgment.</p>
+<h2 id="reporting-the-result-of-the-computational-laboratory">Reporting
+the result of the computational laboratory</h2>
+<p>The companion simulation writes daily CSV ledgers for two
+illustrative order-up-to policies and a summary of unmet units,
+stock-out days and mean stock. These outputs are generated from invented
+demand. A researcher can reproduce the calculations exactly under the
+stored random seed, inspect the event order and challenge the
+assumptions. If the results were collected from a real facility, the
+report would need provenance, permissions, quality checks and
+independent validation. The word “simulation” should appear in every
+table and figure that depends on the invented demand model.</p>
+<p>An excellent student result may be the discovery that ranking of
+policies reverses when lead time becomes uncertain or when expiry costs
+are increased. That finding identifies a measurement need:
+supplier-delay records or item-specific shelf life. A practical project
+can be successful when it establishes what information is missing, even
+before it produces a deployable recommendation.</p>
+<h2
+id="laboratory-extension-designing-the-evidence-needed-for-a-real-pharmacy-tool">Laboratory
+extension: designing the evidence needed for a real pharmacy tool</h2>
+<p>The hardest step in an inventory project may be agreeing on what
+constitutes demand. Dispensing records are often easier to obtain than
+patient requests, but the two are not equivalent during stock-outs.
+Before building software, ask staff how an unavailable medicine is
+recorded, whether substitutions are made, and whether partial issues are
+documented. Draw the information pathway from a patient’s need to a
+prescription, an approved issue and an eventual stock deduction. Each
+transition may lose information.</p>
+<h3 id="a-minimum-operational-dataset">A minimum operational
+dataset</h3>
+<p>For each medicine, collect a documented item identifier, unit and
+pack conversion, date, opening balance, receipts, issues, returns,
+transfers, adjustments, expiry and closing balance. A separate order
+table contains order date, supplier, quantity requested, quantity
+approved, expected delivery and actual receipt dates. If permitted and
+feasible, an unmet-request table records requests not filled without
+exposing unnecessary patient-identifiable details. These records should
+share stable identifiers, but patient privacy must remain a primary
+design constraint.</p>
+<p>Do not assume that joining two tables on medicine name will work
+reliably. Different spelling, strengths, formulations and pack sizes can
+create incorrect matches. A medicine identifier should include the
+attributes necessary to distinguish genuinely different products. If two
+brands are clinically substitutable, that relationship requires approved
+professional input and cannot be inferred from identical stock
+codes.</p>
+<h3 id="physical-counts-as-a-reality-check">Physical counts as a reality
+check</h3>
+<p>At defined intervals, staff compare the recorded closing stock with a
+physical count. Discrepancies should be logged, explained where possible
+and corrected with an audit trail. A modelling team should not overwrite
+the historical balance to make the conservation equation look perfect.
+The difference may reveal losses, timing errors or unit confusion that
+also affect the demand forecasts. A data-cleaning pipeline that removes
+these cases without explanation may delete the evidence most relevant to
+the operational problem.</p>
+<h2 id="a-complete-policy-comparison-protocol">A complete policy
+comparison protocol</h2>
+<p>Define at least three strategies: the current practice, a simple
+fixed minimum-stock rule and a proposed probabilistic or order-up-to
+policy. Specify review days, lead times, order limits, budget, storage
+and emergency purchase conditions. Run all strategies against the same
+permitted historical periods and, for unobserved counterfactual demand,
+the same clearly declared scenario assumptions. Hold out the final
+period from model selection and report both service and financial
+consequences.</p>
+<p>The primary output can be unfilled units or stock-out days, depending
+on what can be measured reliably. Secondary outputs include average
+inventory, expiry, emergency purchase frequency, ordering workload and
+working capital. Report results across plausible supplier-delay
+scenarios. A complicated method should not be preferred when its
+advantage disappears under a modest change in an unverified
+assumption.</p>
+<h3 id="a-realistic-stopping-criterion">A realistic stopping
+criterion</h3>
+<p>A prototype should stop and request human review when required inputs
+are missing, stock balances are irreconcilable, the forecast is based
+mainly on censored periods or the proposed order violates a budget or
+clinical constraint. An automated recommendation is not automatically
+better than an explicit warning that information is insufficient. The
+ability to state why a recommendation was withheld is part of reliable
+design.</p>
+<h2 id="interpretation-and-responsible-handover">Interpretation and
+responsible handover</h2>
+<p>The final report should identify exactly what the programme
+established: the arithmetic of an inventory policy, its results under
+stated simulated scenarios, and any performance measured in an
+authorised pilot. It should separately identify what was not
+established: true unmet demand when no request records exist, causal
+reduction in real stock-outs, or clinical benefit. The handover plan
+names staff who maintain the records, review recommendations, approve
+orders, and diagnose system failures after the original developer
+leaves.</p>
+<h2 id="exercises-and-investigations">Exercises and investigations</h2>
+<ol type="1">
+<li><p>Derive the stock balance when emergency purchases and transfers
+between facilities are recorded separately. Identify all terms and
+units.</p></li>
+<li><p>Explain why observed dispensing on a day with zero stock does not
+measure demand. Give two different demand histories consistent with the
+same issue record.</p></li>
+<li><p>Starting from independent daily demand, derive the variance of
+total demand during five days of fixed lead time. State why the
+calculation fails with correlated days.</p></li>
+<li><p>Use <a href="chapter08.html#eq-random-lead">equation</a> to
+explain the contribution of lead-time uncertainty when average daily
+demand is large. Which term is missed by replacing random lead time with
+its mean?</p></li>
+<li><p>Compare a cycle-service level with a unit fill rate and
+percentage of stock-out days. Construct a small example in which the
+measures rank two policies differently.</p></li>
+<li><p>Verify the monotonicity of the order-up-to rule and write a
+software unit test expressing it.</p></li>
+<li><p>Design a rolling historical evaluation comparing an existing
+reorder rule with a moving-average rule. Identify every piece of
+information that must be available before each simulated order.</p></li>
+<li><p><em>Partner study design.</em> Draft a data-request and
+governance plan for a willing clinic: inventory counts, receipts,
+issues, expired stock, delays, orders and stock-out dates. Specify how
+you would avoid making patient-identifiable data public.</p></li>
+</ol>
+<h5 id="what-this-chapter-establishes.">What this chapter
+establishes.</h5>
+<p>Better forecasts alone do not make essential medicines available. The
+decision is a coupled problem of measurement, supplier behaviour,
+budgets, inventory conservation, robust policy and accountable people.
+That is precisely why the book began with the problem rather than with
+an algorithm. The following chapters extend the same method of reasoning
+to energy, agriculture and infrastructure.</p>
+</article><div class="page-links"><a href="chapter07.html">← Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works →</a></div><p class="notice">Educational working edition. Synthetic calculations and demonstrations are not evidence of field impact. <a href="full-original-manuscript.pdf">Read the complete original PDF</a>.</p></main></div><script src="search.js"></script></body></html>

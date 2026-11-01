@@ -1,0 +1,1130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Chapter 1 — Problems Worth Solving | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html" class="current">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-problems">Problems Worth Solving</h1>
+<p>A useful solution begins with a question that can be answered, a
+decision someone can make, and a reason to believe that the decision
+will help. In practice, those three things are often missing when a
+project begins. Someone has seen an urgent problem. Someone else has
+proposed a piece of software. By the time the mathematician is invited
+to the meeting, the discussion may already be about the technology
+rather than the people it is meant to serve.</p>
+<p>This chapter is about the work that must happen before the first
+model is fitted. We shall follow a fictional health centre, examine
+several tempting but premature solutions, and use a little probability
+and queueing theory to make the choices precise. The calculations are
+genuine consequences of the models we state. The clinic, its
+measurements and its costs are illustrative; they are not observations
+from a health facility. That distinction matters throughout the
+book.</p>
+<h2 id="an-ordinary-morning-at-a-health-centre">An ordinary morning at a
+health centre</h2>
+<p>A patient reaches a rural health centre shortly after eight in the
+morning. There is already a queue at registration. The clinical officer
+has started seeing patients, but the laboratory is recovering from a
+machine fault. The power went off during the night, and one computer has
+not restarted properly. Some people have travelled for hours. Others
+have small children with them and will need to leave before public
+transport becomes scarce in the afternoon.</p>
+<p>At the following staff meeting, the head of the facility describes
+the problem: patients are waiting too long. A visitor suggests a
+machine-learning system to forecast the number of people who will arrive
+each morning. An accurate forecast, the visitor argues, would allow the
+facility to prepare.</p>
+<p>The suggestion is not foolish. Arrivals might well be predictable.
+Yet it is possible to build an excellent forecast and leave the waiting
+time unchanged. If there is no qualified worker available to open
+another desk, knowing tomorrow’s attendance may not change anything. If
+the laboratory is the bottleneck, moving people through registration
+faster may only move the queue down the corridor. If a computer stops
+working each time electricity fails, another digital system might add to
+the trouble rather than remove it.</p>
+<p>Before the meeting ends, the team needs to ask something less
+impressive than whether artificial intelligence will work: where,
+exactly, are patients losing time, and which part of that delay can the
+facility change?</p>
+<p>We will use that question to organise the chapter. No one should
+mistake the fictional story for a report about Ugandan clinics in
+general. Its purpose is to expose the reasoning a real investigation
+would require, not to supply evidence that has not been collected.</p>
+<h3 id="the-complaint-is-not-yet-the-problem">The complaint is not yet
+the problem</h3>
+<p>Patients need timely and appropriate care. A long queue is a symptom
+of a service that may be failing to meet that need. A proposed second
+registration desk is an action. A shorter visit without a loss of safety
+or accuracy is a possible objective. Limited staff, rooms, money and
+equipment are constraints. None of these is interchangeable with the
+others.</p>
+<p>Consider the manager’s statement, “Our objective is to introduce
+electronic registration.” An electronic system is something the manager
+might buy or build. It is not what patients ultimately need. The manager
+could introduce the system, meet the project deadline and spend the
+allocated budget, yet leave patients waiting for the same length of
+time. A better objective would describe the change in service that
+matters: for example, to reduce time spent before consultation without
+increasing record errors, clinical delays or staff workload beyond
+acceptable limits.</p>
+<table>
+<caption>Questions to settle before choosing a technical method. These
+are prompts for investigation, not findings about a real facility.
+{#tbl-problem-questions}</caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">What the clinic must establish</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Whose problem is it?</td>
+<td style="text-align: left;">Patients, workers and the institution may
+experience different costs.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What is actually observed?</td>
+<td style="text-align: left;">Which patients wait, at what stage, for
+how long and on which days?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What might cause it?</td>
+<td style="text-align: left;">Arrival peaks, low capacity, interruptions
+or delays at later stages.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Who can act?</td>
+<td style="text-align: left;">Which manager or worker has authority to
+change a timetable or procedure?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What could be changed?</td>
+<td style="text-align: left;">Staffing times, service flow,
+appointments, equipment or paperwork.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">How will success be judged?</td>
+<td style="text-align: left;">Waiting, access, error rates, costs and
+consequences for different groups.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What may not be sacrificed?</td>
+<td style="text-align: left;">Clinical safety, privacy, staffing
+requirements and equitable access.</td>
+</tr>
+</tbody>
+</table>
+<p>The cause is particularly important. The same visible queue can
+result from very different systems. An arrival surge may make an
+otherwise adequate registration desk temporarily busy. A consultation
+bottleneck may cause staff to hold patients back at registration.
+Laboratory results may take hours while the register records only a few
+minutes of clerical work. A queue is something we see; its cause is
+something we have to investigate.</p>
+<h2 id="follow-the-work-before-measuring-it">Follow the work before
+measuring it</h2>
+<p>Imagine walking through the clinic with a nurse and a records
+officer. The nurse points out that some patients go straight from
+registration to consultation while others need laboratory tests. The
+records officer explains that a file number must be entered twice
+whenever the network is unavailable. A patient tells you that the
+longest part of the visit was not the queue you saw at the door, but the
+wait for results after consultation.</p>
+<p>These are not contradictions. They may be descriptions of different
+stages. A model of registration alone cannot account for time spent
+elsewhere. The first useful drawing is therefore not a neural network.
+It is a simple map of what happens to a patient.</p>
+<figure id="fig-clinic-flow">
+<img src="figures/clinic_service_flow.png"
+alt="A simplified path through the fictional health centre. Patients may skip the laboratory, return to an earlier stage, or leave before completing care; a real process map must show such variations." />
+<figcaption aria-hidden="true">A simplified path through the fictional
+health centre. Patients may skip the laboratory, return to an earlier
+stage, or leave before completing care; a real process map must show
+such variations.</figcaption>
+</figure>
+<p>For patient
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+following a sequence of service stages
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>i</mi></msub><annotation encoding="application/x-tex">p_i</annotation></semantics></math>,
+write the time spent in the facility as</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>i</mi></msub><mo>=</mo><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><msub><mi>p</mi><mi>i</mi></msub></mrow></munder><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">(</mo><msub><mi>W</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>S</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>D</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
+T_i=\sum_{j\in p_i}\bigl(W_{ij}+S_{ij}+D_{ij}\bigr),
+</annotation></semantics></math></p>
+<div id="eq-visit-time">
+
+</div>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">W_{ij}</annotation></semantics></math>
+is waiting before stage
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">S_{ij}</annotation></semantics></math>
+is time receiving service, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">D_{ij}</annotation></semantics></math>
+is transfer or administrative delay. The stages actually visited must be
+recorded; otherwise the sum may include care the patient never needed.
+We should not claim that a change in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mrow><mi>i</mi><mo>,</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub><annotation encoding="application/x-tex">W_{i,\mathrm{registration}}</annotation></semantics></math>
+improves the whole visit unless we also examine what happens to the
+other terms.</p>
+<p>It is worth spending time on the measurements before opening a
+spreadsheet. A timestamp called <code>registration_time</code> could
+mean arrival at the door, the moment a register is opened, or the time
+the clerk finishes. These lead to different waiting-time estimates. A
+patient may be recorded only after completing registration, leaving
+those who abandon the queue out of the data altogether. Two devices with
+unsynchronised clocks can produce a negative waiting time. A record that
+contains only the day’s total attendance cannot tell us whether nearly
+everyone came at eight or arrived evenly through the morning.</p>
+<table>
+<caption>A minimum starting data dictionary for a clinic workflow
+investigation. Collection would require suitable permission, privacy
+protections and local adaptation. {#tbl-clinic-data}</caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Meaning</th>
+<th style="text-align: left;">Why it is needed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Visit code</td>
+<td style="text-align: left;">A de-identified identifier for one service
+visit</td>
+<td style="text-align: left;">Joins the stages without storing names in
+the analysis file</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Arrival time</td>
+<td style="text-align: left;">Time the patient reached the defined queue
+entrance</td>
+<td style="text-align: left;">Establishes the start of the waiting
+period</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Service start and end</td>
+<td style="text-align: left;">Times at which each stage begins and
+finishes</td>
+<td style="text-align: left;">Separates waiting from service</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stage and route</td>
+<td style="text-align: left;">Registration, consultation, laboratory or
+another step</td>
+<td style="text-align: left;">Prevents unlike journeys from being
+treated as identical</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Staff on duty</td>
+<td style="text-align: left;">Qualified workers actually available
+during each interval</td>
+<td style="text-align: left;">Describes operational capacity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Interruption log</td>
+<td style="text-align: left;">Start, end and nature of a service
+interruption</td>
+<td style="text-align: left;">Helps investigate the effect of outages
+and equipment failures</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Exit or abandonment</td>
+<td style="text-align: left;">Whether care was completed, deferred or
+not received</td>
+<td style="text-align: left;">Makes unmet demand visible</td>
+</tr>
+</tbody>
+</table>
+<p>A real project would first check whether the desired measurements are
+necessary, feasible and lawful to collect. It would minimise personally
+identifying data, agree on a time standard, record missingness and
+specify who can access the information. The World Health Organization’s
+service-readiness framework can help describe some aspects of facility
+capacity, but it does not replace a time-stamped study of patient
+journeys <span class="citation" data-cites="whoSARA">(World Health
+Organization 2015)</span>.</p>
+<p>There is an important difference between an explanation that fits a
+story and one that survives a fair test. Imagine that the records
+officer blames a slow computer while the nurse blames the laboratory.
+Both accounts may be plausible, and both may involve real difficulties,
+but neither tells us how much each difficulty contributes to the
+patient’s visit. A useful comparison would ask what we expect to see if
+one explanation is dominant and the other is not. When the computer is
+down, does the registration queue grow? When the computer is working but
+the laboratory is delayed, does the total visit still take hours? Do
+patients who require no test leave much earlier than those who need
+results? A few carefully chosen observations may settle more than a very
+large file of daily totals.</p>
+<p>The question should not be framed so that the favourite explanation
+always wins. Suppose the team believes that registration is the
+bottleneck. It should actively look for a morning when registration
+finishes quickly but the long waits persist. That is the kind of
+observation that could change the recommendation. A project is in danger
+when every contradictory record is dismissed as an exception while every
+supporting record becomes evidence of success. Good problem formulation
+includes a reasonable account of what would count against the proposed
+mechanism.</p>
+<p>Timing matters as much as the choice of variables. A queue length
+noted once at noon may miss an intense morning peak. A register that
+records only those who complete service cannot describe the people who
+give up. An interruption log written at the end of the day may round
+away short failures that matter. Conversely, recording every action to
+the nearest second would add work without much value if the decision
+concerns monthly equipment purchases. Measurements need to be fine
+enough to distinguish the competing explanations, but not more elaborate
+than the decision requires.</p>
+<p>We should also ask what the data would cost to obtain. Observing one
+service stage may require a trained worker who could otherwise assist
+patients. Installing a tracking system may raise privacy concerns. If
+the likely alternatives remain the same under every plausible result,
+the additional study may have little value. If one observation would
+distinguish a cheap timetable change from an expensive software
+purchase, the investigation may be worthwhile. We will return to this
+idea when we calculate the value of information.</p>
+<p>The people who use the system are also sources of knowledge. Instead
+of asking, “Would you like a new app?”, ask a worker to describe the
+last morning when the service became unmanageable. What happened first?
+What did they try? Which option was unavailable? Ask a patient where
+time was lost, without demanding clinical details not needed for the
+project. A useful conversation is one in which a proposed explanation
+can turn out to be wrong.</p>
+<p>The distinction between structure, process and outcome has a long
+history in health-service research. <span class="citation"
+data-cites="donabedian1988">Donabedian (1988)</span> gave a foundational
+account of why the resources available, the work performed and the
+consequences for patients should not be treated as the same measure. In
+our example, adding a computer changes an input; entering records more
+quickly changes a process; helping patients receive appropriate care
+sooner is a possible outcome. One does not automatically establish the
+next.</p>
+<h2 id="turn-the-complaint-into-a-decision">Turn the complaint into a
+decision</h2>
+<p>Suppose the facility really can choose among three arrangements for
+the morning: keep the current schedule, start one qualified worker
+earlier, or temporarily open a second registration desk. We may denote
+the feasible actions by</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝒜</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><msub><mi>a</mi><mn>0</mn></msub><mo>,</mo><msub><mi>a</mi><mn>1</mn></msub><mo>,</mo><msub><mi>a</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathcal A=\{a_0,a_1,a_2\}.
+</annotation></semantics></math></p>
+<p>The word <em>feasible</em> carries weight. If the second desk
+requires taking a worker away from an unsafe laboratory shift, that
+option might not belong in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒜</mi><annotation encoding="application/x-tex">\mathcal A</annotation></semantics></math>
+at all. Technical feasibility, managerial authority and acceptable
+consequences must be considered before the optimisation begins.</p>
+<p>A decision has uncertain outcomes. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ξ</mi><annotation encoding="application/x-tex">\xi</annotation></semantics></math>
+represent conditions such as arrivals, staff absences and equipment
+interruptions. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">L(a,\xi)</annotation></semantics></math>
+be the loss when action
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+is taken under conditions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ξ</mi><annotation encoding="application/x-tex">\xi</annotation></semantics></math>.
+Loss could represent a financial cost, an agreed service measure, or
+several consequences combined using an explicitly defended rule. When
+the probability distribution of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ξ</mi><annotation encoding="application/x-tex">\xi</annotation></semantics></math>
+is credible, a familiar decision criterion is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>a</mi><mo>*</mo></msup><mo>∈</mo><msub><mo>argmin</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝒜</mi></mrow></msub><mspace width="0.278em"></mspace><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+a^*\in\mathop{\arg\min}_{a\in\mathcal A}\;\mathbb E[L(a,\xi)].
+</annotation></semantics></math></p>
+<div id="eq-risk-min">
+
+</div>
+<p>Writing the expectation does not make uncertain measurements
+reliable, nor does it tell us what society should value. It simply
+exposes what a calculation would require: available actions, a loss
+function and evidence about the situations in which the actions will be
+used.</p>
+<p>For example, if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H(a)</annotation></semantics></math>
+is total patient waiting-hours over the morning and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">C(a)</annotation></semantics></math>
+is the additional cost of staffing for that same morning, we could
+examine</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>c</mi><mi>w</mi></msub><mspace width="0.167em"></mspace><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+J(a)=c_w\,\mathbb E[H(a)]+C(a),
+</annotation></semantics></math></p>
+<div id="eq-staff-cost">
+
+</div>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>w</mi></msub><annotation encoding="application/x-tex">c_w</annotation></semantics></math>
+is the cost or decision weight per patient-hour. The units now agree:
+patient-hours multiplied by cost per patient-hour, plus staffing cost.
+In a less careful formulation, someone might add a cost for the whole
+morning to an average number of hours per patient. Both terms would be
+numbers, but their sum would not mean what the author claims.</p>
+<p>Not every consequence should be priced. A better approach may be to
+minimise expected waiting subject to a staffing budget, a clinical
+safety requirement and a limit on unusually long delays:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>min</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝒜</mi></mrow></munder><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≤</mo><mi>B</mi><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>Pr</mo><mo stretchy="false" form="prefix">{</mo><mi>W</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><msub><mi>w</mi><mo>max</mo></msub><mo>∣</mo><mi>G</mi><mo>=</mo><mi>g</mi><mo stretchy="false" form="postfix">}</mo><mo>≤</mo><msub><mi>α</mi><mi>g</mi></msub><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">for relevant groups </mtext><mspace width="0.333em"></mspace></mrow><mi>g</mi><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\min_{a\in\mathcal A}\quad &amp;\mathbb E[H(a)]\\
+\text{subject to}\quad &amp;C(a)\le B,\\
+&amp;\Pr\{W(a)&gt;w_{\max}\mid G=g\}\le\alpha_g
+\quad\text{for relevant groups }g.
+\end{aligned}
+</annotation></semantics></math></p>
+<div id="eq-constraints">
+
+</div>
+<p>Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+denotes a group for which a waiting-time safeguard is justified. Such
+limits require stakeholder judgement and adequate subgroup data. They
+must not be invented merely to make the optimisation look complete.</p>
+<p>A further question is often overlooked: does anyone have authority to
+use the answer? A scheduling prediction is of little practical value
+when staffing cannot change. An elegant assignment may be unusable when
+qualifications prevent the proposed shift. The first obligation of an
+applied mathematician is not to make every decision look optimisable. It
+is to describe the decision that actually exists.</p>
+<h2 id="what-a-queueing-model-can-and-cannot-tell-us">What a queueing
+model can and cannot tell us</h2>
+<p>We can now put some mathematics beside the clinic story. First,
+deliberately ignore the multiple stages, different patient needs,
+interruptions and changing arrival rates. Imagine one registration desk
+with a single line. Patients arrive independently according to a Poisson
+process at mean rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
+per hour. Registration times are independent exponential random
+variables with mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>μ</mi></mrow><annotation encoding="application/x-tex">1/\mu</annotation></semantics></math>
+hours. Patients are served in arrival order and, for this calculation,
+do not leave the line. This is the standard
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><mi>M</mi><mi>/</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">M/M/1</annotation></semantics></math>
+model <span class="citation" data-cites="gross2008 law2015">(Gross et
+al. 2008; Law 2015)</span>.</p>
+<p>We use the model because it is simple enough to check, not because
+health centres necessarily satisfy its assumptions. Write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mi>λ</mi><mi>/</mi><mi>μ</mi></mrow><annotation encoding="application/x-tex">\rho=\lambda/\mu</annotation></semantics></math>.
+In the stable case
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>ρ</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0\le\rho&lt;1</annotation></semantics></math>,
+the long-run probability of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+patients in the system is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mo stretchy="false" form="prefix">{</mo><mi>N</mi><mo>=</mo><mi>n</mi><mo stretchy="false" form="postfix">}</mo><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>ρ</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>ρ</mi><mi>n</mi></msup><mo>,</mo><mspace width="2.0em"></mspace><mi>n</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>…</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\Pr\{N=n\}=(1-\rho)\rho^n,\qquad n=0,1,2,\ldots.
+</annotation></semantics></math></p>
+<div id="eq-mm1-stationary">
+
+</div>
+<p>This follows from balancing the flow between adjacent queue lengths:
+the rate of transitions from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n+1</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><msub><mi>p</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\lambda p_n</annotation></semantics></math>
+and from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n+1</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><msub><mi>p</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\mu p_{n+1}</annotation></semantics></math>.
+Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mi>ρ</mi><msub><mi>p</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">p_{n+1}=\rho p_n</annotation></semantics></math>,
+and the probabilities sum to one only when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\rho&lt;1</annotation></semantics></math>.
+Differentiating the geometric series gives the mean number in the
+system,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>N</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>ρ</mi><mo stretchy="true" form="postfix">)</mo></mrow><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mo accent="false">∞</mo></munderover><mi>n</mi><msup><mi>ρ</mi><mi>n</mi></msup><mo>=</mo><mfrac><mi>ρ</mi><mrow><mn>1</mn><mo>−</mo><mi>ρ</mi></mrow></mfrac><mo>=</mo><mfrac><mi>λ</mi><mrow><mi>μ</mi><mo>−</mo><mi>λ</mi></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathbb E[N]=(1-\rho)\sum_{n=0}^\infty n\rho^n
+=\frac{\rho}{1-\rho}=\frac{\lambda}{\mu-\lambda}.
+</annotation></semantics></math></p>
+<div id="eq-mm1-number">
+
+</div>
+<p>Little’s law relates long-run throughput, mean number present and
+mean time spent in a stable system:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mi>λ</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">L=\lambda W</annotation></semantics></math>
+<span class="citation" data-cites="little1961">(Little 1961)</span>.
+Here the conventional queueing symbol
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+means mean number present; it is unrelated to the loss function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">L(a,\xi)</annotation></semantics></math>
+introduced earlier. Under the stated assumptions, the mean time in
+registration, including the actual service, is therefore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo>−</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">W=1/(\mu-\lambda)</annotation></semantics></math>.
+The mean time spent waiting before service is smaller:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>q</mi></msub><mo>=</mo><mi>W</mi><mo>−</mo><mfrac><mn>1</mn><mi>μ</mi></mfrac><mo>=</mo><mfrac><mi>λ</mi><mrow><mi>μ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo>−</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+W_q=W-\frac1\mu=\frac{\lambda}{\mu(\mu-\lambda)}.
+</annotation></semantics></math></p>
+<div id="eq-mm1-wait">
+
+</div>
+<p>That difference is important. For an invented arrival rate of six
+patients per hour and a service rate of eight per hour, <a
+href="chapter01.html#eq-mm1-wait">equation</a> gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">W=0.5</annotation></semantics></math>
+hour, or thirty minutes. Only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>22.5</mn><annotation encoding="application/x-tex">22.5</annotation></semantics></math>
+minutes are spent waiting in line; the remaining
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>7.5</mn><annotation encoding="application/x-tex">7.5</annotation></semantics></math>
+minutes are spent registering. Calling the whole thirty minutes
+“queueing delay” would be a small but consequential error.</p>
+<p>The striking feature of this model is what happens near full
+utilisation. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">\mu=8</annotation></semantics></math>
+stays fixed while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
+rises, the spare capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>−</mo><mi>λ</mi></mrow><annotation encoding="application/x-tex">\mu-\lambda</annotation></semantics></math>
+becomes small and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+grows rapidly. Indeed,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>∂</mi><mi>W</mi></mrow><mrow><mi>∂</mi><mi>λ</mi></mrow></mfrac><mo>=</mo><mfrac><mn>1</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo>−</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mfrac><mo>,</mo><mspace width="2.0em"></mspace><mfrac><mrow><mi>∂</mi><mi>W</mi></mrow><mrow><mi>∂</mi><mi>μ</mi></mrow></mfrac><mo>=</mo><mi>−</mi><mfrac><mn>1</mn><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo>−</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{\partial W}{\partial\lambda}=\frac{1}{(\mu-\lambda)^2},\qquad
+\frac{\partial W}{\partial\mu}=-\frac{1}{(\mu-\lambda)^2}.
+</annotation></semantics></math></p>
+<div id="eq-queue-sensitivity">
+
+</div>
+<p>This is why a modest increase in arrivals can produce a large
+increase in time. It also warns us that a poorly estimated arrival rate
+can give a misleading staffing recommendation. Testing a range of
+plausible rates is more defensible than trusting one convenient estimate
+<span class="citation" data-cites="saltelli2008">(Saltelli et al.
+2008)</span>. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>≥</mo><mi>μ</mi></mrow><annotation encoding="application/x-tex">\lambda\ge\mu</annotation></semantics></math>,
+the stationary formulas are not valid; inserting a larger arrival rate
+and obtaining a negative time is not a result about real patients. It is
+a sign that the calculation has been used outside its assumptions.</p>
+<figure id="fig-queue-sensitivity">
+<img src="figures/queue_sensitivity.png"
+alt="Calculated time in registration under illustrative Poisson arrivals and exponential service times. The vertical growth near capacity is a property of the assumed model, not measured clinic behaviour." />
+<figcaption aria-hidden="true">Calculated time in registration under
+illustrative Poisson arrivals and exponential service times. The
+vertical growth near capacity is a property of the assumed model, not
+measured clinic behaviour.</figcaption>
+</figure>
+<h3 id="what-would-another-desk-change">What would another desk
+change?</h3>
+<p>Suppose the existing service rate of each worker is eight
+registrations per hour. The manager considers either a modest procedural
+improvement that increases one worker’s rate to nine per hour, or a
+second equally fast desk sharing a common queue. For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+identical servers, set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mi>λ</mi><mi>/</mi><mi>μ</mi></mrow><annotation encoding="application/x-tex">b=\lambda/\mu</annotation></semantics></math>
+and utilisation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mi>b</mi><mi>/</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">\rho=b/c</annotation></semantics></math>.
+Its steady-state waiting calculation, commonly called the Erlang-C
+formula, is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>P</mi><mn>0</mn></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>c</mi><mo>−</mo><mn>1</mn></mrow></munderover><mfrac><msup><mi>b</mi><mi>k</mi></msup><mrow><mi>k</mi><mi>!</mi></mrow></mfrac><mo>+</mo><mfrac><msup><mi>b</mi><mi>c</mi></msup><mrow><mi>c</mi><mi>!</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>ρ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">]</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>P</mi><mrow><mi mathvariant="normal">w</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><msup><mi>b</mi><mi>c</mi></msup><mrow><mi>c</mi><mi>!</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>ρ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><msub><mi>P</mi><mn>0</mn></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>W</mi><mi>q</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><msub><mi>P</mi><mrow><mi mathvariant="normal">w</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow></msub><mrow><mi>c</mi><mi>μ</mi><mo>−</mo><mi>λ</mi></mrow></mfrac><mo>,</mo><mspace width="2.0em"></mspace><mi>W</mi><mo>=</mo><msub><mi>W</mi><mi>q</mi></msub><mo>+</mo><mfrac><mn>1</mn><mi>μ</mi></mfrac><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+P_0&amp;=\left[\sum_{k=0}^{c-1}\frac{b^k}{k!}
+ +\frac{b^c}{c!(1-\rho)}\right]^{-1},\\
+P_{\mathrm{wait}}&amp;=\frac{b^c}{c!(1-\rho)}P_0,\\
+W_q&amp;=\frac{P_{\mathrm{wait}}}{c\mu-\lambda},\qquad
+W=W_q+\frac1\mu.
+\end{aligned}
+</annotation></semantics></math></p>
+<div id="eq-erlang-c">
+
+</div>
+<p>The results for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\lambda=6</annotation></semantics></math>
+patients per hour are as follows. All figures come from the companion
+calculations; they are not field estimates.</p>
+<table>
+<caption>Three modelled registration arrangements with six arrivals per
+hour. {#tbl-queue-choices}</caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Assumed arrangement</th>
+<th style="text-align: right;">Mean wait before service</th>
+<th style="text-align: right;">Mean time including service</th>
+<th style="text-align: right;">Utilisation per server</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">One desk,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">\mu=8</annotation></semantics></math></td>
+<td style="text-align: right;">22.50 min</td>
+<td style="text-align: right;">30.00 min</td>
+<td style="text-align: right;">0.750</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One desk,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><mn>9</mn></mrow><annotation encoding="application/x-tex">\mu=9</annotation></semantics></math></td>
+<td style="text-align: right;">13.33 min</td>
+<td style="text-align: right;">20.00 min</td>
+<td style="text-align: right;">0.667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Two desks, each
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">\mu=8</annotation></semantics></math></td>
+<td style="text-align: right;">1.23 min</td>
+<td style="text-align: right;">8.73 min</td>
+<td style="text-align: right;">0.375</td>
+</tr>
+</tbody>
+</table>
+<p>The second desk looks exceptionally attractive if we read only the
+waiting-time column. It may also require a second qualified worker, desk
+space, additional equipment and the diversion of staff from another
+activity. The model contains none of those costs. Nor does it say how
+many patients need the laboratory afterwards. A numerical difference is
+not yet a recommendation.</p>
+<p>There is another limitation. An average arrival rate of six per hour
+does not mean the patients arrive evenly. Twenty-four patients spread
+over four hours give six per hour, but so do twenty-four patients who
+all arrive in the first hour and almost none over the next three. The
+second pattern produces a temporary queue even though daily capacity
+appears adequate. The stationary
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><mi>M</mi><mi>/</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">M/M/1</annotation></semantics></math>
+calculation cannot reconstruct it. A time-stamped trace, a time-varying
+model or a discrete-event simulation would be needed. These alternatives
+also require care in defining service order, urgency, breaks and
+interruptions <span class="citation" data-cites="law2015">(Law
+2015)</span>.</p>
+<h3 id="a-queue-may-simply-move">A queue may simply move</h3>
+<p>Suppose, in a second illustrative calculation, every patient visits
+two stages in sequence, each initially serving ten per hour, and
+patients arrive at eight per hour. If both stages can be represented as
+stable stationary
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><mi>M</mi><mi>/</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">M/M/1</annotation></semantics></math>
+queues with the necessary assumptions about the flow between them, each
+has mean time in system of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>10</mn><mo>−</mo><mn>8</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">1/(10-8)=0.5</annotation></semantics></math>
+hour. Total mean time across the two stages is one hour. Increasing the
+first stage’s service rate to sixteen per hour reduces time at that
+stage to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>16</mn><mo>−</mo><mn>8</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.125</mn></mrow><annotation encoding="application/x-tex">1/(16-8)=0.125</annotation></semantics></math>
+hour, but leaves the second stage at half an hour. The total becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.625</mn><annotation encoding="application/x-tex">0.625</annotation></semantics></math>
+hour.</p>
+<p>In this special model, the first stage improves by 75 percent while
+the total time improves by 37.5 percent. The figures are not
+contradictory. They describe different outcomes. In a real service,
+faster registration might also change arrivals to the next stage, staff
+assignments, the order of care and the number of patients leaving; the
+simple calculation would no longer suffice. The larger point is
+practical: measure the patient’s complete journey, not merely the
+component that the project team happens to control.</p>
+<p>A useful basic check does not even require queueing theory. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">A(t)</annotation></semantics></math>
+is the cumulative number of arrivals,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D(t)</annotation></semantics></math>
+is completed departures,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">B(t)</annotation></semantics></math>
+counts people who abandon service, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">N(0)</annotation></semantics></math>
+is the initial number present, then</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>D</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+N(t)=N(0)+A(t)-D(t)-B(t).
+</annotation></semantics></math></p>
+<div id="eq-flow-identity">
+
+</div>
+<p>This is an accounting identity, not a probabilistic model. If a
+dataset violates it, something is missing or duplicated. Checking that
+balance can be more valuable than fitting a sophisticated prediction to
+inconsistent records.</p>
+<h2 id="an-accurate-prediction-is-not-necessarily-a-useful-one">An
+accurate prediction is not necessarily a useful one</h2>
+<p>Return to the proposal for an attendance forecast. Suppose tomorrow’s
+demand over a particular period is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+workers can each handle approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+arrivals. One way to compare staffing choices is to combine staffing
+cost with penalties for unserved demand and unused capacity:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>c</mi><mi>s</mi></msub><mi>a</mi><mo>+</mo><msub><mi>c</mi><mi>o</mi></msub><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>d</mi><mo>−</mo><mi>k</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msub><mo>+</mo><msub><mi>c</mi><mi>i</mi></msub><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mi>a</mi><mo>−</mo><mi>d</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msub><mo>=</mo><mo>max</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">}</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">
+C(a,d)=c_s a+c_o(d-ka)_+ +c_i(ka-d)_+,
+\qquad (x)_+=\max\{x,0\}.
+</annotation></semantics></math></p>
+<div id="eq-decision-cost">
+
+</div>
+<p>Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>s</mi></msub><annotation encoding="application/x-tex">c_s</annotation></semantics></math>
+is cost per worker for the period,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>o</mi></msub><annotation encoding="application/x-tex">c_o</annotation></semantics></math>
+is the penalty per arrival that cannot be handled within the modelled
+capacity, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>i</mi></msub><annotation encoding="application/x-tex">c_i</annotation></semantics></math>
+is a penalty for unused capacity. This is only a teaching loss function.
+In a health service, delaying urgent care cannot be made acceptable
+merely by assigning it a conveniently small monetary weight.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">k=10</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>s</mi></msub><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">c_s=20</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>o</mi></msub><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">c_o=5</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">c_i=0.5</annotation></semantics></math>
+in invented common cost units. With actual demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>24</mn></mrow><annotation encoding="application/x-tex">d=24</annotation></semantics></math>,
+two workers cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>40</mn><mo>+</mo><mn>5</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>4</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>60</mn></mrow><annotation encoding="application/x-tex">40+5(4)=60</annotation></semantics></math>,
+while three cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>60</mn><mo>+</mo><mn>0.5</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>6</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">60+0.5(6)=63</annotation></semantics></math>.
+Under these assumed weights, two workers are preferable by three units.
+Increase the penalty for unserved demand and the ranking can reverse.
+The mathematics does not decide what the consequences of delay ought to
+cost; the decision-maker must defend those weights.</p>
+<p>Now suppose one model predicts
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>23</mn><annotation encoding="application/x-tex">23</annotation></semantics></math>
+arrivals and another predicts
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>27</mn><annotation encoding="application/x-tex">27</annotation></semantics></math>,
+with actual demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>24</mn><annotation encoding="application/x-tex">24</annotation></semantics></math>.
+The first is closer. But an operational rule that assigns two workers
+when the forecast is below
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>25</mn><annotation encoding="application/x-tex">25</annotation></semantics></math>
+and three otherwise would produce different actions. Which action is
+preferable depends on costs and service requirements, not simply the
+numerical distance between forecast and outcome. Predictive accuracy
+matters, but its relation to decision quality must be demonstrated
+rather than assumed. Proper evaluation of probabilistic forecasts and
+scoring rules is discussed by <span class="citation"
+data-cites="gneiting2007">Gneiting and Raftery (2007)</span>.</p>
+<p>The baseline for such an evaluation should be what the facility
+already does, not an imaginary organisation that has no knowledge at
+all. Staff may recognise market days or school opening dates that affect
+demand. They may already adjust shifts through a telephone call. A
+simple timetable change might achieve most of the benefit of a
+forecasting system at a fraction of its operating cost. If a new model
+is proposed, compare it with these real practices and with a credible
+simple rule.</p>
+<h2 id="when-is-another-measurement-worth-its-cost">When is another
+measurement worth its cost?</h2>
+<p>Sometimes the team cannot agree whether registration or the
+laboratory is responsible for most of the delay. A short observation
+study could help. It could also waste time and money if the answer would
+not change any feasible decision. This brings us to a different
+mathematical question: how much can information improve a choice?</p>
+<p>Assume two possible states: registration is the main bottleneck,
+denoted
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+or the laboratory is, denoted
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>.
+There are two actions: improve registration,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>R</mi></msub><annotation encoding="application/x-tex">a_R</annotation></semantics></math>,
+or improve laboratory workflow,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>L</mi></msub><annotation encoding="application/x-tex">a_L</annotation></semantics></math>.
+The losses below are invented and measured in comparable units per
+decision period.</p>
+<table>
+<caption>Illustrative loss table for two actions and two uncertain
+causes. {#tbl-loss-test}</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: right;">State
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math></th>
+<th style="text-align: right;">State
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Improve registration,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>R</mi></msub><annotation encoding="application/x-tex">a_R</annotation></semantics></math></td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Improve laboratory workflow,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>L</mi></msub><annotation encoding="application/x-tex">a_L</annotation></semantics></math></td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.6</mn></mrow><annotation encoding="application/x-tex">\Pr(R)=0.6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">\Pr(L)=0.4</annotation></semantics></math>.
+Improving registration has expected loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>12</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">0.6(2)+0.4(12)=6</annotation></semantics></math>.
+Improving laboratory workflow has expected loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>9</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>6.6</mn></mrow><annotation encoding="application/x-tex">0.6(9)+0.4(3)=6.6</annotation></semantics></math>.
+With the evidence currently available, the first action wins, though not
+by much.</p>
+<p>If someone could reveal the true state with certainty before the
+action is chosen, the expected loss would be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2.4</mn></mrow><annotation encoding="application/x-tex">0.6(2)+0.4(3)=2.4</annotation></semantics></math>.
+The expected value of perfect information is therefore</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">V</mi><mi mathvariant="normal">P</mi><mi mathvariant="normal">I</mi></mrow><mo>=</mo><munder><mo>min</mo><mi>a</mi></munder><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><mi>𝔼</mi><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">[</mo><munder><mo>min</mo><mi>a</mi></munder><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">]</mo><mo>=</mo><mn>6</mn><mo>−</mo><mn>2.4</mn><mo>=</mo><mn>3.6</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathrm{EVPI}=\min_a\mathbb E[L(a,\xi)]
+-\mathbb E\bigl[\min_a L(a,\xi)\bigr]
+=6-2.4=3.6.
+</annotation></semantics></math></p>
+<div id="eq-evpi">
+
+</div>
+<p>The value is nonnegative because learning the truth does not force a
+change of action. This is an upper bound on the gain available from
+information within the stated model, not an estimate of what a real
+study would save. It must be compared with costs over the same decision
+horizon <span class="citation" data-cites="raiffa1968">(Raiffa
+1968)</span>.</p>
+<p>Perfect knowledge is rarely available. Suppose a brief diagnostic
+exercise correctly flags registration as the bottleneck in 80 percent of
+state-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+cases, and incorrectly flags it in 25 percent of
+state-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+cases. The probability of a positive report is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.8</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.25</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.58</mn></mrow><annotation encoding="application/x-tex">0.6(0.8)+0.4(0.25)=0.58</annotation></semantics></math>.
+Bayes’ rule gives</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo>∣</mo><mi>+</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.8</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>0.6</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.8</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.4</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.25</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mn>0.48</mn><mn>0.58</mn></mfrac><mo>≈</mo><mn>0.828</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\Pr(R\mid +)=\frac{0.6(0.8)}{0.6(0.8)+0.4(0.25)}
+=\frac{0.48}{0.58}\approx0.828.
+</annotation></semantics></math></p>
+<div id="eq-bayes-report">
+
+</div>
+<p>For a negative report, the corresponding probability is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.12</mn><mi>/</mi><mn>0.42</mn><mo>≈</mo><mn>0.286</mn></mrow><annotation encoding="application/x-tex">0.12/0.42\approx0.286</annotation></semantics></math>.
+A positive result supports action
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>R</mi></msub><annotation encoding="application/x-tex">a_R</annotation></semantics></math>;
+a negative result supports
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>L</mi></msub><annotation encoding="application/x-tex">a_L</annotation></semantics></math>.
+We can calculate the expected loss under that policy without rounding
+posterior probabilities:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>R</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.48</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.10</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>12</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0.12</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>9</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.30</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mn>2.16</mn><mo>+</mo><mn>1.98</mn><mo>=</mo><mn>4.14</mn><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+R_{\mathrm{test}}
+ &amp;= [0.48(2)+0.10(12)] + [0.12(9)+0.30(3)]\\
+ &amp;=2.16+1.98=4.14.
+\end{aligned}
+</annotation></semantics></math></p>
+<div id="eq-risk-test">
+
+</div>
+<p>The expected value of sample information is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>−</mo><mn>4.14</mn><mo>=</mo><mn>1.86</mn></mrow><annotation encoding="application/x-tex">6-4.14=1.86</annotation></semantics></math>
+units, less than the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3.6</mn><annotation encoding="application/x-tex">3.6</annotation></semantics></math>
+units available under perfect information. If the exercise costs two
+loss units for a decision that governs only one period, its net value is
+negative. If its result guides several future periods, the conclusion
+may change, but only if the causal state remains relevant and the
+benefits and costs are compared over the same horizon.</p>
+<figure id="fig-action-threshold">
+<img src="figures/decision_threshold.png"
+alt="Expected losses under the two actions as the assumed probability of a registration bottleneck changes. The crossing point is a mathematical decision threshold, not an observed clinic probability." />
+<figcaption aria-hidden="true">Expected losses under the two actions as
+the assumed probability of a registration bottleneck changes. The
+crossing point is a mathematical decision threshold, not an observed
+clinic probability.</figcaption>
+</figure>
+<p>There is a particularly useful way to read the loss table. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p=\Pr(R)</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>R</mi></msub><annotation encoding="application/x-tex">a_R</annotation></semantics></math>
+has expected loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>p</mi><mo>+</mo><mn>12</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>12</mn><mo>−</mo><mn>10</mn><mi>p</mi></mrow><annotation encoding="application/x-tex">2p+12(1-p)=12-10p</annotation></semantics></math>,
+while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>L</mi></msub><annotation encoding="application/x-tex">a_L</annotation></semantics></math>
+has expected loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>9</mn><mi>p</mi><mo>+</mo><mn>3</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>3</mn><mo>+</mo><mn>6</mn><mi>p</mi></mrow><annotation encoding="application/x-tex">9p+3(1-p)=3+6p</annotation></semantics></math>.
+Registration improvement is preferable precisely when</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>−</mo><mn>10</mn><mi>p</mi><mo>≤</mo><mn>3</mn><mo>+</mo><mn>6</mn><mi>p</mi><mspace width="1.0em"></mspace><mo>⇔</mo><mspace width="1.0em"></mspace><mi>p</mi><mo>≥</mo><mfrac><mn>9</mn><mn>16</mn></mfrac><mo>=</mo><mn>0.5625</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+12-10p\le 3+6p\quad\Longleftrightarrow\quad
+p\ge\frac9{16}=0.5625.
+</annotation></semantics></math></p>
+<div id="eq-action-threshold">
+
+</div>
+<p>This tells us which uncertainty matters. A refined estimate of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
+is unlikely to change a decision when every plausible value lies well
+above
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.5625</mn><annotation encoding="application/x-tex">0.5625</annotation></semantics></math>.
+A modest observation that moves credible beliefs across the threshold
+may be worth much more. The relevant question is not, “Can we collect
+more data?” It is, “Could the information change what we do?”</p>
+<h2 id="whose-waiting-time-counts">Whose waiting time counts?</h2>
+<p>An average can hide a great deal. Suppose a revised appointment
+system reduces average waiting from fifty to forty minutes. That
+improvement may be genuine. But if people with reliable phones gain most
+of the time while patients from distant villages wait longer, a single
+overall number does not describe the service fairly.</p>
+<p>Consider two equally sized patient groups. Before a change, Group A
+waits an average of ten minutes and Group B ninety, making the overall
+mean fifty. After the change, Group A waits five minutes and Group B
+ninety-five. The mean remains fifty. One group has gained while the
+other has lost. There is no contradiction in the arithmetic; there is a
+problem in the choice of what to report.</p>
+<p>At minimum, a serious waiting-time investigation should distinguish
+time in service from time waiting, report a median and a high
+percentile, record abandonment, and examine differences between groups
+where there is a defensible reason and enough data to do so. Group
+comparisons must be planned with care: very small samples create
+unstable estimates, and collecting sensitive personal characteristics
+simply because they might be useful is not justified.</p>
+<p>Risk also has a tail. An arrangement can have a good mean while
+producing occasional unacceptable delays. If the loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+is integrable, a risk-sensitive alternative is conditional value at risk
+at level
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">V</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">R</mi></mrow><mi>α</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>min</mo><mrow><mi>η</mi><mo>∈</mo><mi>ℝ</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">{</mo><mi>η</mi><mo>+</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow></mfrac><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>−</mo><mi>η</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">}</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><mn>0</mn><mo>&lt;</mo><mi>α</mi><mo>&lt;</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathrm{CVaR}_{\alpha}(Z)
+=\min_{\eta\in\mathbb R}
+\left\{\eta+\frac{1}{1-\alpha}\mathbb E[(Z-\eta)_+]\right\},
+\qquad 0&lt;\alpha&lt;1.
+</annotation></semantics></math></p>
+<div id="eq-cvar">
+
+</div>
+<p>A beginner need not optimise this expression to grasp its purpose. It
+is one way to describe the losses in the worse tail rather than the
+average alone. The choice of the tail level, the service standard and
+the admissible action must come from the actual risk, clinical
+requirements and people affected. Mathematics helps make those
+commitments visible; it does not make them on our behalf.</p>
+<h2 id="design-a-small-study-that-could-prove-the-proposal-wrong">Design
+a small study that could prove the proposal wrong</h2>
+<p>The clinic has several possible ways forward: adjust a staff start
+time, temporarily add a desk, revise appointment arrangements, repair a
+recurrent equipment fault, or build a forecasting system that triggers
+an authorised action. At this stage it would be premature to announce
+which one is best. It is possible, however, to design the next useful
+investigation.</p>
+<p>A team might begin with a short period of structured observation. It
+would record arrival and service times by stage, actual staffing,
+interruptions and patients leaving before completion. It would check the
+records against the flow identity in <a
+href="chapter01.html#eq-flow-identity">equation</a> and inspect the
+arrival pattern by hour. A queueing model might then be tested against
+the traces, with discrepancies shown rather than hidden. If the model is
+inadequate, that finding would be useful: perhaps arrivals are too
+clustered or service times are too variable for the simple
+assumptions.</p>
+<p>If registration is confirmed as an important and changeable source of
+delay, the team might test a revised staffing schedule. The claim should
+be specified before results are seen. For example: on mornings with high
+measured arrivals, starting one qualified registration worker earlier
+will reduce median time from arrival to consultation relative to the
+existing schedule, without increasing delays at later stages or record
+errors. That is a claim that can fail in several informative ways.</p>
+<p>The evaluation also needs a comparison. A before-and-after difference
+can reflect changes in patient volume, case mix, weather, equipment and
+staff availability rather than the timetable. Random assignment of safe
+alternatives across appropriate morning sessions may be possible,
+subject to institutional approval and ethical safeguards. Otherwise, a
+defensible comparison design must explain which assumptions are needed
+to interpret differences as effects <span class="citation"
+data-cites="hernan2020">(Hernán and Robins 2020)</span>. Chapter 9
+develops these questions in depth.</p>
+<p>If whole mornings are assigned to different staffing arrangements,
+the morning is a unit of assignment. Ten patients arriving during the
+same morning are not ten independent interventions. Standard errors that
+pretend otherwise may substantially overstate precision. A small pilot
+should be described as a small pilot: it may reveal whether a procedure
+is workable and worth evaluating further without establishing a reliable
+annual treatment effect.</p>
+<p>A study should also have stopping rules. If the changed schedule
+delays urgent care, creates an unsafe workload or prevents a group of
+patients from accessing services, the team must be able to revert. It
+must be possible for an evaluation to conclude that the new method
+should not be deployed. A project that cannot produce such a conclusion
+is not an honest test.</p>
+<h3 id="remember-the-costs-after-the-demonstration">Remember the costs
+after the demonstration</h3>
+<p>The proposed system has a life beyond its first successful trial.
+Somebody must enter data, train new staff, replace devices, maintain
+software and resolve failures when the original programmer is away. A
+simple financial representation is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">e</mi></mrow></msub><mo>=</mo><msub><mi>C</mi><mn>0</mn></msub><mo>+</mo><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></munderover><mfrac><mrow><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">e</mi></mrow><mo>,</mo><mi>t</mi></mrow></msub><mo>+</mo><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow><mo>,</mo><mi>t</mi></mrow></msub><mo>+</mo><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow><mo>,</mo><mi>t</mi></mrow></msub></mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>t</mi></msup></mfrac><mo>+</mo><mfrac><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">x</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow><mo>,</mo><mi>T</mi></mrow></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+C_{\mathrm{life}}=C_0+
+\sum_{t=1}^{T}\frac{C_{\mathrm{operate},t}
++C_{\mathrm{maintain},t}+C_{\mathrm{train},t}}{(1+r)^t}
++\frac{C_{\mathrm{exit},T}}{(1+r)^T},
+</annotation></semantics></math></p>
+<div id="eq-life-cycle">
+
+</div>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mn>0</mn></msub><annotation encoding="application/x-tex">C_0</annotation></semantics></math>
+is the initial cost,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+the discount rate, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>C</mi><mrow><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">x</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow><mo>,</mo><mi>T</mi></mrow></msub><annotation encoding="application/x-tex">C_{\mathrm{exit},T}</annotation></semantics></math>
+the cost of responsible migration or shutdown in period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>.
+Discounting the exit cost as well as the recurring costs keeps the time
+convention consistent. All these quantities would require defensible
+estimates. A free prototype maintained by one enthusiastic student is
+not necessarily a low-cost service.</p>
+<p>A simple timetable adjustment has costs of its own, including
+negotiation and training. But it may work during power cuts and be
+easier to maintain. The relevant comparison is between viable ways of
+improving the service, measured over a realistic period, not between a
+sophisticated system and an imaginary world with no costs.</p>
+<h2 id="the-record-a-team-should-leave-behind">The record a team should
+leave behind</h2>
+<p>Before the first line of production software is written, the team
+ought to be able to leave a short account that another person can
+inspect. Call it a Problem Definition Record. It need not be a
+bureaucratic form. Two careful pages may suffice for a small project.
+The record should tell a future reader what was noticed, what the team
+thought might cause it, which actions were genuinely available, what
+would count as improvement, and what was still uncertain.</p>
+<p>For our fictional facility, it might say that the current question
+concerns the morning service schedule, not the purchase of a prediction
+system. The suspected mechanisms include concentrated arrivals and
+registration capacity, but downstream queues and interruptions have not
+been ruled out. The intended outcomes are time from arrival to
+completion of required care, unacceptable waits, abandonment and record
+accuracy. The schedule is constrained by staff qualifications and
+safety. The next action is a limited, authorised measurement of patient
+flow, followed by comparison of a simple scheduling alternative with
+current practice. No claim about operational improvement has been
+established yet.</p>
+<p>The record should also say what would change the team’s mind.
+Evidence that the laboratory accounts for most of the delay would weaken
+the case for registration-only work. Evidence that staff cannot act on a
+forecast would weaken the case for building one. An inability to collect
+timestamps reliably would call for better measurement before a detailed
+queue model. Such admissions do not make a proposal weak. They make it
+possible to improve or abandon a poor idea before it consumes scarce
+resources.</p>
+<p>These distinctions are useful far beyond a clinic. Consider a rural
+water scheme where residents complain that water fails to reach some
+homes. One team proposes a sensor network, another a larger tank, and a
+third a change in pumping hours. Before deciding, the engineer would
+need to distinguish total water shortage from uneven distribution, power
+interruptions, leakage and the timing of demand. A full tank at the
+wrong time is not the same as adequate supply at a household tap. A
+model of total daily volume will not reveal pressure losses along a
+pipe, just as a daily patient count does not reveal a morning queue.</p>
+<p>At a school, the visible problem might be late examination results.
+The head teacher could request a new records application. But perhaps
+marks are entered late because teachers must reconcile inconsistent
+class lists, or because the only person authorised to approve results is
+frequently away. A faster database cannot fix an approval rule unless
+the institution changes that rule. The sound first step is to trace how
+a result moves from a student’s script to the report sent home, find
+where the delay accumulates and identify a feasible change. That
+investigation may eventually justify a spreadsheet, a web application or
+no new technology at all.</p>
+<p>These two settings differ from the clinic in their human
+consequences, technical constraints and standards of success. They share
+a logical structure: an undesirable outcome, competing causes, limited
+actions, uncertain information and consequences borne by people. That is
+the structure this book will return to in modelling, data work,
+optimisation, machine learning and deployment. The methods should travel
+across countries because the reasoning can travel; conclusions about
+particular places cannot travel without new evidence.</p>
+<p>The next chapter asks how to turn such a problem into a mathematical
+representation that is useful without losing sight of the real system.
+The question at the end of this chapter is still modest: have we
+understood enough to know what deserves to be modelled?</p>
+<h2 class="unnumbered"
+id="computational-laboratory-decisions-before-algorithms">Computational
+laboratory: decisions before algorithms</h2>
+<p>This laboratory runs on an ordinary computer and needs only Python,
+NumPy and Matplotlib. The companion notebook,
+<code>notebooks/chapter01_decisions.ipynb</code>, works through the
+calculations in the text and produces the two queue and decision
+figures. The script <code>code/chapter01_checks.py</code> checks the
+principal numerical results and writes a small CSV table. Both use
+assumed inputs; neither reads observations from a clinic.</p>
+<p>Begin by checking the one-server formulas with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\lambda=6</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">\mu=8</annotation></semantics></math>.
+Derive the stationary probabilities rather than relying solely on the
+plot. Then examine what happens when the arrival rate approaches eight.
+Plot only stable values, and explain the meaning of the vertical rise.
+Next compare the faster single desk and two-desk arrangement, noting
+what the computation leaves out of the decision.</p>
+<p>In the second part, use the two-state loss table in <a
+href="chapter01.html#tbl-loss-test">table</a>. Verify the expected
+losses, the perfect-information bound and the imperfect-test value.
+Change the prior probability and identify the point at which the
+preferred action switches. Finally, assign a cost to gathering the
+observation and compute whether the test’s value exceeds that cost. The
+notebook includes assertions so that an incorrect answer cannot quietly
+pass as a plausible result.</p>
+<p>The deliverable is not merely a figure. A reader should be able to
+explain, in ordinary language, which assumptions produce it, which
+measurements would be needed to check those assumptions, and which
+decision it could reasonably inform.</p>
+<h2 class="unnumbered" id="worked-questions-and-exercises">Worked
+questions and exercises</h2>
+<ol type="1">
+<li><p>A manager proposes a chatbot for appointments because clinic
+visits take too long. Identify the observed symptom, two competing
+explanations, a feasible decision and one outcome that would test
+whether the proposed change helps. Explain what would make the chatbot
+irrelevant.</p></li>
+<li><p>From the balance equations of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><mi>M</mi><mi>/</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">M/M/1</annotation></semantics></math>
+queue, derive
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>n</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>ρ</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>ρ</mi><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">p_n=(1-\rho)\rho^n</annotation></semantics></math>.
+Show why the probabilities fail to sum to one when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\rho\ge1</annotation></semantics></math>.
+Derive <a href="chapter01.html#eq-mm1-number">equation</a> and <a
+href="chapter01.html#eq-mm1-wait">equation</a>, giving the units of
+every quantity.</p></li>
+<li><p>A station serves ten patients per hour on average. Compute
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>q</mi></msub><annotation encoding="application/x-tex">W_q</annotation></semantics></math>
+at arrival rates five, eight and nine per hour. Explain the nonlinear
+increase and describe an arrival pattern for which a single daily
+average would be misleading.</p></li>
+<li><p>Check the three rows of <a
+href="chapter01.html#tbl-queue-choices">table</a> using <a
+href="chapter01.html#eq-erlang-c">equation</a>. Why would the fastest
+modelled arrangement not necessarily be the safest or cheapest
+operational policy? Write down a missing cost or constraint that could
+reverse the recommendation.</p></li>
+<li><p>The prior probability of a registration bottleneck is changed
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.6</mn><annotation encoding="application/x-tex">0.6</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.4</mn><annotation encoding="application/x-tex">0.4</annotation></semantics></math>
+in <a href="chapter01.html#tbl-loss-test">table</a>. Recalculate the
+preferred action. Find the threshold analytically, and explain why a
+study that improves accuracy without crossing the threshold might have
+little decision value.</p></li>
+<li><p>Derive the imperfect-test risk in <a
+href="chapter01.html#eq-risk-test">equation</a> by conditioning
+separately on positive and negative reports. Compute the expected value
+of sample information. Compare it with perfect information and explain
+why the inequality must hold when both use the same action set and loss
+model.</p></li>
+<li><p>Construct a ten-patient example in which the average wait falls
+but the highest waiting time increases. Explain why a mean, median, high
+percentile and abandonment rate may lead to different assessments of the
+same service change.</p></li>
+<li><p>A pilot assigns five mornings to an altered timetable and five to
+current practice. Why should the analysis not treat every patient as an
+independently assigned unit? State the kind of evidence this small pilot
+could provide and the claim it could not yet defend.</p></li>
+<li><p>Draft a two-page Problem Definition Record for a school with late
+examination records, a water scheme with irregular deliveries, or a
+clinic with frequent medicine stock-outs. Include a present practice,
+two competing causes, a feasible alternative, a measurable outcome, a
+possible harm, and evidence that would persuade you to stop the proposed
+project. Do not invent observations.</p></li>
+<li><p>Using the notebook, choose a cost for an imperfect diagnostic
+study and identify the range of prior probabilities for which collecting
+the data changes the preferred action. State which numbers are model
+assumptions and which would have to be measured in a real
+service.</p></li>
+</ol>
+</article><div class="page-links"><a href="preface.html">← Before we begin</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model →</a></div><p class="notice">Educational working edition. Synthetic calculations and demonstrations are not evidence of field impact. <a href="full-original-manuscript.pdf">Read the complete original PDF</a>.</p></main></div><script src="search.js"></script></body></html>

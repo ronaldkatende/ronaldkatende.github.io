@@ -1,0 +1,1084 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Chapter 11 — Adapting Solutions Across Countries and Contexts | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html" class="current">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-transfer">Adapting Solutions Across Countries and
+Contexts</h1>
+<blockquote>
+<p><em>The same equations can be useful in Uganda, Nepal or Peru without
+producing the same policy recommendation. This chapter distinguishes
+what can travel—a mathematical argument, an algorithm, a data
+schema—from what must be learned again: local demand, geography,
+regulations, costs and institutions. We derive a simple transport
+formula, show when it fails, and construct a practical adaptation record
+for new settings.</em></p>
+</blockquote>
+<h2 id="why-a-successful-pilot-is-not-a-universal-answer">Why a
+successful pilot is not a universal answer</h2>
+<p>Suppose a health district introduces a reliable stock-planning tool
+and observes improved availability under a credible evaluation. A
+neighbouring district asks for a copy. The same code may run, but the
+medicines, lead times, budgets, staffing, data definitions and patients
+are not identical. There are at least three separate questions. Does the
+<em>software</em> run on the available devices? Does the
+<em>prediction</em> remain accurate with the new population? Does the
+<em>intervention</em> improve the outcome after local implementation?
+Passing the first test implies neither of the other two.</p>
+<p>The challenge becomes more visible across countries. A water-service
+model fitted using urban demand data may be applied to rural settlements
+with different dry-season patterns. Distances computed on a road map may
+hide travel routes impassable after rainfall. A clinic may record
+prescriptions, while another records only items dispensed. The same
+variable name can describe different measurements. Good adaptation
+begins with those differences, not by changing the country name on the
+cover of a report.</p>
+<p>We should also resist a misleading division between “advanced” and
+“low-resource” countries. Contextual limits exist everywhere. A rural
+district in a high-income country may lack reliable transport, while a
+large hospital in a lower-income country may have sophisticated
+infrastructure. The analytical question is which assumptions change, and
+whether the proposed decision remains justified.</p>
+<h2 id="an-inventory-of-what-can-and-cannot-transfer">An inventory of
+what can and cannot transfer</h2>
+<p>The basic conservation identity in Chapter <a
+href="chapter08.html#sec-health">section</a> remains valid wherever
+physical stock is counted consistently. The empirical distribution of
+lead times is local. The same binary decision variable used in
+Chapter <a href="chapter05.html#sec-optimisation">section</a> can
+express whether a facility is opened, but the candidate sites, staffing
+and affordability require new evidence. The offline transaction
+requirements of Chapter <a
+href="chapter07.html#sec-infrastructure">section</a> may travel almost
+directly; local-language labels and record-retention rules do not.</p>
+<table>
+<caption>Separating portable structure from context-specific content.
+{#tbl-ch11-portability}</caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Object</th>
+<th>Often portable</th>
+<th>Must be checked locally</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Physical model</td>
+<td>Conservation law and units</td>
+<td>Boundary, loss terms, measurement method</td>
+</tr>
+<tr class="even">
+<td>Statistical model</td>
+<td>Estimator, validation procedure</td>
+<td>Sampling frame, conditional relationships, calibration</td>
+</tr>
+<tr class="odd">
+<td>Optimisation</td>
+<td>Mathematical formulation and solver</td>
+<td>Costs, feasible sites, capacities, constraints</td>
+</tr>
+<tr class="even">
+<td>Software</td>
+<td>Transaction and backup patterns</td>
+<td>Devices, language, legal permissions, support</td>
+</tr>
+<tr class="odd">
+<td>Intervention</td>
+<td>Logic of the causal evaluation</td>
+<td>Actual adoption, comparison, population and effects</td>
+</tr>
+</tbody>
+</table>
+<p>A <em>Country Adaptation Record</em> should describe the target
+institution, outcome definitions, differences from the source setting,
+new data requirements, feasibility tests, recalibration plan, legal
+checks and decision authority. A “transfer complete” label should be
+withheld until its specified acceptance tests pass.</p>
+<h2 id="three-distinct-sorts-of-shift">Three distinct sorts of
+shift</h2>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+denote recorded predictors,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+the outcome of interest and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+the setting. A prediction system trained in a source setting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mi>s</mi></mrow><annotation encoding="application/x-tex">S=s</annotation></semantics></math>
+is commonly evaluated in a target setting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mi>t</mi></mrow><annotation encoding="application/x-tex">S=t</annotation></semantics></math>.
+Three situations deserve distinct names.</p>
+<h5 id="covariate-shift.">Covariate shift.</h5>
+<p>The distribution of recorded inputs changes,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(x)\ne p_s(x)</annotation></semantics></math>,
+but the conditional outcome relationship remains invariant:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(y\mid x)=p_s(y\mid x)</annotation></semantics></math>.
+An example would be a different mix of rural and urban facilities, with
+the same outcome mechanism within each properly measured group. This is
+an assumption requiring evidence, not an automatic property of a
+map.</p>
+<h5 id="conditional-or-concept-shift.">Conditional or concept
+shift.</h5>
+<p>The relationship
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(y\mid x)</annotation></semantics></math>
+itself changes. A lead-time predictor may change because procurement
+contracts, roads or delivery schedules differ even after controlling for
+recorded inputs. Reweighting the source data cannot generally correct
+this problem.</p>
+<h5 id="measurement-shift.">Measurement shift.</h5>
+<p>The recorded variable changes its meaning or error mechanism. One
+site counts demand as prescriptions, another counts actual issues, and a
+third counts received orders. Even if the underlying physical process
+were similar, the observed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+is not. A model can look surprisingly good against a flawed reference
+outcome while making poor decisions.</p>
+<p>The distinctions help choose a response. Reweighting, recalibration,
+refitting, revised measurement or a complete redesign solve different
+problems. The covariate-shift literature gives one precise set of tools
+and limitations <span class="citation"
+data-cites="sugiyama2012 ovadia2019">(Sugiyama and Kawanabe 2012; Ovadia
+2019)</span>.</p>
+<h2 id="derive-the-transport-identity">Derive the transport
+identity</h2>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">L(f(X),Y)</annotation></semantics></math>
+be the loss for fixed predictor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>s</mi></msub><annotation encoding="application/x-tex">p_s</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>t</mi></msub><annotation encoding="application/x-tex">p_t</annotation></semantics></math>
+the source and target joint distributions. Assume the target input
+distribution is absolutely continuous with respect to the source input
+distribution: wherever
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">p_t(x)&gt;0</annotation></semantics></math>,
+the source density is positive as well. Assume further that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(y\mid x)=p_s(y\mid x)</annotation></semantics></math>.
+Then</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>𝔼</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><msub><mi>𝔼</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mfrac><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+R_t(f)=\mathbb E_t[L(f(X),Y)]
+=\mathbb E_s\left[\frac{p_t(X)}{p_s(X)}L(f(X),Y)\right].
+</annotation></semantics></math></p>
+<div id="eq-ch11-weighted-risk">
+
+</div>
+<p>The ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w(x)=p_t(x)/p_s(x)</annotation></semantics></math>
+is an importance weight. Equation <a
+href="chapter11.html#eq-ch11-weighted-risk">equation</a> is an identity
+under stated assumptions, not proof that weights are estimable from a
+tiny dataset <span class="citation" data-cites="sugiyama2012">(Sugiyama
+and Kawanabe 2012)</span>.</p>
+<h4
+id="proposition-sec-ch11-risk-suppose-the-source-and-target-admit-joint-densities-p_txll-p_sx-p_tymid-xp_symid-x-almost-everywhere-on-the-target-support-and-the-weighted-loss-is-integrable.-then-equation-holds.">Proposition
+{#sec-ch11-risk} Suppose the source and target admit joint densities,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>≪</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(x)\ll p_s(x)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_t(y\mid x)=p_s(y\mid x)</annotation></semantics></math>
+almost everywhere on the target support, and the weighted loss is
+integrable. Then <a
+href="chapter11.html#eq-ch11-weighted-risk">equation</a> holds.</h4>
+<p><em>Proof.</em> Starting from the source expectation, substitute the
+factorisation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_s(x,y)=p_s(y\mid x)p_s(x)</annotation></semantics></math>:</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>𝔼</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>L</mi><mo stretchy="true" form="postfix">]</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>∫</mo><mspace width="-0.167em"></mspace><mo>∫</mo><mfrac><mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>y</mi><mspace width="0.167em"></mspace><mi>d</mi><mi>x</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>∫</mo><mspace width="-0.167em"></mspace><mo>∫</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>∣</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>y</mi><mspace width="0.167em"></mspace><mi>d</mi><mi>x</mi><mo>=</mo><msub><mi>R</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>f</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+\mathbb E_s[w(X)L]&amp;=\int\!\int\frac{p_t(x)}{p_s(x)}L(f(x),y)p_s(y\mid x)p_s(x)\,dy\,dx\\
+&amp;=\int\!\int L(f(x),y)p_t(x)p_t(y\mid x)\,dy\,dx=R_t(f).
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<p>Support inclusion makes the ratio well-defined where it contributes;
+integrability permits the stated expectations. ◻</p>
+<p><em>Example.</em> Suppose a binary error occurs at rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.10</mn><annotation encoding="application/x-tex">0.10</annotation></semantics></math>
+in urban facilities and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.30</mn><annotation encoding="application/x-tex">0.30</annotation></semantics></math>
+in rural facilities. In the invented source sample,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>80</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">80\%</annotation></semantics></math>
+of facilities are urban, giving source risk
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.8</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.30</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.14</mn></mrow><annotation encoding="application/x-tex">0.8(0.10)+0.2(0.30)=0.14</annotation></semantics></math>.
+In the target region only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">30\%</annotation></semantics></math>
+are urban, giving target risk
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.3</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.10</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.7</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.30</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.24</mn></mrow><annotation encoding="application/x-tex">0.3(0.10)+0.7(0.30)=0.24</annotation></semantics></math>.
+The model has not changed; the population has. The importance weights
+are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.3</mn><mi>/</mi><mn>0.8</mn></mrow><annotation encoding="application/x-tex">0.3/0.8</annotation></semantics></math>
+for urban units and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.7</mn><mi>/</mi><mn>0.2</mn></mrow><annotation encoding="application/x-tex">0.7/0.2</annotation></semantics></math>
+for rural units. Weighting the source conditional errors recovers the
+target risk <em>only if</em> the conditional error rates really remain
+the same.</p>
+<figure id="fig-ch11-shift">
+<img src="figures/ch11_shift_mixture.png"
+alt="Invented source and target compositions for the covariate-shift example. The conditional error rates are assumed invariant, not empirically established." />
+<figcaption aria-hidden="true">Invented source and target compositions
+for the covariate-shift example. The conditional error rates are assumed
+invariant, not empirically established.</figcaption>
+</figure>
+<h2 id="why-weights-do-not-create-information">Why weights do not create
+information</h2>
+<p>The transport identity can be useless in practice if a target
+population contains categories absent from the source, or if a few
+source observations receive enormous weights. For nonnegative sample
+weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>w</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">w_1,\ldots,w_n</annotation></semantics></math>,
+a common descriptive effective-sample-size diagnostic is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">f</mi></mrow></msub><mo>=</mo><mfrac><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mrow><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+n_{\mathrm{eff}}=\frac{(\sum_iw_i)^2}{\sum_iw_i^2}.
+</annotation></semantics></math></p>
+<div id="eq-ch11-ess">
+
+</div>
+<p>It equals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+for equal positive weights and approaches one when nearly all weight
+concentrates on a single observation. This is not an exact number of
+independent observations; it signals potential instability. The weight
+estimates also have uncertainty, which should not be hidden by
+evaluating a plug-in weighted risk as though the weights were known.</p>
+<h4
+id="proposition-sec-ch11-ess-for-nge1-and-nonnegative-weights-not-all-zero-1le-n_mathrmeffle-n.">Proposition
+{#sec-ch11-ess} For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n\ge1</annotation></semantics></math>
+and nonnegative weights not all zero,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>≤</mo><msub><mi>n</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">f</mi></mrow></msub><mo>≤</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1\le n_{\mathrm{eff}}\le n</annotation></semantics></math>.</h4>
+<p><em>Proof.</em> Since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup><mo>+</mo><mn>2</mn><msub><mo>∑</mo><mrow><mi>i</mi><mo>&lt;</mo><mi>j</mi></mrow></msub><msub><mi>w</mi><mi>i</mi></msub><msub><mi>w</mi><mi>j</mi></msub><mo>≥</mo><msub><mo>∑</mo><mi>i</mi></msub><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">(\sum_iw_i)^2=\sum_iw_i^2+2\sum_{i&lt;j}w_iw_j\ge\sum_iw_i^2</annotation></semantics></math>,
+the lower bound follows. Cauchy–Schwarz gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>≤</mo><mi>n</mi><msub><mo>∑</mo><mi>i</mi></msub><msubsup><mi>w</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">(\sum_iw_i)^2\le n\sum_iw_i^2</annotation></semantics></math>,
+yielding the upper bound. ◻</p>
+<p>Clipping weights reduces variance but generally changes the estimand
+by introducing bias. If such regularisation is used, report the
+threshold and examine sensitivity. A target population with important
+unrepresented groups needs new measurements, not more aggressive
+mathematics.</p>
+<h2
+id="transporting-an-intervention-is-harder-than-transporting-prediction">Transporting
+an intervention is harder than transporting prediction</h2>
+<p>Equation <a href="chapter11.html#eq-ch11-weighted-risk">equation</a>
+concerns predictive loss. A credible causal effect in one place does not
+automatically transfer when clinicians, suppliers or institutions act
+differently. Under additional assumptions, the target effect can be
+written</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mi>t</mi></msub><mo>=</mo><mo>∫</mo><mrow><mo stretchy="true" form="prefix">{</mo><msub><mi>𝔼</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">}</mo></mrow><msub><mi>p</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>x</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\tau_t=\int\left\{\mathbb E_s[Y(1)-Y(0)\mid X=x]\right\}p_t(x)\,dx.
+</annotation></semantics></math></p>
+<div id="eq-ch11-causal-transport">
+
+</div>
+<p>But this requires transportability of conditional causal effects,
+suitable overlap and valid identification of those effects in the
+source. If the new setting has different implementation intensity or an
+unmeasured effect modifier, the formula is not justified. Causal
+selection diagrams offer a more general language for expressing which
+mechanisms differ <span class="citation"
+data-cites="pearl2014 hernan2020">(Pearl and Bareinboim 2014; Hernán and
+Robins 2020)</span>.</p>
+<p><em>Example.</em> In one district, forecasting is the binding
+problem: orders are generally delivered on time, but quantities are
+often too low. A better forecast could reduce shortages. Elsewhere,
+quantities are adequate but deliveries are delayed for weeks. Reusing
+the forecast model may improve prediction scores without improving
+medicine availability. The active causal mechanism has changed. The
+second district may need procurement reform or a buffer-stock policy,
+not a more complex prediction model.</p>
+<p>This example also shows why a headline such as “the model improves
+access to medicines” is incomplete. It may be true for one operating
+system and false in another. The report must identify the intervention
+and the surrounding mechanism.</p>
+<h2 id="local-data-can-be-sparse-without-being-ignored">Local data can
+be sparse without being ignored</h2>
+<p>Adapting models often requires balancing information borrowed from
+the source with a small target sample. A hierarchical formulation might
+describe a site-specific parameter as</p>
+<p>$$</p>
+<p><em>jN(,</em>^2), _j_jN(_j,s_j^2).</p>
+<p>$$</p>
+<p>Under this explicitly Gaussian model, the posterior mean of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\theta_j</annotation></semantics></math>
+for fixed hyperparameters is a precision-weighted average:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>θ</mi><mi>j</mi></msub><mo>∣</mo><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>j</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mfrac><mrow><msubsup><mi>σ</mi><mi>θ</mi><mrow><mi>−</mi><mn>2</mn></mrow></msubsup><mi>μ</mi><mo>+</mo><msubsup><mi>s</mi><mi>j</mi><mrow><mi>−</mi><mn>2</mn></mrow></msubsup><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mi>j</mi></msub></mrow><mrow><msubsup><mi>σ</mi><mi>θ</mi><mrow><mi>−</mi><mn>2</mn></mrow></msubsup><mo>+</mo><msubsup><mi>s</mi><mi>j</mi><mrow><mi>−</mi><mn>2</mn></mrow></msubsup></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathbb E[\theta_j\mid\widehat\theta_j]
+=\frac{\sigma_\theta^{-2}\mu+s_j^{-2}\widehat\theta_j}{\sigma_\theta^{-2}+s_j^{-2}}.
+</annotation></semantics></math></p>
+<div id="eq-ch11-partial-pool">
+
+</div>
+<p>No real service parameter is guaranteed to follow the Gaussian model.
+Its value is explanatory: noisy local estimates can borrow strength
+without being treated as identical. Measurement mismatch or severe
+nonexchangeability can make such pooling misleading <span
+class="citation" data-cites="gelman2007">(Gelman and Hill
+2007)</span>.</p>
+<p>Before fitting a sophisticated hierarchical model, ask whether the
+new setting has enough reliable observations to check its assumptions. A
+small, well-audited local dataset may be worth more than millions of
+poorly aligned records from another institution.</p>
+<h2 id="transfer-also-changes-optimisation-and-fairness">Transfer also
+changes optimisation and fairness</h2>
+<p>Prediction is only one input to a decision. In location planning,
+demand estimates, travel-time matrices, candidate sites, clinic capacity
+and cost limits may all change. A solution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>a</mi><mi>s</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">a_s^*</annotation></semantics></math>
+that minimises source cost need not be feasible in the target
+setting:</p>
+<p>$$</p>
+<p>a_s^<em>F_sa_s^</em>F_t.</p>
+<p>$$</p>
+<p>Even if the same problem formulation is appropriate, the target
+optimum is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>a</mi><mi>t</mi><mo>*</mo></msubsup><mo>∈</mo><mo>arg</mo><munder><mo>min</mo><mrow><mi>a</mi><mo>∈</mo><msub><mi>ℱ</mi><mi>t</mi></msub></mrow></munder><msub><mi>𝔼</mi><mi>t</mi></msub><mo stretchy="false" form="prefix">{</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">}</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">
+a_t^*\in\arg\min_{a\in\mathcal F_t}\mathbb E_t\{L(a,\xi)\}.
+</annotation></semantics></math></p>
+<div id="eq-ch11-reopt">
+
+</div>
+<p>The target feasibility set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℱ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\mathcal F_t</annotation></semantics></math>
+should incorporate genuine local limits: staffing, road accessibility,
+budget, legislation and protected service standards. Replacing source
+prices with target prices without checking the rest of the constraints
+is not a complete adaptation.</p>
+<h4
+id="proposition-sec-ch11-decision-suppose-source-and-target-share-a-feasible-set-mathcal-f-and-their-objective-functions-satisfy-sup_ainmathcal-fj_ta-j_salevarepsilon.-if-a_s-minimises-j_s-and-a_t-minimises-j_t-then">Proposition
+{#sec-ch11-decision} Suppose source and target share a feasible set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℱ</mi><annotation encoding="application/x-tex">\mathcal F</annotation></semantics></math>,
+and their objective functions satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>sup</mo><mrow><mi>a</mi><mo>∈</mo><mi>ℱ</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>J</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mo>≤</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">\sup_{a\in\mathcal F}|J_t(a)-J_s(a)|\le\varepsilon</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>s</mi></msub><annotation encoding="application/x-tex">a_s</annotation></semantics></math>
+minimises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mi>s</mi></msub><annotation encoding="application/x-tex">J_s</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>t</mi></msub><annotation encoding="application/x-tex">a_t</annotation></semantics></math>
+minimises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>J</mi><mi>t</mi></msub><annotation encoding="application/x-tex">J_t</annotation></semantics></math>,
+then</h4>
+<p>$$</p>
+<p>0J_t(a_s)-J_t(a_t).</p>
+<p>$$</p>
+<p><em>Proof.</em> Insert
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>s</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">J_s(a_s)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">J_s(a_t)</annotation></semantics></math>
+between the two target values:</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>J</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>s</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>J</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>J</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>s</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>s</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>s</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mspace width="1.0em"></mspace><mo>+</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>J</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>J</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>a</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>≤</mo><mi>ε</mi><mo>+</mo><mn>0</mn><mo>+</mo><mi>ε</mi><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+J_t(a_s)-J_t(a_t)
+&amp;=[J_t(a_s)-J_s(a_s)]+[J_s(a_s)-J_s(a_t)]\\
+&amp;\quad+[J_s(a_t)-J_t(a_t)]\le\varepsilon+0+\varepsilon.
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<p>Nonnegativity follows because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>t</mi></msub><annotation encoding="application/x-tex">a_t</annotation></semantics></math>
+is target-optimal. ◻</p>
+<p>The proposition gives a useful <em>conditional</em> guarantee: if
+every decision’s expected cost changes by at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
+and feasibility does not change, source optimisation incurs at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>ε</mi></mrow><annotation encoding="application/x-tex">2\varepsilon</annotation></semantics></math>
+regret in the target. It does not say that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
+is small. The most valuable transfer task may be to measure or bound the
+shift. If the feasible set changes, the proof cannot be applied as
+written.</p>
+<h2 id="a-reproducible-cross-context-teaching-investigation">A
+reproducible cross-context teaching investigation</h2>
+<p>Our central teaching case considers water-service access in four
+<em>illustrative</em> district settings labelled Uganda, Kenya, Nepal
+and Peru. The labels signal intended contexts for later data collection;
+the numbers inside the supplied script are intentionally invented and
+should never be reported as country statistics. In each setting we vary
+settlement distribution, a resource limit and an assumed unit travel
+burden. The same facility-allocation logic is used, but we re-estimate
+demands and re-solve the decision rather than blindly copying the
+original site’s solution.</p>
+<p>For real work, appropriate starting points include the WHO/UNICEF
+Joint Monitoring Programme, whose datasets and documented application
+programming interface provide WASH estimates at several geographic
+levels where available <span class="citation"
+data-cites="jmp2026">(WHO/UNICEF Joint Monitoring Programme
+2026)</span>; national statistical services; geospatial and road data
+with licence and completeness checks; and locally verified
+infrastructure and cost records. National WASH percentages alone do not
+identify travel times, village-to-tap distances or facility construction
+costs. Joining those quantities without measuring their definitions
+creates spurious precision.</p>
+<h3 id="using-a-public-dataset-responsibly">Using a public dataset
+responsibly</h3>
+<p>For each country, record the particular indicator, reference year,
+geographic level, source method, missingness and access date. Preserve
+the original downloaded file with a checksum. When comparing countries,
+check whether an indicator is defined and estimated consistently. A
+nationally representative estimate cannot automatically be used as a
+village-level input. If disaggregated estimates are unavailable, say so
+and choose a defensible aggregate analysis rather than inventing local
+measurements.</p>
+<p>The companion programme <code>code/ch11_transport_audit.py</code>
+demonstrates the weighted-risk identity, effective sample size and
+failure when the conditional outcome mechanism changes. It also writes
+an invented cross-context allocation table. It contains no claimed
+measurements from the four countries. An extension instructs the reader
+to replace the invented data only after securing documented sources and
+preserving the original field definitions.</p>
+<h2 id="a-decision-oriented-adaptation-protocol">A decision-oriented
+adaptation protocol</h2>
+<p>Before moving a model, complete the following sequence.</p>
+<ol type="1">
+<li><p><em>Name what is being transported.</em> Mathematical model,
+software, predictive relationship, decision rule or claimed causal
+effect?</p></li>
+<li><p><em>Define the new population.</em> Which users, institutions,
+seasons and sites are included? Who is excluded?</p></li>
+<li><p><em>Reconcile measurements.</em> Confirm units, event
+definitions, missingness and survey design.</p></li>
+<li><p><em>Check overlap.</em> Are important target conditions present
+in the source? If not, collect new information.</p></li>
+<li><p><em>Check mechanisms.</em> Which physical, social and
+institutional processes may have changed?</p></li>
+<li><p><em>Update constraints.</em> Recalculate costs, capacity, access,
+legal obligations and service priorities.</p></li>
+<li><p><em>Validate independently.</em> Use local held-out sites or
+times appropriate to the deployment question.</p></li>
+<li><p><em>Review equity.</em> Disaggregate by relevant geographic or
+service groups, with appropriate privacy safeguards.</p></li>
+<li><p><em>Test technical operation.</em> Confirm offline operation,
+accessibility, support and failure recovery.</p></li>
+<li><p><em>Decide and document.</em> Adopt, recalibrate, retrain,
+redesign, test further or reject the transfer.</p></li>
+</ol>
+<p>A country adaptation record is especially important when a
+donor-funded project is reproduced in several locations. The
+transferable achievement may be the disciplined method of inquiry rather
+than identical code or identical performance.</p>
+<h2 id="what-constitutes-evidence-of-successful-transfer">What
+constitutes evidence of successful transfer?</h2>
+<p>A successful installation proves that the software executes on the
+target platform. Acceptable target prediction errors establish empirical
+performance for the measured population and evaluation window. A
+feasible optimisation result establishes feasibility under specified
+constraints. A measured improvement against a credible comparison
+provides evidence of target impact. Maintaining those gains over time is
+yet another question. Each claim requires new evidence at the target
+location.</p>
+<p>If an institution only possesses national aggregates, the appropriate
+conclusion may be modest: a proposed model is <em>plausible and
+testable</em>, but decisions at individual service sites are not yet
+supported. Readers should not confuse this restraint with pessimism. It
+is what prevents research from disguising missing facts as
+precision.</p>
+<h2 id="sec-ch11-deeper">Deeper method: transfer decisions, not only
+models</h2>
+<p>A predictive model can achieve similar error in two places and still
+lead to different decisions. Suppose a shortage-probability model gives
+a facility risk
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">p=0.3</annotation></semantics></math>
+in both settings. In the first setting, an emergency order costs little
+and usually arrives the next morning. In the second, an emergency
+shipment is slow and expensive. Even with identical probability
+estimates, optimal precautionary stock may differ. The decision depends
+on local losses, constraints and response options, not simply the
+distribution of predictions.</p>
+<p>Let action
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>∈</mo><mi>𝒜</mi></mrow><annotation encoding="application/x-tex">a\in\mathcal A</annotation></semantics></math>
+incur loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">L_s(a,Y)</annotation></semantics></math>
+in setting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>,
+and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_s(Y\mid X)</annotation></semantics></math>
+describe local uncertainty. The optimal local action for observed
+covariates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+is</p>
+<p>$$</p>
+<p>a_s^*(x)_{aA_s}E_s[L_s(a,Y)X=x].</p>
+<p>$$</p>
+<p>A transferred model may correctly estimate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p_s(Y\mid X)</annotation></semantics></math>
+and still select a poor action if it retains an outdated loss function
+or feasible set. This is particularly important when monetary costs,
+clinical consequences or regulatory permissions differ. A good transfer
+audit must therefore validate the <em>decision rule</em> as well as the
+predictive component.</p>
+<h3 id="a-two-action-example">A two-action example</h3>
+<p>Suppose action
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">a=1</annotation></semantics></math>
+orders a protective reserve and incurs known additional cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>,
+while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">a=0</annotation></semantics></math>
+leaves the reserve unpurchased. If a shortage occurs with probability
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+the loss from not ordering is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+and the reserve prevents that particular shortage under the simplified
+assumptions. The expected losses are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">C(1)=c</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>p</mi><mi>h</mi></mrow><annotation encoding="application/x-tex">C(0)=ph</annotation></semantics></math>,
+so the reserve is preferred when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mi>c</mi><mi>/</mi><mi>h</mi></mrow><annotation encoding="application/x-tex">p&gt;c/h</annotation></semantics></math>.
+A change in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+changes the decision threshold even with the same model.</p>
+<p>If the source has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>/</mi><mi>h</mi><mo>=</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">c/h=0.2</annotation></semantics></math>
+and the target has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>/</mi><mi>h</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">c/h=0.5</annotation></semantics></math>,
+a predicted risk of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.3</mn><annotation encoding="application/x-tex">0.3</annotation></semantics></math>
+triggers the reserve in the source but not in the target. Blindly
+transferring the source threshold creates a policy mismatch. For
+essential services, hard safety constraints may override this cost
+calculation; the point is the role of local consequences, not a
+universal threshold for medicine stocks.</p>
+<h2 id="robust-transfer-when-information-is-scarce">Robust transfer when
+information is scarce</h2>
+<p>Sometimes a target district has so little reliable data that a fitted
+local distribution is not credible. In that situation a robust decision
+may be more defensible than a speculative precise optimum. Define an
+uncertainty set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝒫</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\mathcal P_t</annotation></semantics></math>
+of plausible target distributions and choose</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>a</mi><mo>*</mo></msup><mo>∈</mo><mo>arg</mo><munder><mo>min</mo><mrow><mi>a</mi><mo>∈</mo><msub><mi>ℱ</mi><mi>t</mi></msub></mrow></munder><munder><mo>sup</mo><mrow><mi>P</mi><mo>∈</mo><msub><mi>𝒫</mi><mi>t</mi></msub></mrow></munder><msub><mi>𝔼</mi><mi>P</mi></msub><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+a^*\in\arg\min_{a\in\mathcal F_t}\sup_{P\in\mathcal P_t}\mathbb E_P L(a,\xi).
+</annotation></semantics></math></p>
+<div id="eq-ch11-robust-transfer">
+
+</div>
+<p>This minimax formulation asks which action has the best worst-case
+expected performance across the declared distributions. Its strength
+depends entirely on whether the uncertainty set captures relevant
+possibilities. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝒫</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\mathcal P_t</annotation></semantics></math>
+is unrealistically narrow, the result will still be fragile. If it is
+too broad, the method may produce excessive conservatism. Robust
+optimisation is a framework for representing uncertainty, not a
+substitute for measuring local conditions <span class="citation"
+data-cites="benTal2009 bertsimas2004">(Ben-Tal, El Ghaoui, and
+Nemirovski 2009; Bertsimas and Sim 2004)</span>.</p>
+<h3 id="an-example-in-water-allocation">An example in water
+allocation</h3>
+<p>Suppose a district can add capacity to one of two sites. Under normal
+seasonal demand, expanding site A costs less travel. During a dry-season
+shift, expanding site B serves a settlement that otherwise has no nearby
+functioning water source. A robust model may select B, but only if the
+dry-season scenario is considered plausible and the resulting cost is
+acceptable. A useful report displays the demand scenarios and the action
+preferred in each, rather than presenting the robust recommendation as
+an unquestionable scientific conclusion.</p>
+<h2 id="source-data-quality-and-target-performance">Source data quality
+and target performance</h2>
+<p>A common assumption in transfer studies is that more source data must
+be better. Not if their labels measure the wrong quantity. For a
+stock-out model, a source dataset with millions of dispensing entries
+may provide less information about latent demand than a small target
+dataset containing unmet requests during shortages. The source and
+target observations should be compared by their measurement process
+before any sample-size argument.</p>
+<p>One way to make this concrete is to describe the observation equation
+in each setting. Let true requested demand be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>,
+observed issues
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mo>min</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mo>,</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y=\min(D,I)</annotation></semantics></math>,
+and reported issues
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Y</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></msup><mo>=</mo><mi>Y</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y^{\mathrm{rep}}=Y+\epsilon</annotation></semantics></math>
+with recording error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>.
+If source facilities have ample stock, issues approximate demand. If
+target facilities are often out of stock, issues are systematically
+censored. A model of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>Y</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow></msup><annotation encoding="application/x-tex">Y^{\mathrm{rep}}</annotation></semantics></math>
+in the source cannot be assumed to identify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+in the target. This is a measurement and identifiability problem, not
+merely covariate shift.</p>
+<h3 id="the-danger-of-silent-imputation">The danger of silent
+imputation</h3>
+<p>When a target field is unavailable, replacing it with the source
+average may seem practical. But it can erase exactly the difference that
+matters. If local supplier lead time is unknown, assigning a source mean
+of three days can create a serious shortage risk in a location where
+deliveries routinely require two weeks. If the decision depends strongly
+on that parameter, the correct response is to collect it, use a
+sensitivity range or withhold the recommendation until it is
+verified.</p>
+<h2 id="a-practical-hierarchy-of-transfer-evidence">A practical
+hierarchy of transfer evidence</h2>
+<p>A sensible transfer project progresses through distinct levels:</p>
+<ol type="1">
+<li><p><em>Conceptual portability.</em> Can the decision and
+mathematical model be defined coherently in the new setting?</p></li>
+<li><p><em>Data compatibility.</em> Do target measurements exist with
+comparable definitions and adequate quality?</p></li>
+<li><p><em>Empirical adequacy.</em> Does the method pass independent
+target validation for the task it will perform?</p></li>
+<li><p><em>Operational feasibility.</em> Can people operate it on their
+devices, under their budgets and legal duties?</p></li>
+<li><p><em>Demonstrated benefit.</em> Does a credible target evaluation
+show the expected improvement in actual outcomes?</p></li>
+<li><p><em>Sustained benefit.</em> Can the institution maintain the
+service after initial project support ends?</p></li>
+</ol>
+<p>No later level is implied by an earlier one. A technically portable
+algorithm has achieved something useful, but its international benefit
+remains unproven until the later evidence exists.</p>
+<h2
+id="a-cross-country-research-collaboration-that-respects-local-expertise">A
+cross-country research collaboration that respects local expertise</h2>
+<p>A responsible international project should avoid treating local
+partners merely as providers of labels or devices. Their knowledge is
+required to define outcomes, identify missing constraints, interpret
+unusual measurements and understand institutional authority. Local
+experts may know that a route closes seasonally, that a record field
+changed after a procurement reform, or that users will not adopt a
+design requiring continuous internet. Those facts can determine the
+mathematical solution.</p>
+<p>An equitable collaboration should agree in advance on data ownership,
+authorship or credit, capacity building, publication permissions, local
+validation and who will maintain the result. A study should not extract
+records, publish a favourable cross-country comparison and leave
+participating institutions without access to usable tools. The book’s
+emphasis on reliable decisions includes the responsibilities of the
+people conducting research.</p>
+<h2
+id="why-success-in-one-setting-may-require-a-different-model-elsewhere">Why
+success in one setting may require a different model elsewhere</h2>
+<p>The same research question can call for different mathematical
+instruments. Where water demand is stable and source yield is the
+limiting factor, a conservation model and deterministic capacity
+optimisation may be sufficient. Where demand is strongly seasonal, a
+time-series model and robust stock or storage decision may matter. Where
+data collection is weak, careful sampling and measurement could be the
+most valuable technical contribution. Where governance is the main
+bottleneck, the priority may be institutional redesign rather than
+computation.</p>
+<p>A good international handbook should therefore teach readers to
+<em>choose</em> among methods, not to deploy one method everywhere. That
+is the sense in which its ideas can be world-class while remaining
+grounded in resource constraints: they are precise about what must be
+known and honest about when the available information cannot support a
+claim.</p>
+<h2 id="sec-ch11-extended">Extended investigation: a country label is
+not a dataset</h2>
+<p>Imagine four teams preparing water-service proposals for Uganda,
+Kenya, Nepal and Peru. The first team has a nationally reported
+drinking-water indicator. The second has a district road network and
+settlement estimates. The third has records from a small household
+survey. The fourth has costs supplied by a regional engineering office.
+A careless joint report could place the numbers in one table and compare
+them as though they measured the same thing. Such a table would be
+attractive and largely uninterpretable.</p>
+<p>The teams should begin by defining a common target: for example, the
+proportion of residents of a specified district who can reach a
+functioning source meeting an agreed water-quality standard within a
+stated one-way travel time in a given season. A national survey
+estimate, a geospatial route model and administrative records may
+provide parts of the evidence, but none automatically gives this target
+quantity. Some sources measure access categories rather than routes.
+Some survey responses describe a household’s primary source rather than
+its actual time under bad weather. Some administrative records count
+installed infrastructure without checking whether it functions.</p>
+<h3 id="a-measurement-compatibility-table">A measurement compatibility
+table</h3>
+<p>For every source, write a row with unit, population frame, time
+period, observation process and likely errors. Examples include:</p>
+<ul>
+<li><p>a survey percentage with a weighted national population
+denominator and documented uncertainty;</p></li>
+<li><p>estimated road distance from a mapped settlement centroid to the
+nearest listed water point;</p></li>
+<li><p>service records showing hours that a particular pump was
+operational;</p></li>
+<li><p>a water-quality test with its date, tested contaminant and
+measurement uncertainty;</p></li>
+<li><p>the present-year local cost of installing and maintaining a
+particular type of point.</p></li>
+</ul>
+<p>These quantities are complementary, not interchangeable. A rigorous
+cross-country comparison may therefore present different levels of
+evidence rather than a falsely harmonised ranking. It may also select
+one narrower question that can be answered consistently.</p>
+<h2 id="when-it-is-sensible-to-borrow-evidence">When it is sensible to
+borrow evidence</h2>
+<p>Consider estimating a regression parameter for demand response to
+seasonal rainfall. A source country has many observations; a target
+district has only a few. Borrowing strength may reduce estimation
+variance if physical mechanisms and measurement are similar. It can
+increase bias if the target uses a different water tariff, irrigation
+practice, or reporting protocol. Hierarchical modelling is not a
+guarantee of transferability. It formalises a set of assumptions about
+how source and target parameters relate <span class="citation"
+data-cites="gelman2007">(Gelman and Hill 2007)</span>.</p>
+<p>A transparent analysis might compare three predictors: a target-only
+baseline, a fully transferred source model, and a partially pooled
+model. Evaluate all three on a temporally separated local target set,
+report computational and data costs, and identify whether differences
+matter for the final decision. If the target sample is too small for a
+reliable comparison, the result should be an uncertainty statement and a
+measurement plan, not a declaration that the most sophisticated model
+“generalises”.</p>
+<h3 id="a-simple-mathematical-sensitivity-bound">A simple mathematical
+sensitivity bound</h3>
+<p>Suppose a policy loss is bounded in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><msub><mi>L</mi><mo>max</mo></msub><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,L_{\max}]</annotation></semantics></math>
+and source and target joint distributions differ. If their
+total-variation distance is at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
+under the convention
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">V</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>Q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>sup</mo><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">|</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{TV}(P,Q)=\sup_A|P(A)-Q(A)|</annotation></semantics></math>,
+then for every fixed decision
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>𝔼</mi><mi>t</mi></msub><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>𝔼</mi><mi>s</mi></msub><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>ξ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mo>≤</mo><msub><mi>L</mi><mo>max</mo></msub><mi>δ</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+|\mathbb E_t L(a,\xi)-\mathbb E_s L(a,\xi)|\le L_{\max}\delta.
+</annotation></semantics></math></p>
+<div id="eq-ch11-tv">
+
+</div>
+<p>The inequality follows by scaling a bounded nonnegative loss to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math>
+and using the characterisation of total variation as the largest
+expectation difference over such functions. If the feasible sets are
+identical, Proposition <a
+href="chapter11.html#sec-ch11-decision">section</a> then bounds the
+target regret of a source-optimal decision by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><msub><mi>L</mi><mo>max</mo></msub><mi>δ</mi></mrow><annotation encoding="application/x-tex">2L_{\max}\delta</annotation></semantics></math>.
+This is a mathematically valid conditional statement, not an estimator
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>.
+Without enough comparable observations to establish a useful bound, the
+theorem may provide no practical assurance.</p>
+<p>When losses are unbounded or the feasible set changes, this shortcut
+no longer applies. That is one reason physical access requirements and
+safety constraints are often more important to check than average loss
+alone.</p>
+<h2 id="a-transfer-audit-for-a-prediction-model">A transfer audit for a
+prediction model</h2>
+<p>A workable audit has four layers. First, evaluate whether input
+fields still describe the same variables: height above sea level, travel
+time, patient age or daily demand. Second, compare source and target
+input distributions, including missingness and relevant subgroups.
+Third, measure target prediction performance on held-out observations
+that reflect actual deployment. Fourth, compute decisions and compare
+their costs, feasibility and distribution of consequences under local
+conditions.</p>
+<p>A source model might maintain excellent aggregate accuracy while
+failing for remote facilities that were rare in the training sample. The
+audit must therefore choose meaningful groups before seeing the errors.
+Reporting only the average can conceal the very contexts that justified
+the adaptation project.</p>
+<h3 id="calibration-is-distinct-from-ranking">Calibration is distinct
+from ranking</h3>
+<p>For a risk predictor, discrimination assesses whether higher-risk
+cases tend to receive higher scores; calibration asks whether
+predictions have the intended frequency interpretation. A model trained
+where shortages are common may rank facilities sensibly elsewhere but
+systematically overstate absolute shortage probability. Local
+calibration may help if sufficient target outcomes are available and the
+ranking mechanism is reasonably stable. It does not repair a model built
+on predictors that are absent or newly defined. In a decision rule,
+recalibration may alter which cases cross a threshold, changing staffing
+and cost even if ranking remains unchanged <span class="citation"
+data-cites="guo2017 ovadia2019">(Guo et al. 2017; Ovadia
+2019)</span>.</p>
+<h2 id="environmental-and-institutional-stress-tests">Environmental and
+institutional stress tests</h2>
+<p>Cross-country adaptation should deliberately examine stresses that
+vary across places: seasonal road closure, power outages, cost of data
+connectivity, staff turnover, storage conditions, language, procurement
+bottlenecks and regulatory constraints. Some are measurable numerical
+parameters; others require structured interviews or practical tests.
+Their presence should not be reduced to a generic “country effect”
+without attempting to identify the mechanism.</p>
+<p>For an offline application, a short test may be more informative than
+a long theoretical argument: install it on an intended device,
+disconnect the internet, enter a record, interrupt power, restart, and
+restore an encrypted backup. For a facility plan, verify a small set of
+travel-time predictions through field journeys at the times and seasons
+relevant to the decision. This converts otherwise invisible assumptions
+into evidence.</p>
+<h2 id="how-to-write-a-responsible-multi-country-result">How to write a
+responsible multi-country result</h2>
+<p>A cross-country study should clearly separate <em>common method</em>
+from <em>common evidence</em>. One chapter can use the same optimisation
+model in several settings and show how different inputs change the
+recommended decision. That demonstrates a reusable computational
+procedure. It does not establish that the recommendations are correct in
+each country unless the required local measurements and checks were
+performed.</p>
+<p>A suitable report therefore contains a source inventory, local
+adjustments, validation results by setting, uncertainty, computational
+resource use, ethical and legal limitations, and a list of decisions
+that remain unsupported. If only one country has measured data, describe
+the others as scenario studies. This is still a valuable book example,
+provided that the boundary between observation and illustration is
+unmistakable.</p>
+<h3 id="a-simple-nontransferability-counterexample">A simple
+nontransferability counterexample</h3>
+<p>Let a source population contain only two types of sites, with
+predictors
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">X=0</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">X=1</annotation></semantics></math>.
+Suppose the outcome rule is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">Y=X</annotation></semantics></math>
+in the source. A perfectly fitted predictor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">f(X)=X</annotation></semantics></math>
+has zero source error. In the target, if the outcome instead follows
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mn>1</mn><mo>−</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">Y=1-X</annotation></semantics></math>,
+the same predictor has error one under absolute loss at every site, even
+if the target and source distributions of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+are exactly equal. Reweighting cannot help, because the conditional
+relationship changed. This elementary example is worth more than a claim
+that a certain algorithm is “domain invariant” without supporting
+assumptions.</p>
+<h2 id="putting-a-country-adaptation-record-into-use">Putting a Country
+Adaptation Record into use</h2>
+<p>The record should list source and target sites; a one-sentence
+decision; intended users; data-field definitions; documented differences
+in population, environment, service process and constraints; methods for
+identifying missing values; evidence on support and shift; independent
+target validation; subgroup and safety checks; governance permissions;
+and the final adoption decision. Include a table with an “unknown”
+column. The team should not be pressured to fill every unknown with a
+guess so that the transfer can be declared complete.</p>
+<p>A capable researcher may conclude that the most useful next
+investment is local measurement rather than another model. This is
+consistent with the book’s guiding question: what information and
+computation are sufficient to make this particular decision reliably?
+Transferability is not achieved by refusing to change a model; it is
+achieved by understanding which parts of the solution must change.</p>
+<h2 id="sec-ch11-workshop">Mathematical workshop: which claims survive
+distribution shift?</h2>
+<p>When a model moves, a seemingly minor change in data collection can
+invalidate the formula used to transfer its results. We examine the
+conditions behind a few common procedures, then turn the mathematics
+into observable checks.</p>
+<h3 id="standardisation-for-a-target-population">Standardisation for a
+target population</h3>
+<p>Suppose a programme’s treatment effect differs between rural and
+urban facilities. In the source evaluation, the conditional effects are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">n</mi></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\tau(\mathrm{urban})=2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\tau(\mathrm{rural})=6</annotation></semantics></math>
+outcome units. If urban facilities make up
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>80</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">80\%</annotation></semantics></math>
+of the source, the source average is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.8</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mn>0.2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>6</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">0.8(2)+0.2(6)=2.8</annotation></semantics></math>.
+If only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">30\%</annotation></semantics></math>
+of target facilities are urban, the standardised target effect would
+be</p>
+<p>$$</p>
+<p>_t=0.3(2)+0.7(6)=4.8.</p>
+<p>$$</p>
+<p>The calculation is elementary. Its interpretation depends on a strong
+substantive assumption: the conditional treatment effects for urban and
+rural facilities would be the same in both settings after accounting for
+relevant effect modifiers. If rural target facilities have different
+roads, procurement contracts or implementation support, the effect of
+the intervention may change even within the rural category.
+Standardisation cannot correct omitted effect modifiers <span
+class="citation" data-cites="pearl2014 hernan2020">(Pearl and Bareinboim
+2014; Hernán and Robins 2020)</span>.</p>
+<h3 id="uncertainty-in-standardisation">Uncertainty in
+standardisation</h3>
+<p>If the conditional effects are estimated rather than known, their
+errors matter. Under a highly simplified model in which two conditional
+estimators are independent with variances
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mi>u</mi></msub><annotation encoding="application/x-tex">v_u</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mi>r</mi></msub><annotation encoding="application/x-tex">v_r</annotation></semantics></math>,
+the variance of a weighted target estimate with fixed weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1-p)</annotation></semantics></math>
+is</p>
+<p>$$</p>
+<p>(p_u+(1-p)_r) =p<sup>2v_u+(1-p)</sup>2v_r.</p>
+<p>$$</p>
+<p>If they are correlated, include the covariance term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">v</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mi>u</mi></msub><mo>,</mo><msub><mover><mi>τ</mi><mo accent="true">̂</mo></mover><mi>r</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">2p(1-p)\mathrm{Cov}(\widehat\tau_u,\widehat\tau_r)</annotation></semantics></math>.
+If the target proportion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
+is estimated from a survey, its uncertainty must also be considered. An
+exercise that treats every input as known may understate confidence even
+when the central formula is correct.</p>
+<h2 id="a-prediction-transfer-audit-with-two-stages">A prediction
+transfer audit with two stages</h2>
+<p>Suppose a binary shortage model was trained in a source region and
+will be used for new sites. Stage one examines whether the same
+information will be available at the time of decision: previous verified
+stock levels, approved orders, supplier delays and facility
+characteristics. A variable based on next month’s deliveries cannot be
+used for an order made today. This is leakage, not a country-specific
+technical issue.</p>
+<p>Stage two evaluates held-out target observations that resemble
+deployment: future times, different sites and routine rather than
+retrospectively corrected records. Report discrimination where relevant,
+calibration, subgroup error, uncertainty, and the operational loss of
+decisions under an explicitly chosen threshold. If the model predicts
+probabilities, compare its predicted and observed frequencies within
+suitably chosen groups, keeping the sample size of each group visible.
+Small samples can make apparent differences unreliable.</p>
+<p>If the model’s only advantage is a slight improvement on a random-row
+split, while a site-held-out test shows no benefit, do not justify a
+costly deployment. It may be more useful to collect new local data or
+choose a robust decision rule that requires less information. This
+repeats the book’s central principle in a new setting: computation
+should earn its cost in relation to the decision.</p>
+<h2 id="when-reweighting-can-make-a-result-worse">When reweighting can
+make a result worse</h2>
+<p>In importance weighting, a source observation from a
+rare-but-important target subgroup may acquire a large weight. The
+estimated target risk can become highly variable. For example, suppose
+99 source observations have weight one and a single observation has
+weight 99. Equation <a href="chapter11.html#eq-ch11-ess">equation</a>
+gives</p>
+<p>$$</p>
+<p>n_{}= =,</p>
+<p>$$</p>
+<p>although the raw dataset contains 100 observations. The computation
+shows severe concentration; it does not imply that the statistical
+uncertainty is exactly the same as having four independent observations.
+The correct response may be targeted data collection in the
+underrepresented group.</p>
+<p><em>Proposition.</em> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+be probability distributions on the same measurable space and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+take values in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>M</mi><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,M]</annotation></semantics></math>.
+Under
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">V</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo>,</mo><mi>Q</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>sup</mo><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">|</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{TV}(P,Q)=\sup_A|P(A)-Q(A)|</annotation></semantics></math>,
+one has</p>
+<p>$$</p>
+<p>|E_P g-E_Q g|M,(P,Q).</p>
+<p>$$</p>
+<p><em>Proof.</em> For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M&gt;0</annotation></semantics></math>,
+write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>/</mi><mi>M</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">g/M\in[0,1]</annotation></semantics></math>.
+The layer-cake representation gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mi>/</mi><mi>M</mi><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><mn>𝟏</mn><mo stretchy="false" form="prefix">{</mo><mi>g</mi><mi>/</mi><mi>M</mi><mo>&gt;</mo><mi>u</mi><mo stretchy="false" form="postfix">}</mo><mspace width="0.167em"></mspace><mi>d</mi><mi>u</mi></mrow><annotation encoding="application/x-tex">g/M=\int_0^1\mathbf1\{g/M&gt;u\}\,du</annotation></semantics></math>.
+Fubini’s theorem and the definition of total variation yield</p>
+<p>$$</p>
+<p>|E_P(g/M)-E_Q(g/M)| _0^1|P(g/M&gt;u)-Q(g/M&gt;u)|,du (P,Q).</p>
+<p>$$</p>
+<p>Multiply by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>.
+The case
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M=0</annotation></semantics></math>
+is immediate. ◻</p>
+<p>This is a bound on expectations under a known distributional
+distance. It is not evidence that the distance is small. If a target
+site has states absent from the source, or if local observations cannot
+establish an informative discrepancy, the formula can be numerically
+correct and operationally useless.</p>
+<h2 id="data-provenance-exercise-with-international-indicators">Data
+provenance exercise with international indicators</h2>
+<p>The WHO/UNICEF JMP publishes documented country and other WASH
+estimates for specified settings <span class="citation"
+data-cites="jmp2026">(WHO/UNICEF Joint Monitoring Programme
+2026)</span>. These are valuable for international context, but the
+operational task must match the indicator. An estimate of safely managed
+drinking-water service in households is not an estimate of a particular
+project’s pump reliability; a school sanitation indicator is not a
+clinic water-quality measurement. A sound exercise begins by selecting
+one service type and one clearly defined indicator, rather than
+collecting all available figures and looking for attractive plots.</p>
+<p>A reproducible student workflow is as follows. Visit the official API
+documentation; record the endpoint and field definitions; select country
+codes and a reference year; download the unmodified response to a named
+file; save the retrieval date and checksum; inspect missing values and
+uncertainty fields; construct a table using only comparable fields; and
+write an interpretation that does not exceed the geographic and temporal
+resolution of the observations. If the interface or coverage changes,
+document the change and update the exercise. Nothing in this book
+asserts numerical national WASH results that have not actually been
+retrieved and checked.</p>
+<h3 id="why-national-percentages-cannot-choose-a-village-site">Why
+national percentages cannot choose a village site</h3>
+<p>A national proportion is an aggregate over many households. Facility
+siting requires local locations, service needs and travel constraints.
+Two districts can have the same national contribution to a reported
+indicator while differing greatly in the distribution of underserved
+settlements. Inferring local access from a country mean is an ecological
+inference error. Even a high-quality national estimate cannot replace
+local field data for site-specific engineering decisions.</p>
+<h2 id="a-transfer-decision-with-three-possible-outcomes">A transfer
+decision with three possible outcomes</h2>
+<p>After a local validation, the team might discover one of three
+situations. First, the model transfers with adequate performance and
+feasible operating costs: adopt with monitoring and local
+accountability. Second, the model remains potentially useful but needs
+recalibration, retraining or a changed decision threshold: perform the
+adaptation and validate again. Third, the model lacks required inputs,
+violates local constraints or creates unacceptable distributional harm:
+withdraw the transfer recommendation and reconsider the problem
+definition.</p>
+<p>The team’s credibility does not depend on always obtaining the first
+outcome. A transferable book of methods must teach readers when to stop
+or reformulate an innovation. The Country Adaptation Record should
+preserve every such decision and the evidence behind it so that future
+teams do not repeat an avoidable failure.</p>
+<h2 id="exercises-and-cross-country-investigations">Exercises and
+cross-country investigations</h2>
+<ol type="1">
+<li><p>Prove Proposition <a
+href="chapter11.html#sec-ch11-risk">section</a> for discrete predictors
+with two categories. State where the proof breaks if the target has a
+category never observed in the source.</p></li>
+<li><p>In the urban/rural example, calculate the two importance weights
+and use them to recover target error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.24</mn><annotation encoding="application/x-tex">0.24</annotation></semantics></math>.
+Compute the unweighted source error and explain the gap.</p></li>
+<li><p>Derive the ESS diagnostic for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math>
+weights equal to one and one weight equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>.
+Describe the limit as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>→</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">M\to\infty</annotation></semantics></math>.</p></li>
+<li><p>Construct two settings with identical input distributions but
+different conditional outcomes. Explain why importance weighting cannot
+repair transfer in this example.</p></li>
+<li><p>Derive equation <a
+href="chapter11.html#eq-ch11-partial-pool">equation</a> by completing
+the square in a normal likelihood times a normal prior.</p></li>
+<li><p>Give a setting in which the same inventory conservation equation
+transfers correctly but the same reorder point is dangerously
+low.</p></li>
+<li><p>Recalculate a simple facility-location problem when one
+previously available road becomes impassable. Identify why source
+optimality no longer guarantees target feasibility.</p></li>
+<li><p>Explain every assumption behind the regret guarantee of
+Proposition <a href="chapter11.html#sec-ch11-decision">section</a>. Find
+a counterexample if the feasible sets differ.</p></li>
+<li><p>Use the JMP documentation to choose one precisely defined WASH
+indicator. Write down its unit, reference year, population, geography
+and limitations before downloading any data.</p></li>
+<li><p>Draft a Country Adaptation Record for transferring a school
+attendance or clinic appointment system from one district to another.
+Include legal and language differences.</p></li>
+<li><p>Change the target covariate mix and conditional error rates in
+the companion code. Explain which experiment satisfies covariate shift
+and which does not.</p></li>
+<li><p>Design an independent target validation that withholds entire
+sites rather than random records within sites. Explain when this
+distinction matters.</p></li>
+</ol>
+<h5 id="what-this-chapter-establishes.">What this chapter
+establishes.</h5>
+<p>A reusable method is not the same as a universally valid prediction
+or universal intervention effect. Transfer requires a map of what is
+invariant, new measurements of what changes, independent validation and
+a fresh decision. The final chapter brings those habits together into
+one complete project from first problem statement to handover.</p>
+</article><div class="page-links"><a href="chapter10.html">← Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook →</a></div><p class="notice">Educational working edition. Synthetic calculations and demonstrations are not evidence of field impact. <a href="full-original-manuscript.pdf">Read the complete original PDF</a>.</p></main></div><script src="search.js"></script></body></html>

@@ -1,0 +1,1340 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Chapter 4 — Mathematical Models for Prediction and Understanding | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html" class="current">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-prediction">Mathematical Models for Prediction and
+Understanding</h1>
+<blockquote>
+<p><em>What can we predict from imperfect observations? How certain
+should we be, and how can we discover when a good-looking prediction
+will fail in an unfamiliar place? This chapter develops regression,
+count models, forecasting, spatial prediction and honest validation,
+then connects them to decisions about air-quality monitoring.</em></p>
+</blockquote>
+<h2 id="a-prediction-is-an-answer-to-a-particular-question">A prediction
+is an answer to a particular question</h2>
+<p>A district officer may ask whether a market is likely to be flooded
+tomorrow. A health centre may ask how many patients will arrive next
+Monday. An environmental planner may ask about particulate pollution
+between monitoring stations. All three questions involve an unknown
+quantity, but the information available before the answer is needed
+differs. A rainfall forecast issued tomorrow morning cannot legitimately
+use tomorrow evening’s recorded rainfall; a prediction at a new
+air-quality station cannot use yesterday’s readings from that station if
+its purpose is to establish how well the method works <em>without</em> a
+monitor there. The time and location of available information are part
+of the mathematics of the problem, not administrative details.</p>
+<p>Write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+for the quantity of interest,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+for predictors actually available when a decision is made, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+for a prediction rule. The point prediction is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mo>=</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widehat Y=f(X)</annotation></semantics></math>.
+For squared-error loss, the population-optimal rule is the conditional
+expectation,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>f</mi><mo>*</mo></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+f^*(x)=\mathbb E[Y\mid X=x].
+</annotation></semantics></math></p>
+<div id="eq-conditional-best">
+
+</div>
+<p>This result needs assumptions: the conditional mean must exist and
+the squared loss must represent the error we wish to minimise. If
+underestimating medicine demand is far more costly than overestimating
+it, the conditional mean need not be the decision-relevant summary. If
+the officer must choose an action, we ultimately need
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>arg</mo><msub><mo>min</mo><mi>a</mi></msub><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\arg\min_a\mathbb E[L(a,Y)\mid X]</annotation></semantics></math>,
+as Chapter 1 argued. Prediction is often an input to that calculation,
+not its final answer.</p>
+<p><em>Proposition.</em> Assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>Y</mi><mn>2</mn></msup><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>&lt;</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">\mathbb E[Y^2\mid X=x]&lt;\infty</annotation></semantics></math>.
+For any real number
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>,</p>
+<p>$$</p>
+<p>E[(Y-c)^2X=x] =(YX=x)+(c-E[YX=x])^2.</p>
+<p>$$</p>
+<p>Hence the minimum occurs at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">c=\mathbb E[Y\mid X=x]</annotation></semantics></math>.</p>
+<p><em>Proof.</em> Write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">m=\mathbb E[Y\mid X=x]</annotation></semantics></math>
+and decompose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>−</mo><mi>c</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>m</mi><mo>−</mo><mi>c</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y-c=(Y-m)+(m-c)</annotation></semantics></math>.
+Square both sides and take conditional expectations. The mixed term
+vanishes because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>Y</mi><mo>−</mo><mi>m</mi><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbb E[Y-m\mid X=x]=0</annotation></semantics></math>.
+What remains is the displayed decomposition, whose second term cannot be
+negative. ◻</p>
+<p>The proposition is simple, but it exposes an important limitation.
+Even the best possible forecast carries irreducible uncertainty
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Var}(Y\mid X=x)</annotation></semantics></math>.
+A sufficiently clever algorithm cannot recover information that was
+never observed. The proper question is whether the error that remains is
+small enough for the intended use. This perspective is consistent with
+statistical decision theory and the scoring-rule literature <span
+class="citation" data-cites="gneiting2007 raiffa1968">(Gneiting and
+Raftery 2007; Raiffa 1968)</span>.</p>
+<h2 id="constructing-regression-from-the-residuals">Constructing
+regression from the residuals</h2>
+<p>Suppose a clinic has observations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>,</mo><msub><mi>y</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x_i,y_i)</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>i</mi></msub><annotation encoding="application/x-tex">x_i</annotation></semantics></math>
+is the number of staffed service hours and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">y_i</annotation></semantics></math>
+is the number of patients processed. A linear description begins with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>x</mi><mi>i</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i=\beta_0+\beta_1x_i+\epsilon_i</annotation></semantics></math>.
+It is tempting to describe
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
+as the effect of additional staff hours. That would be premature:
+facilities may schedule more staff precisely when they expect more
+patients. A fitted slope can describe an association without identifying
+a causal intervention. Chapter 3’s discussion of measurement and
+selection still applies.</p>
+<p>The least-squares estimates minimise</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msubsup><mi>x</mi><mi>i</mi><mi>𝖳</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>=</mo><mo stretchy="false" form="postfix">∥</mo><mi>y</mi><mo>−</mo><mi>X</mi><mi>β</mi><msubsup><mo stretchy="false" form="postfix">∥</mo><mn>2</mn><mn>2</mn></msubsup><mi>.</mi></mrow><annotation encoding="application/x-tex">
+Q(\beta)=\sum_{i=1}^n(y_i-x_i^{\mathsf T}\beta)^2
+=\|y-X\beta\|_2^2.
+</annotation></semantics></math></p>
+<div id="eq-ols">
+
+</div>
+<p>For a model with an intercept, the first column of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+consists of ones. Differentiating gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∇</mi><mi>Q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2</mn><msup><mi>X</mi><mi>𝖳</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>β</mi><mo>−</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\nabla Q(\beta)=2X^{\mathsf T}(X\beta-y)</annotation></semantics></math>.
+A stationary point therefore satisfies the normal equations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>=</mo><msup><mi>X</mi><mi>𝖳</mi></msup><mi>y</mi></mrow><annotation encoding="application/x-tex">X^{\mathsf T}X\widehat\beta=X^{\mathsf T}y</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+has full column rank,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi></mrow><annotation encoding="application/x-tex">X^{\mathsf T}X</annotation></semantics></math>
+is positive definite and the minimiser is unique. Otherwise some
+coefficients are not separately identifiable, even when fitted
+predictions may be well defined.</p>
+<p><em>Proposition.</em> If the columns of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+are linearly independent, then the residual
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>y</mi><mo>−</mo><mi>X</mi><mover><mi>β</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">r=y-X\widehat\beta</annotation></semantics></math>
+satisfies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>𝖳</mi></msup><mi>r</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">X^{\mathsf T}r=0</annotation></semantics></math>.
+The vector of fitted values is the orthogonal projection of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+onto the column space of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
+<p><em>Proof.</em> The normal equations imply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>𝖳</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>−</mo><mi>X</mi><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">X^{\mathsf T}(y-X\widehat\beta)=0</annotation></semantics></math>.
+Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+is orthogonal to every column of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>,
+hence to every vector in their span. Since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mover><mi>β</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">X\widehat\beta</annotation></semantics></math>
+is itself in that span, the projection property follows. ◻</p>
+<p>This gives a practical diagnostic. Large residuals may arise from
+unusual observations or an inadequate model; small residuals do not
+prove that an omitted cause is irrelevant. The equations also explain
+why a nearly singular
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi></mrow><annotation encoding="application/x-tex">X^{\mathsf T}X</annotation></semantics></math>
+is dangerous. When two predictors carry almost the same information,
+substantially different coefficient vectors can produce almost identical
+predictions. A reader should not mistake numerical sensitivity for
+evidence that two economic or physical mechanisms have large, opposite
+effects.</p>
+<h3 id="what-regularisation-changes">What regularisation changes</h3>
+<p>Ridge regression replaces
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+by</p>
+<p>$$</p>
+<p>Q_()=|y-X|<em>2^2+|</em>{-0}|_2^2,</p>
+<p>$$</p>
+<p>where the intercept is not usually penalised and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\lambda\ge0</annotation></semantics></math>.
+After centring the variables, its solution is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi><mo>+</mo><mi>λ</mi><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mi>X</mi><mi>𝖳</mi></msup><mi>y</mi></mrow><annotation encoding="application/x-tex">(X^{\mathsf T}X+\lambda I)^{-1}X^{\mathsf T}y</annotation></semantics></math>.
+The additional term stabilises directions that would otherwise have
+small eigenvalues, but introduces bias. It does not repair biased
+sampling, inaccurate sensors or predictors measured after the decision
+time. Standardise predictors before penalising coefficients, using the
+training data only. Otherwise a change of measurement units changes
+which coefficient is penalised most strongly <span class="citation"
+data-cites="hastie2009 bishop2006">(Hastie, Tibshirani, and Friedman
+2009; Bishop 2006)</span>.</p>
+<p><em>Example.</em> Imagine two weather stations where daily
+electricity consumption and refrigerator use track each other closely. A
+regression for peak load uses both. If one column almost duplicates the
+other, each coefficient may vary greatly when one day is removed, even
+though total-load predictions barely change. Keep the two roles
+distinct: prediction can remain acceptable while component-level
+explanation is unreliable. If the engineering decision is whether to
+increase generator capacity, prediction of the total may suffice. If the
+decision is whether to replace refrigerators, the individual effect
+demands stronger identification.</p>
+<h2 id="counts-rates-and-probabilities-are-different-outcomes">Counts,
+rates and probabilities are different outcomes</h2>
+<p>Not every observation is well represented by ordinary least squares.
+A weekly count of stock-out incidents is nonnegative and discrete. A
+proportion of late reports lies between zero and one. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Y_i</annotation></semantics></math>
+is a count with exposure
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>i</mi></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E_i&gt;0</annotation></semantics></math>,
+a Poisson regression can model</p>
+<p>$$</p>
+<p>Y_iX_i(_i), _i=E_i+_0+X_i^{T}.</p>
+<p>$$</p>
+<p>The offset
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><msub><mi>E</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\log E_i</annotation></semantics></math>
+has coefficient fixed at one. It expresses a rate model: doubling
+exposure with unchanged conditions doubles the expected count. For
+instance, clinics serving populations of 12,000 and 120,000 cannot be
+compared fairly using raw event counts without explaining the exposure.
+The offset assumption itself should be checked; the event rate may not
+scale exactly with population.</p>
+<p>The Poisson variance equals the mean conditional on the predictors.
+Operational counts often vary more widely, because risk differs across
+sites or events cluster in time. A negative-binomial model introduces
+additional dispersion, commonly written
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>μ</mi><mo>+</mo><mi>α</mi><msup><mi>μ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(Y\mid X)=\mu+\alpha\mu^2</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\alpha&gt;0</annotation></semantics></math>.
+It may improve uncertainty assessment, but should not be chosen
+automatically: excess variance can also reveal omitted structure,
+inconsistent observation periods or changes in recording. For binary
+outcomes, logistic regression gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo>=</mo><mn>1</mn><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>+</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><msup><mi>X</mi><mi>𝖳</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mo stretchy="false" form="postfix">}</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\Pr(Y=1\mid X)=\{1+\exp(-X^{\mathsf T}\beta)\}^{-1}</annotation></semantics></math>;
+the probability needs calibration against observed frequencies, not only
+a classification threshold. See <span class="citation"
+data-cites="mccullagh1989 agresti2015">McCullagh and Nelder (1989;
+Agresti 2015)</span> for the broader generalised linear model
+framework.</p>
+<p><em>Example.</em> Suppose an illustrative facility serving 20,000
+people records ten reports, while another serving 80,000 records twenty.
+The second has more reports but half the rate:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.5</mn><annotation encoding="application/x-tex">0.5</annotation></semantics></math>
+versus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.25</mn><annotation encoding="application/x-tex">0.25</annotation></semantics></math>
+per 1,000 residents. Which facility is “worse” depends on what a report
+means and how reliably it was recorded. A rate adjustment cannot
+distinguish genuine risk from stronger reporting systems.</p>
+<h2 id="forecasting-respects-the-direction-of-time">Forecasting respects
+the direction of time</h2>
+<p>Time series are not ordinary shuffled tables. A model fitted with
+future observations is not a forecast of the past, even if
+cross-validation software calls it one. A useful baseline is
+persistence,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>y</mi><mo accent="true">̂</mo></mover><mrow><mi>t</mi><mo>+</mo><mi>h</mi><mo>∣</mo><mi>t</mi></mrow></msub><mo>=</mo><msub><mi>y</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\widehat y_{t+h\mid t}=y_t</annotation></semantics></math>,
+while seasonal naive prediction uses the last observation in the
+corresponding season. These are difficult to beat consistently in sparse
+settings and must not be omitted merely because a complicated algorithm
+is available <span class="citation" data-cites="hyndman2021">(Hyndman
+and Athanasopoulos 2021)</span>.</p>
+<p>An autoregressive model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>t</mi></msub><mo>=</mo><mi>c</mi><mo>+</mo><mi>ϕ</mi><msub><mi>y</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>ϵ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">y_t=c+\phi y_{t-1}+\epsilon_t</annotation></semantics></math>
+assumes a particular dependence structure. When
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">|</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">|</mo></mrow><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">|\phi|&lt;1</annotation></semantics></math>,
+shocks decay geometrically in expectation and the process can have a
+finite stationary variance under the usual white-noise assumptions. But
+structural changes can invalidate a good historical fit. Likewise a
+state-space representation,</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>z</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>F</mi><msub><mi>z</mi><mi>t</mi></msub><mo>+</mo><mi>G</mi><msub><mi>u</mi><mi>t</mi></msub><mo>+</mo><msub><mi>w</mi><mi>t</mi></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>y</mi><mi>t</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>H</mi><msub><mi>z</mi><mi>t</mi></msub><mo>+</mo><msub><mi>v</mi><mi>t</mi></msub><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+z_{t+1}&amp;=Fz_t+Gu_t+w_t,\\
+y_t&amp;=Hz_t+v_t,
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<p>separates latent system conditions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">z_t</annotation></semantics></math>
+from noisy measurements
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">y_t</annotation></semantics></math>.
+Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>t</mi></msub><annotation encoding="application/x-tex">w_t</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mi>t</mi></msub><annotation encoding="application/x-tex">v_t</annotation></semantics></math>
+may represent distinct uncertainties. This becomes useful when an
+observed signal has both process variability and sensor error. A Kalman
+filter is a conditional estimator under linear-Gaussian assumptions; a
+forecast still depends on knowing those matrices sufficiently well <span
+class="citation" data-cites="kalman1960 durbin2012">(Kalman 1960; Durbin
+and Koopman 2012)</span>.</p>
+<h3 id="a-rolling-origin-evaluation">A rolling-origin evaluation</h3>
+<p>At decision time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+estimate parameters from data available through
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+produce forecasts for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t+1</annotation></semantics></math>
+through
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mi>h</mi></mrow><annotation encoding="application/x-tex">t+h</annotation></semantics></math>,
+and score only when these outcomes become observable. Repeat for several
+origins. If hyperparameters are tuned, that operation belongs inside
+each training period. A later revision to a weather dataset cannot be
+silently used to represent what was known at the earlier forecast date.
+Record the data release or observation timestamp separately from the
+physical measurement date.</p>
+<h2 id="spatial-prediction-a-station-is-not-a-pixel">Spatial prediction:
+a station is not a pixel</h2>
+<p>Air-quality monitoring offers a natural reason to learn spatial
+statistics. A sensor measures air at its particular location and time,
+subject to its device, calibration and sampling conditions. A mapped
+grid cell is a numerical estimate for an area. Neither is an exact
+substitute for the other. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+denote location and write</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>ϵ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+Y(s)=m(s)+Z(s)+\epsilon(s),
+</annotation></semantics></math></p>
+<div id="eq-spatial-model">
+
+</div>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">m(s)</annotation></semantics></math>
+is a trend or covariate regression,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z(s)</annotation></semantics></math>
+is a spatially related residual process, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\epsilon(s)</annotation></semantics></math>
+is measurement error or fine-scale variability. These components are
+useful only to the extent that their assumptions can be checked. For
+example, a spatial Gaussian-process model might specify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mi>′</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>k</mi><mi>θ</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>s</mi><mi>′</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Cov}(Z(s),Z(s&#39;))=k_\theta(s,s&#39;)</annotation></semantics></math>
+with a range parameter controlling how quickly similarity decays with
+separation <span class="citation"
+data-cites="cressie1993 rasmussen2006">(Cressie 1993; Rasmussen and
+Williams 2006)</span>.</p>
+<p>For observed sites
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>s</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">s_1,\ldots,s_n</annotation></semantics></math>,
+assume a known mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>,
+covariance matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>,
+and sensor-error matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>.
+For a new site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mo>*</mo></msub><annotation encoding="application/x-tex">s_*</annotation></semantics></math>,
+let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mo>*</mo></msub><annotation encoding="application/x-tex">k_*</annotation></semantics></math>
+be the covariance vector between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z(s_*)</annotation></semantics></math>
+and the observed residual process. Under a Gaussian model the
+conditional mean and variance are</p>
+$$
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msubsup><mi>k</mi><mo>*</mo><mi>𝖳</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>V</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo>,</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msubsup><mi>k</mi><mo>*</mo><mi>𝖳</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msub><mi>k</mi><mo>*</mo></msub><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+
+\widehat Y(s_*)&amp;=m(s_*)+k_*^{\mathsf T}(K+R)^{-1}(y-m),\\
+V(s_*)&amp;=k(s_*,s_*)-k_*^{\mathsf T}(K+R)^{-1}k_*.
+\end{aligned}</annotation></semantics></math>
+<p>$$</p>
+<div id="eq-gp-pred">
+
+</div>
+<p>If the goal is prediction of a noisy future reading rather than the
+latent mean, add its measurement-error variance to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>V</mi><annotation encoding="application/x-tex">V</annotation></semantics></math>.
+If covariance parameters are estimated, the plug-in variance above
+usually omits parameter uncertainty. An attractive narrow band based on
+this formula is not automatically a calibrated prediction interval.</p>
+<p><em>Proposition.</em> For a zero-mean Gaussian residual process with
+positive-definite training covariance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>+</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">K+R</annotation></semantics></math>,
+suppose the covariance vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mo>*</mo></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">k_*(s)</annotation></semantics></math>
+tends to zero as a target site moves far from all observed sites. Then
+the conditional mean correction tends to zero and the conditional
+variance tends to the prior variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">k(s,s)</annotation></semantics></math>,
+provided the prior marginal variance converges.</p>
+<p><em>Proof.</em> The correction is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>k</mi><mo>*</mo><mi>𝖳</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>−</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">k_*^{\mathsf T}(K+R)^{-1}(y-m)</annotation></semantics></math>
+and the variance reduction is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>k</mi><mo>*</mo><mi>𝖳</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msub><mi>k</mi><mo>*</mo></msub></mrow><annotation encoding="application/x-tex">k_*^{\mathsf T}(K+R)^{-1}k_*</annotation></semantics></math>.
+Since the inverse is fixed and finite, both tend to zero as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mo>*</mo></msub><mo>→</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">k_*\to0</annotation></semantics></math>.
+The remaining variance is the prior marginal variance. ◻</p>
+<p>The statement is not a guarantee that a fitted model reports honest
+uncertainty at distant sites: a wrong range parameter or missing
+covariate can undermine it. It explains why the distance to the nearest
+functioning monitor belongs in an operational error analysis.</p>
+<h3
+id="inverse-distance-weighting-is-a-baseline-not-a-physical-law">Inverse-distance
+weighting is a baseline, not a physical law</h3>
+<p>A simple estimator uses weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>d</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo>,</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mi>p</mi></mrow></msup><mi>/</mi><msub><mo>∑</mo><mi>j</mi></msub><mi>d</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo>,</mo><msub><mi>s</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mi>p</mi></mrow></msup></mrow><annotation encoding="application/x-tex">w_i(s_*)=d(s_*,s_i)^{-p}/\sum_jd(s_*,s_j)^{-p}</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">p&gt;0</annotation></semantics></math>
+when all distances are positive. Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>y</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mo>*</mo></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>y</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widehat y(s_*)=\sum_iw_i(s_*)y(s_i)</annotation></semantics></math>.
+We must define the zero-distance rule and coordinate units. More
+importantly, proximity does not imply similarity across hills,
+coastlines, major roads or source regions. Inverse-distance weighting is
+a benchmark to compare against, not a substitute for testing spatial
+assumptions.</p>
+<h2
+id="uncertainty-statements-must-have-an-operational-meaning">Uncertainty
+statements must have an operational meaning</h2>
+<p>A 90% prediction interval for a new observation is supposed to cover
+that observation about nine times out of ten under the relevant
+repeated-sampling or exchangeability conditions. A confidence interval
+for a mean answers a different question. Credible intervals under a
+Bayesian model depend on its prior and likelihood. An interval that is
+narrow but covers only half the withheld sites is misleading, however
+appealing its graph.</p>
+<p>For a collection of genuinely held-out outcomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">y_i</annotation></semantics></math>
+and intervals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><msub><mo>ℓ</mo><mi>i</mi></msub><mo>,</mo><msub><mi>u</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[\ell_i,u_i]</annotation></semantics></math>,
+empirical coverage is</p>
+<p>$$</p>
+<p>C_{0.9}=1m_{i=1}^m{_iy_iu_i}.</p>
+<p>$$</p>
+<p>It should be reported together with average interval width, bias and
+error. A very wide interval can achieve high coverage without guiding
+decisions. Proper scoring rules offer a principled way to balance
+probability accuracy and sharpness <span class="citation"
+data-cites="gneiting2007">(Gneiting and Raftery 2007)</span>.</p>
+<p>A clear validation table includes mean absolute error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>m</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>∑</mo><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover><mi>y</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></mrow><annotation encoding="application/x-tex">m^{-1}\sum|y_i-\widehat y_i|</annotation></semantics></math>,
+root mean squared error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>m</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>∑</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover><mi>y</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">(m^{-1}\sum(y_i-\widehat y_i)^2)^{1/2}</annotation></semantics></math>,
+signed mean error, coverage and interval width. Report the unit (for
+example
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mi mathvariant="normal">g</mi><mi>/</mi><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\mu\mathrm g/\mathrm m^3</annotation></semantics></math>)
+and the level of aggregation. A model may perform well by hour but
+poorly during the short pollution episodes at which an alert threshold
+matters. The proper aggregation depends on the downstream decision.</p>
+<h2 id="why-ordinary-random-cross-validation-can-be-wrong">Why ordinary
+random cross-validation can be wrong</h2>
+<p>Suppose a sensor contributes thousands of hourly records. Randomly
+splitting individual hours into train and test sets leaves nearly
+identical readings from the same sensor on both sides. The resulting
+score largely tests interpolation in time at known sites; it does not
+establish performance at an unobserved station. The cross-validation
+design must match the intended deployment: hold out stations for a
+new-location claim, hold out future periods for forecasting, and hold
+out sites <em>and</em> future periods for the strongest joint claim.
+Spatial dependence may persist between nearby stations, so also record
+the distance between held-out and training sites <span class="citation"
+data-cites="roberts2017">(Roberts 2017)</span>.</p>
+<p>The procedure is straightforward to state but easy to violate. First
+choose the held-out stations, without looking at their pollution
+outcomes. Fit imputations, transformations, spatial covariance
+parameters and hyperparameters on the remaining stations only. Tune
+within grouped training folds. Evaluate once on the held-out stations.
+Report results per station as well as across all observations, because a
+station with a faster reporting frequency should not necessarily
+dominate every summary.</p>
+<h2 id="a-case-study-in-kampala-from-a-map-to-a-defensible-claim">A case
+study in Kampala: from a map to a defensible claim</h2>
+<p>The chapter’s principal empirical laboratory asks: <em>How well can
+we estimate
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+concentration at a place without a functioning monitor?</em> The public
+measurement candidates are AirQo and OpenAQ. Their APIs, documentation,
+measurement histories, coverage and permissions must be checked at the
+time of download. AirQo’s public API documentation describes
+authenticated access to current and historical measurements; access to a
+particular historical period must not be assumed. OpenAQ is a separate
+aggregation route with heterogeneous coverage and data provenance.
+Neither guarantees the site density or covariates required for every
+proposed model <span class="citation"
+data-cites="airqoAPI openaqAPI">(AirQo 2026; OpenAQ 2026)</span>.</p>
+<p>A minimum data inventory contains station identifier, coordinates,
+timestamp and timezone, observed
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>,
+quality flag, device provenance, data version and units. Add weather,
+road or land-use covariates only when they can be aligned with the
+prediction time. A station with duplicate identifiers or moving
+coordinates should not silently be treated as stationary. The analyst
+should publish the data coverage diagram before fitting anything.</p>
+<p>Compare, on exactly the same held-out observations, a training-set
+mean, an inverse-distance-weighted predictor, a generalised additive
+model, a random forest, a Gaussian process and, where covariates allow,
+gradient boosting followed by kriging of training residuals. An ordinary
+gradient-boosting model is a useful separate baseline; residual kriging
+is not necessarily beneficial if the remaining errors are spatially
+unstructured. This comparison is motivated by the classes of methods,
+not by an assumption that the most elaborate method will win <span
+class="citation" data-cites="breiman2001 friedman2001 wood2017">(Breiman
+2001; Friedman 2001; Wood 2017)</span>.</p>
+<table>
+<caption>Required outputs from the measured-data air-quality laboratory.
+No numerical performance claims are made before data acquisition.
+{#tbl-airqo-protocol}</caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Output</th>
+<th>Question it must answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Site map and date coverage</td>
+<td>Which stations and time periods are actually observed?</td>
+</tr>
+<tr class="even">
+<td>Held-out station results</td>
+<td>How does the prediction behave where the model has seen no
+outcomes?</td>
+</tr>
+<tr class="odd">
+<td>Error against nearest-station distance</td>
+<td>Does accuracy deteriorate away from measured locations?</td>
+</tr>
+<tr class="even">
+<td>Prediction interval coverage and width</td>
+<td>Does uncertainty describe observed disagreement, or merely appear
+precise?</td>
+</tr>
+<tr class="odd">
+<td>Missing-input and quality-flag sensitivity</td>
+<td>Does failure of one instrument or covariate materially change the
+conclusions?</td>
+</tr>
+<tr class="even">
+<td>Runtime, memory and storage</td>
+<td>Could an ordinary office computer reproduce and use this
+approach?</td>
+</tr>
+</tbody>
+</table>
+<p>An example of an appropriate conclusion would be: “The model’s error
+increased beyond the observed station-density range, so we cannot
+recommend use of these predicted concentrations for site-specific
+regulatory enforcement there.” An inappropriate conclusion would be:
+“The map measures air quality in every Ugandan district,” when all
+stations were in a few urban locations. A spatial map is useful only
+when its uncertainty, time period and evidence limits travel with
+it.</p>
+<h2
+id="worked-investigation-forecast-accuracy-is-not-decision-accuracy">Worked
+investigation: forecast accuracy is not decision accuracy</h2>
+<p>Consider an illustrative authority that issues a warning whenever
+tomorrow’s
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+exceeds a threshold
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>.
+A false warning costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">C_{\mathrm{FP}}&gt;0</annotation></semantics></math>
+in disruption; a missed exceedance costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">C_{\mathrm{FN}}&gt;0</annotation></semantics></math>
+in avoidable harm. With a calibrated predicted exceedance probability
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>,
+expected loss if we warn is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></msub></mrow><annotation encoding="application/x-tex">(1-p)C_{\mathrm{FP}}</annotation></semantics></math>
+and if we do not warn is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></msub></mrow><annotation encoding="application/x-tex">pC_{\mathrm{FN}}</annotation></semantics></math>.
+The warning is preferred exactly when</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mfrac><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></msub><mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></msub><mo>+</mo><msub><mi>C</mi><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></msub></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+p&gt;\frac{C_{\mathrm{FP}}}{C_{\mathrm{FP}}+C_{\mathrm{FN}}}.
+</annotation></semantics></math></p>
+<div id="eq-warn-threshold">
+
+</div>
+<p>This threshold is derived, not guessed. If a missed event is ten
+times more costly than an unnecessary warning, the probability threshold
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mn>11</mn></mrow><annotation encoding="application/x-tex">1/11</annotation></semantics></math>,
+not
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">1/2</annotation></semantics></math>.
+The result assumes those costs are appropriate representations of real
+consequences and that the forecast probability is trustworthy. It does
+not assign an official public-health warning threshold, which belongs to
+the responsible authority.</p>
+<p>Two models can have similar average
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+error and very different exceedance probabilities. The second may make
+better decisions even with a slightly worse RMSE. Conversely, a highly
+calibrated probability can still be operationally useless if no
+resources exist to communicate or act on the warning. These issues
+become the main subject of Chapter 6.</p>
+<figure id="fig-ch4-split">
+<img src="figures/ch04_validation.png"
+alt="An entirely synthetic teaching comparison. The larger held-out-site error in this particular simulation illustrates the risk of row-wise splitting when the goal is prediction at new sites; neither error is an AirQo or Uganda measurement." />
+<figcaption aria-hidden="true">An entirely synthetic teaching
+comparison. The larger held-out-site error in this particular simulation
+illustrates the risk of row-wise splitting when the goal is prediction
+at new sites; neither error is an AirQo or Uganda
+measurement.</figcaption>
+</figure>
+<h2 id="laboratory-4-an-honest-spatial-validation-exercise">Laboratory
+4: an honest spatial-validation exercise</h2>
+<p>The companion Python programme
+<code>code/ch04_spatial_validation.py</code> creates <em>explicitly
+synthetic</em> station readings and compares ordinary row-wise splitting
+with grouped held-out-site testing. It reports the grouping and stores a
+site-level error table. The example is a unit test of evaluation design,
+not a measured Kampala result. The more important second part of the
+laboratory asks the reader to replace the synthetic input with an
+appropriately licensed measured dataset while preserving the same
+validation protocol. The code intentionally keeps the input schema
+separate from the model implementation.</p>
+<p>Before running the laboratory, predict what may happen when many
+near-duplicate records belong to a single station. After running it,
+change the number of stations and the spatial correlation length.
+Explain why the numerical direction of the gap between random-split and
+held-out-site error can vary with the data-generating process, even
+though random splitting is conceptually inappropriate for a claim about
+unseen sites. Do not force the simulation to demonstrate a predetermined
+outcome.</p>
+<h2 id="a-closer-look-at-predictive-uncertainty">A closer look at
+predictive uncertainty</h2>
+<p>The claim that “a prediction has uncertainty” can refer to several
+distinct things. There may be randomness in the outcome even with
+complete knowledge of the system, uncertainty about parameters because
+few observations were collected, variation introduced by an imperfect
+sensor, or uncertainty about whether the chosen model represents the
+mechanism. These sources are not generally interchangeable. A model that
+estimates the conditional variance correctly within a familiar training
+region may still be wrong under changes in the physical process.</p>
+<p>Write the response as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo>,</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y=m(X,\theta)+\epsilon</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ϵ</mi><mo>∣</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbb E(\epsilon\mid X)=0</annotation></semantics></math>.
+If the parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+are treated as uncertain, the law of total variance suggests separating
+variation within a parameter configuration from variation in the fitted
+mean:</p>
+<p>$$</p>
+<p>(YD,X)= E_{D}[(Y,X)] +_{D}[E(Y,X)].</p>
+<p>$$</p>
+<p>The first term describes remaining outcome variation after
+conditioning on the parameter, while the second reflects uncertainty in
+the conditional mean across plausible parameter values. This is a useful
+accounting device in a probability model; it is not a full description
+of model misspecification, distribution shift or future data-system
+failure. Those require additional checks.</p>
+<h3 id="why-ordinary-bootstrap-intervals-can-understate-uncertainty">Why
+ordinary bootstrap intervals can understate uncertainty</h3>
+<p>A common computational technique resamples observations with
+replacement, refits the model and examines the variation in results.
+This is useful under appropriate sampling assumptions. But if daily
+readings within a station are strongly correlated, resampling every hour
+independently creates artificial information: repeated readings from the
+same station are treated as though they came from independent monitoring
+sites. For a claim about new locations, resampling or evaluation should
+respect the station as a cluster. A cluster bootstrap resamples whole
+sites; if there are very few independent sites, no bootstrap method can
+conjure a large effective sample <span class="citation"
+data-cites="efron1993 roberts2017">(Efron and Tibshirani 1993; Roberts
+2017)</span>.</p>
+<p>Suppose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+stations each provide
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+observations and within-station correlation is approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>.
+A simple variance-inflation approximation for equally sized exchangeable
+clusters is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>ρ</mi></mrow><annotation encoding="application/x-tex">1+(T-1)\rho</annotation></semantics></math>.
+The nominal row count
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">mT</annotation></semantics></math>
+overstates effective information when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\rho&gt;0</annotation></semantics></math>.
+The calculation is illustrative, but it reveals why a million hourly
+data points from three stations do not automatically establish
+generalisation across a country.</p>
+<h2 id="when-a-model-gains-accuracy-by-learning-the-wrong-thing">When a
+model gains accuracy by learning the wrong thing</h2>
+<p>Imagine that a mobile environmental monitor is moved to higher-risk
+streets during smoke events. If the analyst fits pollution against
+street type using the collected observations, high readings may appear
+associated with the selected routes. The difference may be real, but the
+site-selection rule helped determine which observations exist.
+Reweighting or modelling the selection process may be necessary before
+interpreting results as representative of the whole city. The same logic
+appears in Chapter 3 for household surveys, but spatial monitoring makes
+the difficulty particularly visible.</p>
+<p>A predictive map can also be misleading when several instruments
+observe the same general plume. The average squared error on held-out
+hours can be low because nearby training sensors have almost identical
+readings at those hours. The result does not prove that a remote
+settlement shares the same pollution process. The evaluation unit should
+therefore be chosen by the decision: if a city wishes to fill gaps
+between known monitors, spatial interpolation within observed coverage
+may be sufficient; if a national agency wants to place warnings in
+unmonitored districts, extrapolation evidence is required.</p>
+<h3 id="the-geometry-of-a-kernel-matters">The geometry of a kernel
+matters</h3>
+<p>A radial covariance of the form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>s</mi><mi>′</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>σ</mi><mn>2</mn></msup><mo>exp</mo><mo stretchy="false" form="prefix">{</mo><mi>−</mi><mo stretchy="false" form="postfix">∥</mo><mi>s</mi><mo>−</mo><mi>s</mi><mi>′</mi><mo stretchy="false" form="postfix">∥</mo><mi>/</mi><mo>ℓ</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">k(s,s&#39;)=\sigma^2\exp\{-\|s-s&#39;\|/\ell\}</annotation></semantics></math>
+assumes a relationship based on Euclidean distance and a common
+correlation length
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>ℓ</mo><annotation encoding="application/x-tex">\ell</annotation></semantics></math>.
+This may ignore prevailing winds, terrain and emissions. Distances also
+require a proper coordinate reference system: a degree of longitude is
+not a fixed number of kilometres, and treating raw latitude and
+longitude as planar metres can distort interpolation. The analyst should
+describe the distance calculation and ideally test sensitivity to its
+choice. A model whose fitted range is shorter than the gaps between most
+stations will have little ability to identify local variations at
+unobserved sites, however persuasive its coloured prediction surface
+appears.</p>
+<p>For the two-station case, the algebra is transparent. Suppose the
+latent covariance matrix is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>ρ</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>ρ</mi></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\sigma^2\begin{smallmatrix}1&amp;\rho\\\rho&amp;1\end{smallmatrix}</annotation></semantics></math>
+and independent sensor noise has variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>τ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\tau^2</annotation></semantics></math>.
+At a target with covariance vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mo>*</mo></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>𝖳</mi></msup></mrow><annotation encoding="application/x-tex">k_*=(a,b)^{\mathsf T}</annotation></semantics></math>,
+the predicted residual is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><mi>r</mi></mrow><annotation encoding="application/x-tex">(a,b)(K+\tau^2I)^{-1}r</annotation></semantics></math>.
+Increasing sensor noise weakens the influence of the observations
+because the inverse discounts uncertain signals. Increasing correlation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
+without gaining spatial coverage can create redundancy rather than
+independent information. The formula demonstrates precisely why the
+number of recorded rows is not an adequate measure of spatial
+information.</p>
+<h2 id="a-useful-comparison-table-before-fitting">A useful comparison
+table before fitting</h2>
+<p>The comparison should be organised around differences in assumptions
+rather than a list of fashionable names.</p>
+<table>
+<caption>Methods and the first question to ask before using each one
+{#tbl-4_2}</caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Essential assumption or vulnerability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Spatial mean</td>
+<td>The large-scale average is informative at the target; ignores local
+variation.</td>
+</tr>
+<tr class="even">
+<td>Inverse-distance weighting</td>
+<td>Nearby sites are more relevant under the chosen distance and power
+rule.</td>
+</tr>
+<tr class="odd">
+<td>Linear or additive regression</td>
+<td>Chosen covariates represent meaningful structure; extrapolation
+remains uncertain.</td>
+</tr>
+<tr class="even">
+<td>Gaussian process</td>
+<td>Covariance and measurement-error model reasonably describe residual
+dependence.</td>
+</tr>
+<tr class="odd">
+<td>Random forest</td>
+<td>Training covariate patterns are relevant at prediction sites;
+outside-range behaviour is limited.</td>
+</tr>
+<tr class="even">
+<td>Boosting with residual kriging</td>
+<td>Residual spatial dependence remains after the learned trend and can
+be estimated without leakage.</td>
+</tr>
+</tbody>
+</table>
+<p>What should be called improvement? A model that gains 0.1 units of
+MAE at the cost of a fivefold increase in computation has not
+necessarily improved a decision. A model that predicts the average well
+but misses every high-risk episode may be unfit for alerts. Improvement
+should be judged against the predeclared use, with intervals and error
+decomposition supporting rather than replacing the decision
+argument.</p>
+<h2
+id="full-worked-investigation-deriving-the-value-of-an-observation">Full
+worked investigation: deriving the value of an observation</h2>
+<p>Consider a simplified pollution state
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+at a proposed unmonitored location, modelled as Gaussian with prior mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">v&gt;0</annotation></semantics></math>.
+Suppose an instrument could provide
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>Z</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y=Z+\epsilon</annotation></semantics></math>
+with independent Gaussian noise variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>τ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\tau^2</annotation></semantics></math>.
+Under these assumptions the conditional variance after a measurement
+is</p>
+<p>$$</p>
+<p>(ZY)=(+)^{-1} =.</p>
+<p>$$</p>
+<p>The reduction in variance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>−</mo><mi>v</mi><msup><mi>τ</mi><mn>2</mn></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>v</mi><mn>2</mn></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">v-v\tau^2/(v+\tau^2)=v^2/(v+\tau^2)</annotation></semantics></math>.
+This quantity increases with prior uncertainty
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
+and decreases as measurement noise grows. A highly noisy instrument may
+provide little useful information despite producing thousands of
+readings. The calculation connects sensor placement to Chapter 1’s
+value-of-information perspective without claiming that variance
+reduction alone determines the best location.</p>
+<p><em>Proof.</em> <em>Derivation.</em> The joint covariance of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>,</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Z,Y)</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>v</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>v</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>v</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>v</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{smallmatrix}v&amp;v\\v&amp;v+\tau^2\end{smallmatrix}</annotation></semantics></math>.
+The conditional Gaussian variance is the upper-left element minus the
+squared cross-covariance divided by the variance of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>,
+giving
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>v</mi><msup><mi>τ</mi><mn>2</mn></msup><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo>+</mo><msup><mi>τ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">v-v^2/(v+\tau^2)=v\tau^2/(v+\tau^2)</annotation></semantics></math>. ◻</p>
+<p>If the decision is to issue a warning when pollution exceeds a limit,
+a sensor whose measurements chiefly reduce uncertainty far below that
+limit may not be the best investment. A more decision-focused value of
+information compares expected loss before and after receiving a
+measurement, integrating over possible observed values and future
+actions. The two criteria can rank sites differently.</p>
+<h2
+id="an-air-quality-investigation-that-another-researcher-can-reproduce">An
+air-quality investigation that another researcher can reproduce</h2>
+<p>For each candidate public dataset, the final manuscript should record
+the retrieval date, source terms, coordinates, station identifiers and
+quality flags. A compact input table should include a codebook
+explaining whether the pollutant concentration refers to hourly, daily
+or another aggregation. A station with many missing hours may produce a
+biased daily average if outages correlate with high pollution; ignoring
+that mechanism should be acknowledged. If sensors are calibrated by a
+model using nearby regulatory instruments, their readings are not
+necessarily independent of those instruments. The original calibration
+procedure may matter for validation.</p>
+<p>The main performance table should not collapse every withheld site
+into a single number. Show a row for each site, then a summary across
+sites. This lets the reader see whether a low pooled MAE is dominated by
+dense stations. Next show error against distance to the nearest training
+site and counts in each distance band. Interpret empty bands as a
+failure of geographic coverage, not as zero error. Repeat the assessment
+across seasons if the record spans them; a method that works during one
+dry interval may fail under different weather.</p>
+<p>Where actual licensed data are unavailable, the book’s computational
+exercise remains a demonstration of validation machinery. There is
+nothing shameful about using synthetic data to teach what the code does,
+provided the book is explicit about what has and has not been measured.
+The scientific mistake would be to report such a demonstration as
+evidence that a model works on Ugandan air pollution. Readers should see
+this distinction repeated in the conclusions of empirical chapters
+rather than buried in a footnote.</p>
+<h2
+id="extended-case-study-when-an-air-quality-map-deserves-to-be-believed">Extended
+case study: when an air-quality map deserves to be believed</h2>
+<p>A field map presents an unusual temptation. It can look complete even
+when its underlying measurements cover only a handful of streets. The
+grid is filled with coloured cells, so the reader’s eye sees data
+everywhere. Yet the underlying evidence may come from irregular samples
+at a few stations. A good environmental map should make both the
+estimate and the geographic reach of the evidence visible. This worked
+investigation develops a complete assessment plan for that problem. It
+deliberately avoids assigning numerical success to any model before an
+appropriate measured dataset has been obtained and analysed.</p>
+<h3 id="first-identify-the-user-and-the-decision">First identify the
+user and the decision</h3>
+<p>Suppose an urban-planning office wishes to prioritise locations for
+additional monitoring rather than issue immediate individual health
+advice. Its decision is where to place a small number of new monitors.
+The relevant output might be a spatial estimate of likely
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+level together with uncertainty and distance from existing instruments.
+That is different from estimating an individual person’s exposure or
+determining compliance with a legal concentration limit. An official
+compliance determination may require a specified measurement instrument,
+averaging period, and quality-control protocol. A map produced by the
+methods in this chapter cannot substitute for those requirements by
+default.</p>
+<p>A second office may want to choose roads for dust-control
+maintenance. That task requires information about the part of pollution
+actually affected by the intervention. A map estimating total
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+may predict well while failing to identify the change achievable by road
+work. The distinction is causal: a predictive relationship between road
+proximity and observed pollution does not establish the amount by which
+resurfacing a road will change concentrations. For the first office,
+prediction and uncertainty are useful inputs. For the second, additional
+intervention evidence is necessary.</p>
+<h3 id="the-data-inventory-should-be-legible-without-the-code">The data
+inventory should be legible without the code</h3>
+<p>Before building a dataset, prepare a table naming each source and the
+question it answers. Observed
+PM<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi></mi><mn>2.5</mn></msub><annotation encoding="application/x-tex">_{2.5}</annotation></semantics></math>
+comes from functioning instruments, accompanied by timestamps, units,
+calibration flags and physical coordinates. Weather covariates describe
+potentially relevant atmospheric conditions; road density and land-use
+variables describe possible sources and exposures. A population grid may
+help identify who could be affected, but population is not itself a
+pollutant sensor. Each input should have an acquisition date and
+permitted use. Different variables may describe different years, spatial
+supports or time resolutions. The analyst needs to make those mismatches
+explicit.</p>
+<p>A point measurement and an area average are mathematically distinct.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z(s)</annotation></semantics></math>
+is a spatial field and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+is a grid cell, a cell average is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Z</mi><mo accent="true">¯</mo></mover><mi>A</mi></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">|</mo><mi>A</mi><mo stretchy="true" form="postfix">|</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msub><mo>∫</mo><mi>A</mi></msub><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi>d</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">\overline Z_A=|A|^{-1}\int_A Z(s)\,ds</annotation></semantics></math>,
+whereas a monitor measures approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z(s_0)</annotation></semantics></math>
+plus instrument error for a particular
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mn>0</mn></msub><annotation encoding="application/x-tex">s_0</annotation></semantics></math>.
+The two can disagree without either being wrong. If a model is trained
+on point observations but evaluated against a satellite grid product,
+the meaning of the comparison changes. The support of each outcome
+belongs in the evaluation design.</p>
+<h3 id="choose-the-holdout-before-making-a-map">Choose the holdout
+before making a map</h3>
+<p>Divide monitors into a training group and an untouched test group. If
+there are 20 usable sites, an illustrative design might reserve five
+entire sites for testing. The choice should consider spatial coverage,
+not merely sample size. If all five are near training sites, the
+experiment tests interpolation. If several are far from any training
+site, it also tests more challenging spatial transfer. Publish a site
+map showing the groups and report the distance from each test location
+to its nearest training site.</p>
+<p>A meaningful error table could have columns for site, observation
+days, MAE, mean signed error, RMSE, interval coverage and
+nearest-training-site distance. Do not report a pooled hourly error
+alone. A sensor that reports every minute can dominate one that reports
+daily, while the practical decision may concern equal importance across
+locations. Site-averaged metrics give each held-out station one
+contribution, but the choice of weighting must itself be described. A
+statistically principled estimate of citywide accuracy would need
+information about how the station locations represent the city; equal
+weighting by station is not automatically population weighting.</p>
+<h3 id="keep-selection-and-fitting-separate">Keep selection and fitting
+separate</h3>
+<p>Use grouped cross-validation within training stations to choose
+hyperparameters. For the Gaussian process, estimate the spatial range
+and noise variance on training information; for forests, choose tree
+depth, leaf size and feature selection through the training folds. If
+the final test sites influence these choices, the reported final test
+error is optimistic because the evaluation has become part of model
+development. The issue remains even if the analyst did not explicitly
+copy test outcomes into training; repeated inspection and revision can
+gradually overfit the test set.</p>
+<p>Suppose a boosted model uses both rainfall and station identifier.
+Station identifier may explain stable differences between known sites,
+but the identifier has no meaningful value at a new station. Any
+preprocessing that one-hot encodes known identifiers without a plan for
+new ones can produce undefined or misleading behaviour. It is often
+better to use physical covariates and coordinates whose meanings
+transfer to new sites, while acknowledging the remaining
+uncertainty.</p>
+<h3
+id="explain-residual-kriging-rather-than-invoking-it-by-name">Explain
+residual kriging rather than invoking it by name</h3>
+<p>Let a trend model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>m</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widehat m(s)</annotation></semantics></math>
+be fitted on the training stations. Its training residuals are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub><mo>=</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>m</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>s</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">r_i=y_i-\widehat m(s_i)</annotation></semantics></math>.
+If there is spatial correlation left in those residuals, fit a
+covariance model to them using training data alone. At a new site,
+combine the trend and a kriged residual correction:</p>
+<p>$$</p>
+<p>y(s_<em>)=m(s_</em>)+k_*<sup>{T}(K+R)</sup>{-1}r.</p>
+<p>$$</p>
+<p>This expression is not a guarantee of improvement. If the trend
+already captures spatial structure, the estimated residual correlation
+may be weak or unstable. If residual dependence changes with weather, a
+stationary covariance model can be inadequate. If training residuals are
+unrealistically small because the trend model overfits, residual kriging
+may learn little or produce overconfident intervals. Cross-fitting
+residuals for covariance estimation may reduce this problem, but must
+also respect the station-group structure.</p>
+<p>A useful diagnostic compares residual correlations by separation
+distance, and then tests whether residual correction improves the same
+held-out sites as the uncorrected trend. A claimed gain should include
+uncertainty across stations and a compute-cost comparison. If two
+methods are effectively indistinguishable on independent sites, prefer
+the one with clearer assumptions and lower maintenance demands until
+more evidence is available.</p>
+<h3
+id="distance-dependent-reliability-and-a-refusal-region">Distance-dependent
+reliability and a refusal region</h3>
+<p>Suppose held-out sites near training monitors show small errors,
+while those beyond 10 kilometres show much larger errors. This suggests
+a practical decision boundary: do not present site-specific values
+beyond the demonstrated range as if they have the same reliability as
+interpolated values. A robust map might display an uncertainty overlay
+or label regions that have no validation support. The distance at which
+the method becomes unreliable must be inferred from held-out evidence,
+not chosen after looking for a convenient result.</p>
+<p>There is also an important counterexample. A distant site with the
+same meteorological and emissions conditions as well-observed areas may
+be predicted accurately from covariates even when spatial correlation is
+weak. Conversely, a near site separated by a major emission source may
+be poorly predicted. Distance alone is a useful diagnostic, not a
+complete description of distribution shift. Report both distance and
+covariate novelty where possible.</p>
+<h3 id="a-concrete-uncertainty-assessment">A concrete uncertainty
+assessment</h3>
+<p>Suppose a fitted model returns means
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>y</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><annotation encoding="application/x-tex">\widehat y_i</annotation></semantics></math>
+and standard deviations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><annotation encoding="application/x-tex">\widehat\sigma_i</annotation></semantics></math>
+for the held-out observations. A Gaussian 90% interval is approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>y</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><mo>±</mo><mn>1.645</mn><msub><mover><mi>σ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\widehat y_i\pm1.645\widehat\sigma_i</annotation></semantics></math>.
+Calculate the fraction of held-out values within these bounds and their
+average width. If coverage is 65%, the intervals are not empirically
+calibrated at the nominal level in that test. An interval-widening
+adjustment might improve coverage but should be fitted on a separate
+calibration set; fitting it to the final test outcomes invalidates that
+test. Calibration under exchangeability may be approached through
+conformal methods, but spatial dependence and distribution shift
+complicate the usual finite-sample guarantees <span class="citation"
+data-cites="shafer2008">(Shafer and Vovk 2008)</span>.</p>
+<p>The relevant communication to a planner is not merely a confidence
+percentage. It should say which observed regions supported the interval,
+how the observation frequency was aggregated, and where data are too
+limited to justify a precise recommendation. If a predicted
+concentration is 27 units with a 90% interval from 10 to 55, treating
+the point estimate as an exact exposure can lead to an unsound
+intervention decision.</p>
+<h3 id="from-a-map-to-an-additional-monitor-decision">From a map to an
+additional-monitor decision</h3>
+<p>Suppose a planning office can afford one more monitoring station. A
+naive rule chooses the area with the highest predicted concentration;
+another chooses the location with the greatest model variance. These are
+different objectives. The first targets possible high exposure, while
+the second aims to reduce prediction uncertainty. A third approach
+chooses the site with greatest expected reduction in decision loss,
+balancing where people live, the need for evidence and monitoring cost.
+Each choice requires an explicit goal, and the resulting site may be
+different.</p>
+<p>For a Gaussian process with candidate measurement location
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>,
+one can calculate the expected reduction in variance at a target
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+under a simple noise model:</p>
+<p>$$</p>
+<p>V(s;c)=.</p>
+<p>$$</p>
+<p>Summing this reduction over weighted planning locations gives an
+illustrative design criterion. Yet the weights reflect whose areas
+matter and the covariance model reflects observed spatial structure. A
+high predicted variance at an inaccessible road junction is not a
+feasible monitoring proposal. Site selection is therefore an
+optimisation problem subject to maintenance, power, security,
+calibration and access constraints.</p>
+<h3
+id="a-genuine-publishable-result-versus-an-attractive-illustration">A
+genuine publishable result versus an attractive illustration</h3>
+<p>A scientifically credible manuscript emerging from the laboratory
+would publish documented measurements, actual station-level holdouts,
+appropriate baselines, uncertainty calibration, resource measurements
+and clearly bounded conclusions. It should include a counterexample or a
+systematic description of where the method fails, not only a map of
+favourable predictions. A real operational study would go further: place
+a monitor at a proposed site, measure its readings prospectively and
+determine whether the resulting information changes planning decisions.
+That final step cannot be inferred from a retrospective random
+split.</p>
+<p>The chapter’s synthetic demonstration is intentionally less
+ambitious. It checks that grouping changes the evaluation target and
+that code can produce auditable outputs. The data were invented; the
+improvement or deterioration of any method in this exercise is not an
+observation about Kampala. This distinction must remain visible to
+readers who reuse the code.</p>
+<h2
+id="mathematical-workshop-four-predictions-that-look-alike-but-are-not">Mathematical
+workshop: four predictions that look alike but are not</h2>
+<p>Students often encounter a formula and ask which values to put into
+it. A more useful habit is to ask what the formula assumes about the
+observation and what kind of unknown it estimates. We compare four
+apparently similar tasks: predicting a mean at a known set of
+conditions, predicting an individual outcome, predicting at an unseen
+site and predicting a future period. The numerical expressions can be
+related, but their uncertainty calculations and validation requirements
+differ.</p>
+<h3 id="mean-response-versus-new-observation">Mean response versus new
+observation</h3>
+<p>In a linear regression
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><msup><mi>x</mi><mi>𝖳</mi></msup><mi>β</mi><mo>+</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">Y=x^{\mathsf T}\beta+\epsilon</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>
+independent of the predictors and variance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>,
+the fitted mean at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mo>*</mo></msub><annotation encoding="application/x-tex">x_*</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>m</mi><mo accent="true">̂</mo></mover><mo>*</mo></msub><mo>=</mo><msubsup><mi>x</mi><mo>*</mo><mi>𝖳</mi></msubsup><mover><mi>β</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">\widehat m_*=x_*^{\mathsf T}\widehat\beta</annotation></semantics></math>.
+Under classical full-rank assumptions with homoscedastic independent
+errors,</p>
+<p>$$</p>
+<p>(m_<em>-m_</em>)=^2x_<em><sup>{T}(X</sup>{T}X)^{-1}x_</em>.</p>
+<p>$$</p>
+<p>A future individual observation has an additional noise term, so its
+predictive variance is approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>+</mo><msubsup><mi>x</mi><mo>*</mo><mi>𝖳</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msub><mi>x</mi><mo>*</mo></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\sigma^2\{1+x_*^{\mathsf T}(X^{\mathsf T}X)^{-1}x_*\}</annotation></semantics></math>.
+The second interval is wider because it must accommodate the
+unpredictability of the new observation itself. A confidence band for
+the conditional mean does not provide the promised coverage for future
+individual measurements.</p>
+<h3 id="why-this-derivation-works">Why this derivation works</h3>
+<p>Under the standard linear model,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>=</mo><mi>β</mi><mo>+</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mi>X</mi><mi>𝖳</mi></msup><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">\widehat\beta=\beta+(X^{\mathsf T}X)^{-1}X^{\mathsf T}\epsilon</annotation></semantics></math>.
+Its covariance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>𝖳</mi></msup><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\sigma^2(X^{\mathsf T}X)^{-1}</annotation></semantics></math>.
+Taking the linear functional
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>x</mi><mo>*</mo><mi>𝖳</mi></msubsup><mover><mi>β</mi><mo accent="true">̂</mo></mover></mrow><annotation encoding="application/x-tex">x_*^{\mathsf T}\widehat\beta</annotation></semantics></math>
+gives the first variance. If the new error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mo>*</mo></msub><annotation encoding="application/x-tex">\epsilon_*</annotation></semantics></math>
+is independent of the training errors, its variance adds
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>σ</mi><mn>2</mn></msup><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math>
+to the variance of the fitted mean, yielding the second expression. The
+distinction disappears from neither a bigger data set nor an elaborate
+algorithm; only the reducible part can shrink as more observations are
+collected.</p>
+<h3
+id="predicting-an-unseen-station-requires-another-uncertainty-component">Predicting
+an unseen station requires another uncertainty component</h3>
+<p>If several measurements share a station-specific random effect
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>j</mi></msub><annotation encoding="application/x-tex">b_j</annotation></semantics></math>,
+an appropriate model might be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mrow><mi>j</mi><mi>t</mi></mrow></msub><mo>=</mo><msubsup><mi>x</mi><mrow><mi>j</mi><mi>t</mi></mrow><mi>𝖳</mi></msubsup><mi>β</mi><mo>+</mo><msub><mi>b</mi><mi>j</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mrow><mi>j</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">Y_{jt}=x_{jt}^{\mathsf T}\beta+b_j+\epsilon_{jt}</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>b</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>τ</mi><mi>b</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(b_j)=\tau_b^2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ϵ</mi><mrow><mi>j</mi><mi>t</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\operatorname{Var}(\epsilon_{jt})=\sigma^2</annotation></semantics></math>.
+At a known station, earlier observations inform its particular
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>j</mi></msub><annotation encoding="application/x-tex">b_j</annotation></semantics></math>.
+At a new station, that effect is unobserved. The prediction distribution
+may need to include
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>τ</mi><mi>b</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\tau_b^2</annotation></semantics></math>
+in addition to daily noise and parameter uncertainty. Randomly
+withholding an hour at a known station and withholding an entire station
+do not measure the same task.</p>
+<p>If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>τ</mi><mi>b</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\tau_b^2</annotation></semantics></math>
+is large and only three stations are observed, the estimated population
+distribution of site effects may be poor. Reporting thousands of hourly
+measurements does not remove the limitation that only three independent
+site effects were sampled. This is a key reason to examine both
+between-site and within-site variability before choosing an evaluation
+scheme.</p>
+<h2 id="deriving-the-poisson-regression-score">Deriving the Poisson
+regression score</h2>
+<p>The count model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>i</mi></msub><mo>∼</mo><mo>Poisson</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>μ</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y_i\sim\operatorname{Poisson}(\mu_i)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>i</mi></msub><mo>=</mo><msub><mi>E</mi><mi>i</mi></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>x</mi><mi>i</mi><mi>𝖳</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mu_i=E_i\exp(x_i^{\mathsf T}\beta)</annotation></semantics></math>
+has log-likelihood, up to constants independent of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,</p>
+<p>$$</p>
+<p>()=_i{y_i(E_i+x_i<sup>{T})-E_i(x_i</sup>{T})}.</p>
+<p>$$</p>
+<p>Differentiation gives score</p>
+<p>$$</p>
+<p>=_i x_i(y_i-_i).</p>
+<p>$$</p>
+<p>Thus the fitted coefficients balance covariate-weighted residuals.
+The Hessian is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>μ</mi><mi>i</mi></msub><msub><mi>x</mi><mi>i</mi></msub><msubsup><mi>x</mi><mi>i</mi><mi>𝖳</mi></msubsup></mrow><annotation encoding="application/x-tex">-\sum_i\mu_i x_ix_i^{\mathsf T}</annotation></semantics></math>,
+negative semidefinite; under full-rank conditions it is negative
+definite. These facts explain why Poisson regression has a convenient
+convex optimisation structure for the negative log-likelihood. They do
+not establish that the Poisson conditional variance assumption or the
+exposure offset is correct for the data.</p>
+<p>The exponential link forces positive fitted means, which is
+appropriate for counts. It is not appropriate to use the raw predicted
+mean as though it were an actual nonnegative integer; a conditional mean
+of 3.7 is meaningful even though observed counts are discrete. When
+planning future capacity, the full predictive distribution is often more
+informative than rounding the mean to four.</p>
+<h2 id="what-a-proper-score-can-and-cannot-guarantee">What a proper
+score can and cannot guarantee</h2>
+<p>Consider a binary event with true probability
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,
+and let a model report
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>.
+The expected Brier loss is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>q</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>p</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">q(1-p)^2+(1-q)p^2</annotation></semantics></math>.
+Expand the expression:</p>
+<p>$$</p>
+<p>q-2qp+p<sup>2=(p-q)</sup>2+q(1-q).</p>
+<p>$$</p>
+<p>Its minimum occurs uniquely at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">p=q</annotation></semantics></math>.
+This small proof explains why the Brier score is a proper probability
+score: under the stated data-generating probability, the best expected
+score comes from reporting the true probability. But a model minimising
+empirical Brier loss on a biased sample does not necessarily estimate
+the deployment population’s probabilities. Scoring-rule optimality does
+not correct sample selection.</p>
+<h2
+id="an-honest-prediction-interval-check-with-few-independent-sites">An
+honest prediction interval check with few independent sites</h2>
+<p>Suppose five withheld stations have site-aggregated observed values,
+and a model provides a 90% interval for each. If four are covered,
+empirical coverage is 80%. It would be misleading to assert that the
+population coverage is exactly 80%: with only five independent sites,
+that fraction is highly variable. Nor does high hourly coverage
+establish site-level reliability if hundreds of correlated hours were
+treated as separate Bernoulli trials. Present numerator and denominator,
+and when possible provide an interval for the coverage estimate based on
+the appropriate independent units.</p>
+<p>A useful uncertainty report states: “Four of five held-out stations
+had their aggregated values inside the nominal 90% prediction
+intervals.” It avoids claiming that national coverage is known
+precisely. With more stations, subgroup and distance-stratified coverage
+can become meaningful. With few stations, a careful limitations
+statement is part of the quantitative result.</p>
+<h2 id="a-compact-checklist-for-an-empirical-prediction-paper">A compact
+checklist for an empirical prediction paper</h2>
+<p>Before concluding that one method is better than another, verify that
+the intended outcome is defined, inputs would be available at prediction
+time, all methods used comparable training information, test sites were
+excluded from every fitted transformation, and uncertainty was evaluated
+against actual observations. Then ask whether the measured accuracy
+difference is large enough to matter to the user, whether it survives
+reasonable variations in data quality, and whether the method can be
+maintained at a tolerable cost.</p>
+<p>The reason for such a checklist is mathematical, not bureaucratic.
+Each missing condition weakens the link between the score computed in
+the laboratory and the error a user would experience. Prediction is
+useful only when that link is sufficiently strong for the decision at
+hand.</p>
+<h2 id="a-deeper-mathematical-view-of-spatial-prediction">A deeper
+mathematical view of spatial prediction</h2>
+<p>The Gaussian-process formula is sometimes taught as a ready-made
+block of algebra. It is more useful to understand why its pieces appear.
+Assume jointly Gaussian random vectors
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mo>*</mo></msub><annotation encoding="application/x-tex">Z_*</annotation></semantics></math>
+at an unobserved location and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+at observed locations. Their joint mean is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>m</mi><mo>*</mo></msub><mo>,</mo><mi>m</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>𝖳</mi></msup><annotation encoding="application/x-tex">(m_*,m)^{\mathsf T}</annotation></semantics></math>
+and covariance is</p>
+<p>$$</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>K</mi><mrow><mi>*</mi><mo>*</mo></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>K</mi><mrow><mi>*</mi><mi>Y</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>K</mi><mrow><mi>Y</mi><mo>*</mo></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>K</mi><mrow><mi>Y</mi><mi>Y</mi></mrow></msub></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{pmatrix}
+K_{**}&amp;K_{*Y}\\K_{Y*}&amp;K_{YY}
+\end{pmatrix}</annotation></semantics></math>
+<p>,K_{YY}.</p>
+<p>$$</p>
+<p>A conditional Gaussian calculation gives</p>
+<p>$$</p>
+<p>E[Z_*Y=y]=m_<em>+K_{</em>Y}K_{YY}^{-1}(y-m),
+(Z_*Y)=K_{**}-K_{<em>Y}K_{YY}^{-1}K_{Y</em>}.</p>
+<p>$$</p>
+<p>The variance reduction is a Schur-complement term. Because covariance
+matrices are positive semidefinite, this conditional variance is
+nonnegative. The algebra expresses a simple idea: the prediction
+corrects the prior mean according to how strongly the unobserved
+location covaries with measured ones, weighted by the reliability and
+redundancy of the observed data.</p>
+<h3
+id="the-danger-of-substituting-a-fitted-covariance-as-though-it-were-known">The
+danger of substituting a fitted covariance as though it were known</h3>
+<p>The preceding equations assume a covariance structure that is known.
+In practice the variance, correlation length and nugget parameters are
+estimated. With only a few monitoring sites, several covariance
+combinations may explain the observed residuals nearly equally well, yet
+produce different predictions at distant sites. A plug-in interval based
+on one parameter estimate may be narrower than the full uncertainty
+warrants. The analyst should inspect sensitivity to plausible parameter
+settings, provide an appropriate held-out assessment and avoid claiming
+certainty about a correlation range that the data cannot identify.</p>
+<p>Numerical stability also matters. Forming
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">(K+R)^{-1}</annotation></semantics></math>
+explicitly is generally less desirable than solving the linear system
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo>+</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>z</mi><mo>=</mo><mi>y</mi><mo>−</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">(K+R)z=y-m</annotation></semantics></math>.
+A Cholesky factorisation is efficient when the matrix is symmetric
+positive definite. If the matrix is nearly singular, numerical
+difficulties may indicate duplicated coordinates, implausibly tiny
+measurement noise, or redundant measurements. Adding a small diagonal
+numerical jitter can stabilise computation, but it changes the model
+slightly and must be reported if it materially affects predictions.</p>
+<h2
+id="learning-a-forecast-without-confusing-seasonal-variation-with-change">Learning
+a forecast without confusing seasonal variation with change</h2>
+<p>Environmental or service data may have a seasonal pattern and a
+gradual trend. A simple decomposition writes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><msub><mi>T</mi><mi>t</mi></msub><mo>+</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>R</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">Y_t=T_t+S_t+R_t</annotation></semantics></math>
+for trend, seasonal and residual components. The decomposition is
+descriptive unless a process model is specified. A forecast constructed
+by estimating a seasonal average using future years is not an honest
+historical forecast. The correct backtest must estimate the pattern from
+only the records that were available before each prediction date.</p>
+<p>Consider a hypothetical monthly series with a recurring high-demand
+season. If a training period contains only one season, fitting a complex
+seasonal model may be unstable. A simple prior seasonal average may also
+be poorly identified. A transparent evaluation should show the available
+years and how error changes across seasons. If the intended decision is
+to buy medicine before a seasonal peak, the forecast must be issued
+early enough to influence the supplier’s lead time. Information
+published after the purchase deadline can improve explanation of the
+past but not the earlier purchasing decision.</p>
+<h2 id="why-aggregation-can-hide-failure">Why aggregation can hide
+failure</h2>
+<p>An agency may report one prediction per district by averaging
+high-resolution estimates. If predictions are biased high in one part of
+the district and biased low in another, the mean error can cancel even
+while local recommendations are wrong. Conversely, small location errors
+may aggregate into a useful district average. The desired spatial
+support must be specified. An average of predicted point concentrations
+is not automatically an estimate of population-weighted exposure. That
+calculation would require a defensible population surface and
+assumptions about where and when people are exposed.</p>
+<p>Similarly, a model predicting average pollution over a month may be
+unsuitable for identifying rare daily exceedances. These are different
+target variables, not alternative visualisations of one objective. When
+the decision is a daily warning, model evaluation should reflect daily
+exceedance outcomes. When the decision is long-term monitoring
+allocation, broader spatial uncertainty may matter more. A single
+headline RMSE cannot certify all possible uses.</p>
+<h2 id="a-direct-exercise-in-evaluation-leakage">A direct exercise in
+evaluation leakage</h2>
+<p>Take a synthetic dataset with 15 sites and 100 records per site.
+Assign each site a stable latent level and add small independent daily
+noise. A predictor that memorises site identifiers will look excellent
+under random-row cross-validation: each test site is already represented
+among training rows. Under held-out-site validation, the same
+identifiers offer no information. This experiment isolates the effect of
+grouping from differences in model architecture.</p>
+<p>Repeat with strong spatial covariates that explain most site
+differences. Held-out-site prediction should then improve because
+new-site covariates carry transferable information. The result depends
+on the synthetic mechanism; the point is not that grouped error must
+always exceed random error. The point is that evaluation has to ask the
+question the eventual user needs answered. A good student should be able
+to state the information-set difference in words before looking at any
+code output.</p>
+<h2 id="exercises-and-investigations">Exercises and investigations</h2>
+<ol type="1">
+<li><p>Derive the minimiser of expected absolute error and explain why
+the conditional median, rather than the mean, appears. State a condition
+under which it is unique.</p></li>
+<li><p>For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+observations and a single explanatory variable with intercept, derive
+the two normal equations explicitly. Explain how a nearly constant
+predictor affects identification.</p></li>
+<li><p>Derive the ratio interpretation of a Poisson coefficient under a
+log link. Why is adding population as an ordinary predictor not
+identical to using it as a fixed offset?</p></li>
+<li><p>A monitoring network has eight stations, six in a city and two in
+rural districts. Design a held-out-site evaluation that reports rural
+performance without claiming nationally representative
+accuracy.</p></li>
+<li><p>Prove that the posterior variance reduction in <a
+href="chapter04.html#eq-gp-pred">equation</a> is nonnegative when the
+covariance matrix is positive definite. Explain why this proof does not
+establish empirical calibration.</p></li>
+<li><p>Design a figure showing bias against distance to the nearest
+training station. State how spatial coordinates and duplicate readings
+would be checked.</p></li>
+<li><p>A forecast has 91% interval coverage but intervals nearly as wide
+as the entire observed range. Explain what is missing from the
+evaluation.</p></li>
+<li><p><em>Research project.</em> Obtain documented public measurements
+under an appropriate licence. Keep one complete station out of training.
+Produce a transparent data inventory, a simple baseline, one spatial
+method and a defensible limitations statement.</p></li>
+</ol>
+<h5 id="what-we-have-learned.">What we have learned.</h5>
+<p>A prediction is an answer conditioned on particular information.
+Mathematics can derive a sound estimator under explicit assumptions;
+validation reveals whether it remains useful when those assumptions meet
+real observations. The next question is what action to take with the
+information that survives these tests.</p>
+</article><div class="page-links"><a href="chapter03.html">← Chapter 3 — Data That Can Be Trusted</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce →</a></div><p class="notice">Educational working edition. Synthetic calculations and demonstrations are not evidence of field impact. <a href="full-original-manuscript.pdf">Read the complete original PDF</a>.</p></main></div><script src="search.js"></script></body></html>
