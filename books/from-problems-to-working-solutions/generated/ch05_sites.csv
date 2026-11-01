@@ -1,0 +1,7 @@
+sites,count,weighted_minutes
+A,1,20000
+B,1,20500
+C,1,18500
+A+B,2,11500
+A+C,2,15500
+B+C,2,14500

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="A rigorous applied mathematics and computing book for resource-constrained environments" name="description"/><title>Chapter 5 — Optimisation When Resources Are Scarce | From Problems to Working Solutions</title><link href="style.css" rel="stylesheet"/></head><body>
+<div class="site-layout"><aside><div class="brand">From Problems to<br/>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input aria-label="Search the book" class="search" id="search" placeholder="Search the book"/><div id="results"></div><div class="reader-access"><a class="reader-entry" href="reader.html">Open facing-page reader</a><a href="book.pdf">PDF edition</a></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a class="current" href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><p class="chapter-banner">Chapter 5 · <a href="reader.html#page=102">Read in facing pages</a></p><h1 id="sec-optimisation">Optimisation When Resources Are Scarce</h1>
+<blockquote>
+<p><em>Prediction tells us what may happen. Optimisation asks what to
+do, under actual limits on money, time, people, capacity and risk. We
+develop linear and integer programming, duality, network flows, facility
+location, queueing and robust decision-making, paying particular
+attention to the assumptions that separate an elegant mathematical
+solution from a practical one.</em></p>
+</blockquote>
+<h2 id="a-scarce-resource-creates-a-choice">A scarce resource creates a
+choice</h2>
+<p>A district owns one vehicle and has several health facilities to
+supply. A cooperative has enough grain to process three orders, but only
+one machine. A health officer may have the money to improve two clinics
+but not six. These problems are not solved by predicting everything
+perfectly. Even with complete information, the decision-maker faces
+mutually incompatible uses of limited resources. Mathematics helps make
+the trade-off explicit; it does not decide whose welfare should matter
+without a public or institutional judgment.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>j</mi></msub><annotation encoding="application/x-tex">x_j</annotation></semantics></math>
+be a controllable quantity: deliveries, equipment purchases, patients
+assigned to a facility or hours of operation. An elementary linear
+programme is</p>
+<p class="numbered-equation" id="eq-lp-standard"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>min</mo><mrow><mi>x</mi><mo>≥</mo><mn>0</mn></mrow></munder><msup><mi>c</mi><mi>𝖳</mi></msup><mi>x</mi><mspace width="2.0em"></mspace><mrow><mtext mathvariant="normal">subject to </mtext><mspace width="0.333em"></mspace></mrow><mi>A</mi><mi>x</mi><mo>≥</mo><mi>b</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\min_{x\ge0}c^{\mathsf T}x\qquad \text{subject to }Ax\ge b.
+</annotation></semantics></math><span aria-label="Equation 5.1" class="equation-number">(5.1)</span></p>
+
+<p>The objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>c</mi><mi>𝖳</mi></msup><mi>x</mi></mrow><annotation encoding="application/x-tex">c^{\mathsf T}x</annotation></semantics></math>
+has a meaning only when the units and prices of each decision are
+defined. The constraints
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>x</mi><mo>≥</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Ax\ge b</annotation></semantics></math>
+state obligations such as minimum service provision. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+counts whole vehicles or facilities, fractional values are not
+meaningful and an integer restriction must be included. If capacity is
+unknown, its uncertainty cannot disappear because the solver accepted a
+numeric parameter.</p>
+<h3 id="build-the-model-backwards-from-an-actual-decision">Build the
+model backwards from an actual decision</h3>
+<p>Start with the action someone can approve or carry out. Does the
+manager choose a route, a dispatch date, a staffing level, a purchase
+quantity, or a location for new infrastructure? Next identify
+feasibility rules that must never be broken, such as an equipment safety
+rating or a budget ceiling. Only then write an objective. There is no
+honest way to optimise “development” as a single quantity without
+explaining whose outcomes are weighted and how. The mathematical
+difficulty is often less than the work of getting the objective
+right.</p>
+<h2 id="a-fully-worked-allocation-problem">A fully worked allocation
+problem</h2>
+<p>A small service programme has 40 staff-hours available. Service A
+requires two hours per client and returns an illustrative benefit score
+of five per client; service B requires four hours and returns a score of
+eight. At most 12 clients can be served by A and at most eight by B.
+With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>,</mo><msub><mi>x</mi><mi>B</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x_A,x_B\ge0</annotation></semantics></math>
+the continuous planning problem is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mspace width="0.278em"></mspace><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub><mo>,</mo><mspace width="1.0em"></mspace><mn>2</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>4</mn><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>40</mn><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>x</mi><mi>A</mi></msub><mo>≤</mo><mn>12</mn><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>8</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\max\; 5x_A+8x_B,
+\quad 2x_A+4x_B\le40,\quad x_A\le12,\quad x_B\le8.
+</annotation></semantics></math></p>
+<p>These scores are invented to illustrate allocation. They are not
+values assigned to real patients. Because benefit per staff-hour is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">5/2</annotation></semantics></math>
+for A and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">8/4</annotation></semantics></math>
+for B, A is preferable per hour while both caps are respected. Allocate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">x_A=12</annotation></semantics></math>
+at a cost of 24 hours, leaving 16 hours for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">x_B=4</annotation></semantics></math>.
+The objective is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>8</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>92</mn></mrow><annotation encoding="application/x-tex">5(12)+8(4)=92</annotation></semantics></math>.
+In this small problem the optimum can be checked without a solver: any
+move that replaces two hours of A with two hours of B reduces benefit
+until the cap on A is reached, and extra B cannot be added without
+hours.</p>
+<p><em>Proposition.</em> For the preceding continuous allocation
+problem,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(12,4)</annotation></semantics></math>
+maximises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">5x_A+8x_B</annotation></semantics></math>
+and yields value 92.</p>
+<p><em>Proof.</em> From the hour constraint,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>10</mn><mo>−</mo><msub><mi>x</mi><mi>A</mi></msub><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">x_B\le10-x_A/2</annotation></semantics></math>.
+Hence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>80</mn><mo>+</mo><msub><mi>x</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">5x_A+8x_B\le 80+x_A</annotation></semantics></math>.
+Since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>≤</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">x_A\le12</annotation></semantics></math>,
+the objective is at most 92. The point
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(12,4)</annotation></semantics></math>
+is feasible and attains the bound. Thus it is optimal. ◻</p>
+<p>What if the programme’s priority is to serve at least five B clients?
+Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>≥</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">x_B\ge5</annotation></semantics></math>
+is a legitimate new constraint; the optimum changes. Mathematical
+optimality is always relative to the stated objective and feasible set.
+It cannot certify that the original objective was ethically
+appropriate.</p>
+<h2 id="duality-explains-the-value-of-an-extra-unit">Duality explains
+the value of an extra unit</h2>
+<p>For the canonical minimisation form in <a href="chapter05.html#eq-lp-standard">equation (5.1)</a>, the dual is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>max</mo><mrow><mi>y</mi><mo>≥</mo><mn>0</mn></mrow></munder><mspace width="0.278em"></mspace><msup><mi>b</mi><mi>𝖳</mi></msup><mi>y</mi><mo>,</mo><mspace width="2.0em"></mspace><msup><mi>A</mi><mi>𝖳</mi></msup><mi>y</mi><mo>≤</mo><mi>c</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\max_{y\ge0}\; b^{\mathsf T}y,\qquad A^{\mathsf T}y\le c.
+</annotation></semantics></math></p>
+<p>Every dual feasible
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+gives a lower bound on the primal objective because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>c</mi><mi>𝖳</mi></msup><mi>x</mi><mo>≥</mo><msup><mi>y</mi><mi>𝖳</mi></msup><mi>A</mi><mi>x</mi><mo>≥</mo><msup><mi>y</mi><mi>𝖳</mi></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">c^{\mathsf T}x\ge y^{\mathsf T}Ax\ge y^{\mathsf T}b</annotation></semantics></math>
+for feasible
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>,</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x,y</annotation></semantics></math>.
+This elementary inequality is <em>weak duality</em>. Under the usual
+finite-dimensional linear-programming feasibility and finiteness
+conditions, strong duality states that the optimal values coincide <span class="citation" data-cites="boyd2004 hillier2021">(Boyd and
+Vandenberghe 2004; Hillier and Lieberman 2021)</span>.</p>
+<p><em>Proposition.</em> If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x\ge0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>x</mi><mo>≥</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Ax\ge b</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">y\ge0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>A</mi><mi>𝖳</mi></msup><mi>y</mi><mo>≤</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">A^{\mathsf T}y\le c</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>b</mi><mi>𝖳</mi></msup><mi>y</mi><mo>≤</mo><msup><mi>c</mi><mi>𝖳</mi></msup><mi>x</mi></mrow><annotation encoding="application/x-tex">b^{\mathsf T}y\le c^{\mathsf T}x</annotation></semantics></math>.</p>
+<p><em>Proof.</em> Multiply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>x</mi><mo>≥</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Ax\ge b</annotation></semantics></math>
+by the nonnegative vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+to obtain
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>y</mi><mi>𝖳</mi></msup><mi>A</mi><mi>x</mi><mo>≥</mo><msup><mi>y</mi><mi>𝖳</mi></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">y^{\mathsf T}Ax\ge y^{\mathsf T}b</annotation></semantics></math>.
+Multiply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>A</mi><mi>𝖳</mi></msup><mi>y</mi><mo>≤</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">A^{\mathsf T}y\le c</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x\ge0</annotation></semantics></math>
+to obtain
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mi>𝖳</mi></msup><msup><mi>A</mi><mi>𝖳</mi></msup><mi>y</mi><mo>≤</mo><msup><mi>x</mi><mi>𝖳</mi></msup><mi>c</mi></mrow><annotation encoding="application/x-tex">x^{\mathsf T}A^{\mathsf T}y\le x^{\mathsf T}c</annotation></semantics></math>.
+The shared middle expression yields the claim. ◻</p>
+<p>A dual multiplier may be interpreted locally as a <em>shadow
+price</em>: the improvement in the optimised objective for a small
+relaxation of a constraint, while the current active set remains stable.
+It is not a market price, a promise of gain from a real investment, or a
+valid prediction for arbitrarily large changes. In the staff-hour
+example, the hour resource has local value two benefit units per hour
+while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>A</mi></msub><annotation encoding="application/x-tex">x_A</annotation></semantics></math>
+remains capped and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>B</mi></msub><annotation encoding="application/x-tex">x_B</annotation></semantics></math>
+has spare capacity. An additional hour can serve a quarter of a B client
+in the continuous relaxation, increasing value by two. If clients are
+indivisible, the marginal gain becomes discontinuous: one extra hour may
+change nothing until enough additional hours accumulate.</p>
+<h3 id="integer-decisions-change-what-is-feasible">Integer decisions
+change what is feasible</h3>
+<p>For a facility-opening variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>j</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">y_j\in\{0,1\}</annotation></semantics></math>,
+a continuous relaxation allows
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>j</mi></msub><mo>=</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">y_j=0.3</annotation></semantics></math>
+and may produce an unrealistically attractive bound. The relaxation is
+valuable computationally because it supplies a lower bound for a
+minimisation model; it is not a deployable answer. Integer programmes
+require binary or integer variables, and the solver must report
+optimality gaps or time limits honestly. A feasible solution with a 4%
+gap is not a proof of global optimality unless the gap is zero within
+appropriate numerical tolerances.</p>
+<h2 id="road-networks-distance-is-not-travel-time">Road networks:
+distance is not travel time</h2>
+<p>An urban delivery network can be represented by a directed graph
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mi>V</mi><mo>,</mo><mi>E</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">G=(V,E)</annotation></semantics></math>.
+Vertices stand for intersections or facilities; edges stand for
+navigable links. A shortest-path algorithm such as Dijkstra’s algorithm
+finds the least-cost route when edge costs are nonnegative. What counts
+as cost is the modelling decision. Edge distance and edge travel time
+are not interchangeable. If one road floods, the best route may change
+even when its geometric length does not. Road geometry from
+OpenStreetMap gives useful network structure but cannot, by itself,
+establish actual wet-season passability or hourly travel speed <span class="citation" data-cites="dijkstra1959 geofabrikUG">(Dijkstra 1959;
+Geofabrik 2026)</span>.</p>
+<p>For edge flows
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>e</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f_e\ge0</annotation></semantics></math>,
+a single-commodity network model imposes flow conservation at each node
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>∑</mo><mrow><mi>e</mi><mo>∈</mo><msup><mi>δ</mi><mo>+</mo></msup><mrow><mo form="prefix" stretchy="true">(</mo><mi>v</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></munder><msub><mi>f</mi><mi>e</mi></msub><mo>−</mo><munder><mo>∑</mo><mrow><mi>e</mi><mo>∈</mo><msup><mi>δ</mi><mo>−</mo></msup><mrow><mo form="prefix" stretchy="true">(</mo><mi>v</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></munder><msub><mi>f</mi><mi>e</mi></msub><mo>=</mo><msub><mi>b</mi><mi>v</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\sum_{e\in\delta^+(v)}f_e-\sum_{e\in\delta^-(v)}f_e=b_v,
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>v</mi></msub><annotation encoding="application/x-tex">b_v</annotation></semantics></math>
+is net supply. Capacity bounds
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>f</mi><mi>e</mi></msub><mo>≤</mo><msub><mi>u</mi><mi>e</mi></msub></mrow><annotation encoding="application/x-tex">0\le f_e\le u_e</annotation></semantics></math>
+protect links or conveyances. A water distribution or medicine-delivery
+system with losses, limited vehicles or time windows needs more
+constraints. The diagram is not the network: a missing bridge on the map
+or an overestimated carrying capacity can completely invalidate the
+proposed schedule.</p>
+<h2 id="the-difference-between-locating-a-facility-and-assigning-users">The
+difference between locating a facility and assigning users</h2>
+<p>Suppose populations indexed by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+must be served by candidate facilities
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>i</mi></msub><annotation encoding="application/x-tex">p_i</annotation></semantics></math>
+denote the size of population group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">d_{ij}</annotation></semantics></math>
+a route-based travel cost,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">x_{ij}</annotation></semantics></math>
+the fraction assigned and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>j</mi></msub><annotation encoding="application/x-tex">y_j</annotation></semantics></math>
+whether a facility is opened. A capacitated location–allocation
+formulation is</p>
+<p class="numbered-equation" id="eq-facility-location"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>min</mo><mrow><mi>x</mi><mo>,</mo><mi>y</mi></mrow></munder><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></munder><msub><mi>p</mi><mi>i</mi></msub><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>+</mo><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>f</mi><mi>j</mi></msub><msub><mi>y</mi><mi>j</mi></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mspace width="1.0em"></mspace><mrow><mo form="prefix" stretchy="true">(</mo><mo>∀</mo><mi>i</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>p</mi><mi>i</mi></msub><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>K</mi><mi>j</mi></msub><msub><mi>y</mi><mi>j</mi></msub><mspace width="1.0em"></mspace><mrow><mo form="prefix" stretchy="true">(</mo><mo>∀</mo><mi>j</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>y</mi><mi>j</mi></msub><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>y</mi><mi>j</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo><mo>,</mo><mspace width="1.0em"></mspace><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>f</mi><mi>j</mi></msub><msub><mi>y</mi><mi>j</mi></msub><mo>≤</mo><mi>B</mi><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\min_{x,y}\quad&amp;\sum_{i,j}p_id_{ij}x_{ij}+\sum_jf_jy_j\\
+\text{subject to}\quad&amp;\sum_jx_{ij}=1\quad(\forall i),\\
+&amp;\sum_i p_ix_{ij}\le K_jy_j\quad(\forall j),\\
+&amp;0\le x_{ij}\le y_j,\quad y_j\in\{0,1\},\quad \sum_jf_jy_j\le B.
+\end{aligned}
+</annotation></semantics></math><span aria-label="Equation 5.2" class="equation-number">(5.2)</span></p>
+
+<p>If opening costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mi>j</mi></msub><annotation encoding="application/x-tex">f_j</annotation></semantics></math>
+appear in both the objective and budget, they are counted differently
+for different reasons: the objective includes a cost trade-off, while
+the budget imposes an affordability limit. Avoid inadvertently charging
+the same cost twice in a monetary total. If the policy fixes the number
+of new facilities rather than a monetary budget, use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>y</mi><mi>j</mi></msub><mo>≤</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">\sum_jy_j\le k</annotation></semantics></math>.</p>
+<p>Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>j</mi></msub><annotation encoding="application/x-tex">K_j</annotation></semantics></math>
+is service capacity in people, not an abstract score. The model treats
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>i</mi></msub><annotation encoding="application/x-tex">p_i</annotation></semantics></math>
+as divisible among facilities; if populations cannot realistically be
+divided, or the service requires exclusive assignment, binary
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">x_{ij}</annotation></semantics></math>
+may be preferable. A mathematical optimum may be inequitable if a few
+remote groups bear very large travel burdens. A constraint such as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>j</mi><mo>:</mo><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≤</mo><mi>T</mi></mrow></msub><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≥</mo><msub><mi>α</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{j:d_{ij}\le T}x_{ij}\ge\alpha_i</annotation></semantics></math>
+for specified groups can represent a minimum fraction served within a
+travel limit
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>.
+The values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>α</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\alpha_i</annotation></semantics></math>
+are policy choices that should be discussed with affected communities
+rather than presented as facts discovered by an optimiser.</p>
+<p><em>Example.</em> For illustration, imagine three villages with
+populations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>300</mn><mo>,</mo><mn>200</mn><mo>,</mo><mn>100</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(300,200,100)</annotation></semantics></math>
+and possible mobile-team sites
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>,</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A,B</annotation></semantics></math>.
+Their travel minutes are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>20</mn><mo>,</mo><mn>40</mn><mo>,</mo><mn>60</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(20,40,60)</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>50</mn><mo>,</mo><mn>20</mn><mo>,</mo><mn>15</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(50,20,15)</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>.
+If only one team can be based at a single site, the population-weighted
+travel costs are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>300</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>20</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>200</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>40</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>100</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>60</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>20</mn><mo>,</mo><mn>000</mn></mrow><annotation encoding="application/x-tex">300(20)+200(40)+100(60)=20{,}000</annotation></semantics></math>
+minutes for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>300</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>50</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>200</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>20</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>100</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>15</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>20</mn><mo>,</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">300(50)+200(20)+100(15)=20{,}500</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>.
+Under this objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+wins by 500 weighted minutes. But village 3 faces a 60-minute journey to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+rather than 15 minutes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>.
+Whether this is acceptable depends on travel-time equity and the
+service’s clinical urgency; the weighted mean alone cannot answer
+it.</p>
+<h2 id="queueing-and-service-capacity">Queueing and service
+capacity</h2>
+<p>An assignment model that sends more people to a clinic must consider
+the waiting time produced by that load. Suppose arrivals at a single
+service point follow a Poisson process at rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
+and independent service times are exponential at rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>&gt;</mo><mi>λ</mi></mrow><annotation encoding="application/x-tex">\mu&gt;\lambda</annotation></semantics></math>.
+In the elementary M/M/1 model, utilisation is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mi>λ</mi><mi>/</mi><mi>μ</mi></mrow><annotation encoding="application/x-tex">\rho=\lambda/\mu</annotation></semantics></math>
+and mean time in the system is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mi>μ</mi><mo>−</mo><mi>λ</mi></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+W=\frac{1}{\mu-\lambda}.
+</annotation></semantics></math></p>
+<p>As
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>↑</mo><mi>μ</mi></mrow><annotation encoding="application/x-tex">\lambda\uparrow\mu</annotation></semantics></math>,
+the mean waiting time diverges. The formula makes the cost of operating
+near full utilisation vivid; it also depends on assumptions that may not
+fit scheduled appointments, interruptions or heterogeneous clinical
+tasks <span class="citation" data-cites="gross2008 kleinrock1975">(Gross
+et al. 2008; Kleinrock 1975)</span>. If the arrival process is highly
+variable or the staff member performs several duties, a more suitable
+queueing model or a simulation should be justified.</p>
+<p>A practical facility-location problem is therefore joint: opening a
+new clinic may reduce travel time yet fail to reduce total time if
+staffing is insufficient. Optimising only road distance can shift the
+burden from transport to queues. More complex models couple route
+assignments and service capacity, but the additional variables demand
+data that an existing clinic register may not contain. Start with a
+defensible baseline and expose the missing information before expanding
+the model.</p>
+<h2 id="planning-when-demand-and-infrastructure-are-uncertain">Planning
+when demand and infrastructure are uncertain</h2>
+<p>A single demand estimate, solar forecast or travel-speed assumption
+can produce a brittle plan. A scenario set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒮</mi><annotation encoding="application/x-tex">\mathcal S</annotation></semantics></math>
+supplies plausible alternatives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+with objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>s</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">C(x,s)</annotation></semantics></math>.
+Expected-cost optimisation uses probabilities
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mi>s</mi></msub><annotation encoding="application/x-tex">\pi_s</annotation></semantics></math>
+and minimises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>s</mi></msub><msub><mi>π</mi><mi>s</mi></msub><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>s</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\sum_s\pi_sC(x,s)</annotation></semantics></math>,
+while a worst-case plan minimises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>max</mo><mrow><mi>s</mi><mo>∈</mo><mi>𝒮</mi></mrow></msub><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>s</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\max_{s\in\mathcal S}C(x,s)</annotation></semantics></math>.
+These are distinct notions of risk. An expected-cost solution can have
+rare catastrophic outcomes; a worst-case plan can be expensive if the
+uncertainty set contains impossible combinations. Neither should be
+called “robust” without defining the set of circumstances and how they
+were selected <span class="citation" data-cites="bertsimas2004 benTal2009">(Bertsimas and Sim 2004; Ben-Tal,
+El Ghaoui, and Nemirovski 2009)</span>.</p>
+<p>A chance constraint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mo form="prefix" stretchy="false">{</mo><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>ξ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≤</mo><mn>0</mn><mo form="postfix" stretchy="false">}</mo><mo>≥</mo><mn>1</mn><mo>−</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">\Pr\{g(x,\xi)\le0\}\ge1-\alpha</annotation></semantics></math>
+requires a probability model for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ξ</mi><annotation encoding="application/x-tex">\xi</annotation></semantics></math>.
+A scenario approximation based on ten invented disruptions does not
+establish a 99% reliability guarantee. If historical road closures or
+supplier delays are limited, consider transparent sensitivity analysis
+and state the range of assumptions rather than attaching unwarranted
+probabilities.</p>
+<p><em>Proposition.</em> Consider two actions with costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>A</mi><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">C(A,1)=1</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>A</mi><mo>,</mo><mn>2</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">C(A,2)=100</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>B</mi><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">C(B,1)=10</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>B</mi><mo>,</mo><mn>2</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">C(B,2)=11</annotation></semantics></math>.
+Under scenario 1 alone,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+is optimal, but under a worst-case criterion over scenarios 1 and 2,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+is optimal.</p>
+<p><em>Proof.</em> Under scenario 1,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&lt;</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">1&lt;10</annotation></semantics></math>.
+Under worst-case evaluation,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mo form="prefix" stretchy="false">{</mo><mn>1</mn><mo>,</mo><mn>100</mn><mo form="postfix" stretchy="false">}</mo><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\max\{1,100\}=100</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mo form="prefix" stretchy="false">{</mo><mn>10</mn><mo>,</mo><mn>11</mn><mo form="postfix" stretchy="false">}</mo><mo>=</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">\max\{10,11\}=11</annotation></semantics></math>.
+Therefore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+has the lower worst-case cost. ◻</p>
+<p>This invented counterexample is intentionally tiny. It shows that a
+model can be solved flawlessly and still give a poor recommendation if
+uncertainty has been suppressed. It does not tell us whether the
+worst-case criterion is the right policy in any actual district.</p>
+<h2 id="an-honest-health-facility-access-laboratory">An honest
+health-facility access laboratory</h2>
+<p>The book’s main location exercise uses geographic candidates from
+Uganda’s OpenStreetMap extract, contributed facility records such as
+Healthsites.io and an explicitly dated population surface such as
+WorldPop <span class="citation" data-cites="geofabrikUG healthsites worldpop">(Geofabrik 2026;
+Healthsites.io 2026; WorldPop 2026)</span>. The dataset must state which
+facilities are in the source and which are verified operational. A
+reported health-site point is not evidence that staff or essential
+services are available there. Population rasters are model-based
+estimates, not household enumeration at each pixel. Travel-speed
+attributes need checking; otherwise define several labelled
+scenarios.</p>
+<p>The first stage is deliberately modest: find the nearest reachable
+candidate site for each population cell over the observed road graph,
+comparing weighted straight-line distance with network distance. The
+second stage imposes a limit on new facilities and plausible capacities.
+The third tests whether the decision survives changes in travel speeds,
+missing road connections and candidate closures. This order reveals
+exactly what each layer of complexity contributes.</p>
+<table id="tbl-5_1">
+<caption><span class="caption-label">Table 5.1. </span>Questions to answer before claiming a facility-location result</caption>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Check</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Are facilities operational?</td>
+<td>A mapped building may not offer the intended service.</td>
+</tr>
+<tr class="even">
+<td>Are populations and facilities time-aligned?</td>
+<td>Settlement patterns and capacities change.</td>
+</tr>
+<tr class="odd">
+<td>Is route travel time measured?</td>
+<td>Distance and assumed speeds do not establish observed journeys.</td>
+</tr>
+<tr class="even">
+<td>Are referral and urgency rules included?</td>
+<td>Nearest is not always clinically appropriate.</td>
+</tr>
+<tr class="odd">
+<td>Are candidate sites legally and physically feasible?</td>
+<td>A site can be mathematically optimal but impossible to acquire.</td>
+</tr>
+<tr class="even">
+<td>Are worst-served communities reported?</td>
+<td>Means can conceal concentrated harm.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="worked-investigation-verify-an-optimiser-without-trusting-it-blindly">Worked
+investigation: verify an optimiser without trusting it blindly</h2>
+<p>For a small problem, exhaustive enumeration can establish a reference
+answer. Consider candidate sites
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>,</mo><mi>B</mi><mo>,</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">A,B,C</annotation></semantics></math>
+and a budget for one. Calculate the total assignment cost for each
+candidate with the same cost table and constraints. The minimum is an
+exact discrete optimum. Then solve with a mixed-integer optimiser and
+verify the selected site’s value against that table. Next increase the
+budget to two facilities and enumerate all three two-site subsets. A
+solver returning a lower cost than exhaustive enumeration indicates a
+mistake in the model, input data or comparison procedure. This is
+software verification, not validation of the road speeds.</p>
+<p>The companion program reproduces the continuous staff-hour example,
+exhaustively evaluates a small facility-location illustration and checks
+every returned decision against the capacity and selection constraints.
+It intentionally requires no commercial solver. For larger real
+networks, the exercise can be extended using a documented open-source
+mixed-integer solver, but the book’s claims should remain limited to the
+problem actually solved and checked.</p>
+<h2 id="the-decision-record-is-part-of-the-result">The decision record
+is part of the result</h2>
+<p>A planner should not receive only a map and a number. A useful
+decision record identifies the recommended action, the objective, hard
+constraints, alternatives considered, uncertainty assumptions,
+feasibility checks, required data and the consequences of being wrong. A
+local planner may reject a mathematically preferred location because
+community land agreements, referral patterns or financing make it
+infeasible. Such a rejection is information about the model’s boundary,
+not evidence that the mathematics was useless.</p>
+<h2 id="feasibility-comes-before-optimality">Feasibility comes before
+optimality</h2>
+<p>In practice, one of the first questions about an optimisation problem
+is whether any feasible decision exists. A solver that reports
+infeasibility is not necessarily malfunctioning. It may be telling us
+that the stated requirements are mutually incompatible. Suppose a
+district requires at least 300 visits from a team that can conduct only
+200 in the available working days. If all assumptions are true, no
+clever allocation can meet the target. The useful result may be
+identifying the smallest change to staffing, time or service
+expectations that restores feasibility.</p>
+<p>A simple diagnostic introduces nonnegative slack variables
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>
+and minimises their weighted sum subject to relaxed constraints. For
+example, if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>x</mi><mo>≥</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Ax\ge b</annotation></semantics></math>
+cannot be satisfied, solve
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>min</mo><mrow><mi>x</mi><mo>,</mo><mi>s</mi><mo>≥</mo><mn>0</mn></mrow></msub><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\min_{x,s\ge0}\sum_iw_is_i</annotation></semantics></math>
+subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>x</mi><mo>+</mo><mi>s</mi><mo>≥</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Ax+s\ge b</annotation></semantics></math>.
+The weights encode priorities: relaxing a non-negotiable clinical safety
+condition should not be treated as equivalent to delaying a routine
+administrative task. The diagnostic provides a transparent account of
+incompatibility, but it is not itself approval to violate a
+requirement.</p>
+<h3 id="a-feasible-decision-can-still-be-numerically-fragile">A feasible
+decision can still be numerically fragile</h3>
+<p>Optimisers rely on floating-point arithmetic. If a capacity
+constraint is satisfied within a solver’s tolerance, the result may
+still be marginally infeasible when rounded to whole staff shifts or
+medicine packs. For any proposed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,
+independently calculate residuals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>A</mi><mi>x</mi><mo>−</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">r=Ax-b</annotation></semantics></math>
+and compare them with tolerances appropriate to physical units. A
+violation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>6</mn></mrow></msup><annotation encoding="application/x-tex">10^{-6}</annotation></semantics></math>
+litres may be irrelevant in a reservoir model; a violation of one full
+vehicle or a medicine cold-storage threshold may not be. The checking
+programme should not use the same mistaken conversion routine that
+created the original optimisation model.</p>
+<h2 id="why-dual-prices-are-local-descriptions-not-permanent-promises">Why
+dual prices are local descriptions, not permanent promises</h2>
+<p>Consider a simple facility investment with two binding constraints:
+staff-hours and vehicle capacity. If one additional vehicle has no use
+without extra staff, the shadow price for vehicle capacity may be zero.
+After staff capacity increases, vehicle capacity may become valuable.
+This does not contradict duality; it reveals a change in which
+constraints are active. A common misuse of optimisation is to multiply a
+local shadow price by a huge proposed budget expansion and claim that
+amount as the gain. The local approximation need not remain valid when
+another constraint becomes active.</p>
+<p>For a minimisation programme with right-hand side
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>,
+write its optimal value as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>b</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">V(b)</annotation></semantics></math>.
+Under suitable regularity and an unchanged optimal basis, the dual
+vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>y</mi><mo>*</mo></msup><annotation encoding="application/x-tex">y^*</annotation></semantics></math>
+gives a local directional sensitivity:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>b</mi><mo>+</mo><mi>Δ</mi><mi>b</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≈</mo><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>b</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><msup><msup><mi>y</mi><mo>*</mo></msup><mi>𝖳</mi></msup><mi>Δ</mi><mi>b</mi></mrow><annotation encoding="application/x-tex">V(b+\Delta b)\approx V(b)+{y^*}^{\mathsf T}\Delta b</annotation></semantics></math>
+(with signs chosen consistently for the constraint orientation). A full
+calculation should reoptimise after a meaningful change. The mathematics
+indicates where a new resource might matter, but the real cost of
+supplying that resource must be added before recommending action.</p>
+<h2 id="a-richer-road-network-counterexample">A richer road-network
+counterexample</h2>
+<p>Imagine a driver choosing between roads
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+between the same two sites. Road
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+is 12 kilometres and is assumed to permit 20 kilometres per hour. Road
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+is 18 kilometres and permits 45 kilometres per hour. Their nominal
+travel times are 36 and 24 minutes, respectively. The shorter road is
+slower. If heavy rain reduces the safe speed on road
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+to 15 kilometres per hour, its time becomes 72 minutes and the preferred
+route reverses. These values are invented, but the reversal is a
+reliable consequence of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>d</mi><mi>/</mi><mi>v</mi></mrow><annotation encoding="application/x-tex">t=d/v</annotation></semantics></math>
+under the stated scenario.</p>
+<p>Now suppose the rainfall forecast is uncertain. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+is slower only during severe rain, one needs the frequency and
+operational consequences of that condition to choose an expected-time
+route. A route that minimises average travel time may be unreliable for
+urgent medical supplies, where the worst delays matter more than small
+reductions in the mean. An appropriate objective might be the 90th
+percentile of delivery time or expected cost plus a penalty for late
+arrival. Such a decision can be implemented only if the relevant risk is
+measured or if scenario assumptions are openly presented.</p>
+<h2 id="comparing-location-decisions-through-a-sequence-of-models">Comparing
+location decisions through a sequence of models</h2>
+<p>Rather than building the full location problem in one step, an
+instructor can show students how assumptions change results. In a first
+model, assign each village to the nearest functioning facility by
+verified road distance. In a second, use travel time and plausible road
+speeds. In a third, add facility capacities. In a fourth, allow opening
+one additional site. In a fifth, add an explicit equity requirement for
+remote populations. Keep the same candidate set and data for every
+comparison so that the effect of each change is visible.</p>
+<p>At every stage ask what new information was required. Switching from
+distance to travel time requires speeds, surface types or observations.
+Adding capacities requires service-specific facility information, not
+simply building areas. Adding a new site requires a catalogue of
+physically feasible candidates. Adding equity requires a public choice
+about acceptable disadvantage. A model is richer when it answers a more
+important question under defensible assumptions, not merely when it has
+more variables.</p>
+<p>The resulting report can be organised around four maps: existing
+accessibility, predicted access after nearest-site assignment, proposed
+allocation under capacity limits, and locations where the choice changes
+under plausible disruptions. The report should include people for whom
+travel time increases, not only people for whom it decreases. A
+numerical objective without a distribution of effects can hide an
+intervention’s unequal burden.</p>
+<h2 id="an-allocation-problem-with-uncertain-capacity">An allocation
+problem with uncertain capacity</h2>
+<p>Suppose two vehicles nominally have capacities 50 and 40 boxes, while
+total demand is 85 boxes. The nominal plan is feasible if no capacity is
+lost. If wet-road conditions reduce the second vehicle’s usable capacity
+to 25, total capacity becomes 75 and the plan is infeasible. An
+optimisation model that assumes the nominal capacity in all periods
+cannot guarantee delivery of all 85 boxes. It can make a defensible plan
+only by including extra trips, reserve capacity, alternate transport or
+accepted unmet delivery in its constraints and objective.</p>
+<p>One possible two-stage formulation chooses initial resource decisions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+before knowing the disruption and recourse decisions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>s</mi></msub><annotation encoding="application/x-tex">y_s</annotation></semantics></math>
+after observing scenario
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>min</mo><mrow><mi>x</mi><mo>,</mo><mo form="prefix" stretchy="false">{</mo><msub><mi>y</mi><mi>s</mi></msub><mo form="postfix" stretchy="false">}</mo></mrow></munder><mspace width="0.278em"></mspace><msup><mi>c</mi><mi>𝖳</mi></msup><mi>x</mi><mo>+</mo><munder><mo>∑</mo><mrow><mi>s</mi><mo>∈</mo><mi>𝒮</mi></mrow></munder><msub><mi>π</mi><mi>s</mi></msub><msubsup><mi>q</mi><mi>s</mi><mi>𝖳</mi></msubsup><msub><mi>y</mi><mi>s</mi></msub><mo>,</mo><mspace width="1.0em"></mspace><msub><mi>T</mi><mi>s</mi></msub><mi>x</mi><mo>+</mo><msub><mi>W</mi><mi>s</mi></msub><msub><mi>y</mi><mi>s</mi></msub><mo>≥</mo><msub><mi>h</mi><mi>s</mi></msub><mspace width="1.0em"></mspace><mrow><mo form="prefix" stretchy="true">(</mo><mo>∀</mo><mi>s</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\min_{x,\{y_s\}}\;c^{\mathsf T}x+\sum_{s\in\mathcal S}\pi_s q_s^{\mathsf T}y_s,
+\quad T_sx+W_sy_s\ge h_s\quad(\forall s).
+</annotation></semantics></math></p>
+<p>Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+may represent advance vehicle booking while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>s</mi></msub><annotation encoding="application/x-tex">y_s</annotation></semantics></math>
+represents emergency rescheduling. Recourse is meaningful only if a
+second-stage action can actually occur when disruption is known. A road
+closure discovered after the delivery deadline provides no useful
+opportunity to hire extra transport. Timing belongs in the feasible
+set.</p>
+<h2 id="computation-and-explanation-for-the-final-decision">Computation
+and explanation for the final decision</h2>
+<p>For a large integer programme, record solver name, version,
+tolerances, elapsed time, thread count and an optimality gap. Test a
+small instance by exhaustive enumeration, then perform a constraint
+audit on the large solution. The number of nodes considered or
+iterations completed is not a measure of policy benefit. Report both the
+mathematical objective and the operational outcome; a model that reduces
+travel minutes but increases missed urgent deliveries has not
+necessarily improved the service.</p>
+<p>Where possible, show a transparent baseline next to the optimised
+recommendation. The baseline may be the current allocation, nearest-site
+rule or a simple greedy heuristic. If the advanced optimisation improves
+little over the baseline, that finding is valuable. It may show that
+there is no need to maintain a complex tool. If it improves
+substantially only under one travel-speed assumption, the next
+investment may be better measurement rather than new software.</p>
+<h2 id="extended-case-study-one-district-a-limited-service-budget">Extended
+case study: one district, a limited service budget</h2>
+<p>Consider a district planning exercise in which a mobile service team
+must visit settlements separated by difficult roads. We imagine the
+planner has a basic road graph, a list of candidate service points and
+approximate population totals. The budget permits only one new service
+point. This is a plausible type of decision, but all numerical values in
+this investigation are illustrative; no actual site is being
+recommended.</p>
+<p>The planner first needs to distinguish the purpose of a visit from
+the number of visitors. A routine vaccination session, supply delivery
+and emergency referral have different constraints. A location suitable
+for an occasional mobile clinic may be unsuitable for an ambulance
+service, even if the same road graph is used. Define the service, the
+minimum operating standard and the time horizon before calculating
+travel cost. “Closest hospital” is not necessarily meaningful without
+specifying which services are available at each facility.</p>
+<h3 id="stage-one-build-an-auditable-baseline">Stage one: build an
+auditable baseline</h3>
+<p>Create a table of settlements with stable identifiers, population
+counts, coordinates and geographic source dates. Build another table of
+operational facilities, with location and verified services. Construct
+the road network and calculate route costs with a documented algorithm.
+If a settlement is disconnected in the mapped road graph, record that
+fact rather than silently assigning straight-line travel distance. Where
+transport modes vary, declare a separate cost model for each mode.</p>
+<p>The most basic decision is to assign every settlement to a reachable
+existing facility. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mo>=</mo><msub><mo>min</mo><mrow><mi>j</mi><mo>∈</mo><msub><mi>F</mi><mn>0</mn></msub></mrow></msub><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">d_i^{(0)}=\min_{j\in F_0}d_{ij}</annotation></semantics></math>
+denote travel cost from settlement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+to the nearest functioning facility in the baseline set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mn>0</mn></msub><annotation encoding="application/x-tex">F_0</annotation></semantics></math>.
+An average accessibility score is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>d</mi><mo accent="true">¯</mo></mover><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mi>/</mi><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\overline d=\sum_i p_i d_i^{(0)}/\sum_i p_i</annotation></semantics></math>.
+This is population-weighted travel cost, not an observed patient journey
+time. It depends on the assumptions used to turn roads into travel
+times. The baseline should also report the largest distances and the
+number of people beyond a chosen threshold.</p>
+<h3 id="stage-two-test-a-single-proposed-location">Stage two: test a
+single proposed location</h3>
+<p>For each candidate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+not already open, calculate the new minimum travel cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>j</mi><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mo>=</mo><mo>min</mo><mo form="prefix" stretchy="false">{</mo><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mo>,</mo><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">d_i^{(j)}=\min\{d_i^{(0)},d_{ij}\}</annotation></semantics></math>.
+The weighted improvement is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mi>j</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mo>−</mo><msubsup><mi>d</mi><mi>i</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>j</mi><mo form="postfix" stretchy="true">)</mo></mrow></msubsup><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta_j=\sum_i p_i(d_i^{(0)}-d_i^{(j)})</annotation></semantics></math>.
+The best site under this one-dimensional objective maximises
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\Delta_j</annotation></semantics></math>,
+subject to feasibility. The calculation can be completed by enumerating
+every candidate without sophisticated software. This is a useful exact
+benchmark against which more elaborate location models should be
+checked.</p>
+<p>Now add an operational cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mi>j</mi></msub><annotation encoding="application/x-tex">f_j</annotation></semantics></math>.
+If the budget permits only one new site with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>j</mi></msub><mo>≤</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">f_j\le B</annotation></semantics></math>,
+the feasible candidates may shrink. Next consider capacity. An
+apparently well-located site that can serve 40 clients per week cannot
+automatically absorb 600 clients simply because it is closest. If demand
+is concentrated in one settlement, a capacity-limited assignment may
+send some clients farther away. The site that maximises travel savings
+without capacity can cease to be optimal when staffing is
+considered.</p>
+<h3 id="stage-three-introduce-equity-without-hiding-the-trade-off">Stage
+three: introduce equity without hiding the trade-off</h3>
+<p>An average travel-time objective can favour dense central
+settlements. To see why, imagine one village of 1,000 residents and a
+remote village of 40 residents. Reducing the large village’s travel time
+by ten minutes yields 10,000 weighted minutes saved. Reducing the remote
+village’s time by 100 minutes yields 4,000. The mean-based objective
+favours the large village, even though the remote residents face a much
+greater journey. This preference follows from the chosen objective, not
+from an empirical finding that the second group’s burden is
+acceptable.</p>
+<p>A planner can represent equity explicitly. One option minimises the
+maximum travel time; another imposes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>≤</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">d_i\le T</annotation></semantics></math>
+for settlements with designated priority. A third uses a weighted
+objective with additional priority weights, but those weights require
+open discussion. A mathematically optimal plan can be sensitive to the
+chosen representation of fairness. The result should present the
+alternatives rather than declare one universal definition of an
+equitable allocation.</p>
+<h3 id="stage-four-explain-infeasibility-to-a-decision-maker">Stage
+four: explain infeasibility to a decision-maker</h3>
+<p>Suppose the district has only one ambulance and policy requires all
+emergency patients to reach a referral centre within 30 minutes. The
+road network shows a settlement whose minimum travel time is 80 minutes
+even with the best available candidate site. No assignment algorithm can
+satisfy the stated target. The correct result is infeasibility, together
+with options for what additional resources or infrastructure would be
+required. One might need a nearer emergency service, an additional
+vehicle, improved road access or a revised referral strategy. Choosing a
+different solver is not a solution.</p>
+<h3 id="stage-five-account-for-disruption">Stage five: account for
+disruption</h3>
+<p>Assume one bridge becomes impassable during some periods. Remove its
+edge from the network and recompute the assignments. Repeat for other
+plausible closures or speed changes. A robust decision could minimise
+maximum travel cost over the designated scenarios or satisfy minimum
+access in each scenario. That decision may differ from the nominal
+optimum. The price of robustness is the additional cost or lost nominal
+performance accepted to reduce vulnerability. It should be reported, not
+hidden behind a label such as “climate-smart.”</p>
+<p>The scenario exercise is useful even if historical closure
+probabilities are unavailable. It shows which decisions depend
+critically on a single uncertain road link. It does not establish how
+often that link fails. If better observations would alter the preferred
+plan, the project may justify collecting road-speed and passability
+records before investing in a new facility.</p>
+<h2 id="mathematical-detail-a-small-exact-facility-location-method">Mathematical
+detail: a small exact facility-location method</h2>
+<p>Suppose a set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>
+has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+candidates and exactly
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+may be opened. The brute-force method evaluates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mfrac linethickness="0"><mi>m</mi><mi>k</mi></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">\binom{m}{k}</annotation></semantics></math>
+candidate subsets. For each subset
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>,
+compute
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><msub><mo>min</mo><mrow><mi>j</mi><mo>∈</mo><mi>S</mi></mrow></msub><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C(S)=\sum_i p_i\min_{j\in S}d_{ij}</annotation></semantics></math>.
+Choose an admissible subset attaining the minimum. This method is
+computationally expensive for large
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>,
+but it is exact for a small benchmark. A student should understand what
+the enumeration proves before accepting an integer solver’s
+certificate.</p>
+<p>The code companion enumerates subsets of three candidate sites for
+one-site and two-site plans, reporting every objective. It is important
+that the objective table includes <em>all</em> admissible subsets, not
+only the winning one. This makes the result independently checkable.
+Extending the code to capacities requires changing the assignment
+procedure; merely adding capacity values to a printed table does not
+enforce them.</p>
+<h2 id="network-errors-and-their-decision-consequences">Network errors
+and their decision consequences</h2>
+<p>If a bridge is missing from the mapped graph, a route may appear to
+require a long detour. If a river crossing is incorrectly mapped as a
+driveable road, travel time may be underestimated. These errors have
+directional consequences for investment decisions. It can be useful to
+classify uncertain edges by how often they are used in optimal
+solutions. An uncertain bridge that changes the selected facility under
+plausible interpretations deserves higher-priority verification than a
+road segment never used by any feasible route.</p>
+<p>This suggests a practical, decision-oriented data-audit procedure:
+perturb uncertain map attributes within justified ranges, recompute the
+decision, and rank the information gaps by whether they change the
+chosen action. If the optimal location is stable across all considered
+assumptions, elaborate additional surveying may not be immediately
+necessary for that decision. If the recommendation changes repeatedly,
+more data could have substantial value. This is a stronger argument for
+data collection than counting map features with missing labels.</p>
+<h2 id="a-policy-briefing-that-exposes-uncertainty">A policy briefing
+that exposes uncertainty</h2>
+<p>A final briefing should show the current access pattern, the proposed
+choice, its resource requirements and the people who do and do not
+benefit. It should include nominal and disrupted-route results,
+operational caveats, and what site verification remains before
+investment. Claims such as “travel time reduced by 28%” must identify
+whether the time was measured from journeys or modelled from road
+geometry and assumed speeds. The numerical precision of a solver does
+not determine the precision of those inputs.</p>
+<p>A planner who decides not to invest immediately may still have
+benefited from the analysis. The work could reveal that a proposed
+facility is infeasible because of staffing limits, or that a cheap road
+verification survey is more valuable than another optimisation run. A
+sound engineering book should teach readers to recognise that outcome as
+a legitimate solution to the current problem.</p>
+<h2 id="mathematical-workshop-reading-a-constrained-solution">Mathematical
+workshop: reading a constrained solution</h2>
+<p>Optimisation models can feel like collections of inequalities until
+the reader learns to interpret each constraint as a real operational
+promise. Consider a two-variable allocation with unit costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mn>1</mn></msub><mo>,</mo><msub><mi>c</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">c_1,c_2</annotation></semantics></math>
+and resource limits. The feasible region is the intersection of
+half-spaces. In two dimensions it can be drawn, but in larger problems
+its geometry is encoded by the matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>.
+The model is not complete until every coefficient has a unit: hours per
+client, shillings per item, litres per day or kilometres per trip. A
+coefficient that adds hours to litres does not become meaningful because
+a computer accepted the matrix.</p>
+<h3 id="a-dual-certificate-of-optimality">A dual certificate of
+optimality</h3>
+<p>Return to the illustrative programme with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">\max 5x_A+8x_B</annotation></semantics></math>
+subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>4</mn><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">2x_A+4x_B\le40</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>≤</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">x_A\le12</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">x_B\le8</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x\ge0</annotation></semantics></math>.
+A simple upper bound arises from the hours constraint:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>80</mn><mo>−</mo><mn>4</mn><msub><mi>x</mi><mi>A</mi></msub><mo>,</mo><mspace width="2.0em"></mspace><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub><mo>≤</mo><mn>80</mn><mo>+</mo><msub><mi>x</mi><mi>A</mi></msub><mo>≤</mo><mn>92</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+8x_B\le80-4x_A,
+\qquad 5x_A+8x_B\le80+x_A\le92.
+</annotation></semantics></math></p>
+<p>The candidate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(12,4)</annotation></semantics></math>
+attains 92, so the bound certifies optimality without reliance on solver
+output. This kind of certificate is important pedagogically. A numerical
+programme should be checked against mathematics on small instances so
+that students understand what it means to trust an optimisation
+result.</p>
+<p>The bounding argument also reveals shadow prices. The objective bound
+was constructed by assigning price two to the hour resource and price
+one to the cap on service A. Indeed,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>2</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>4</mn><msub><mi>x</mi><mi>B</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>1</mn><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>x</mi><mi>A</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>5</mn><msub><mi>x</mi><mi>A</mi></msub><mo>+</mo><mn>8</mn><msub><mi>x</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">2(2x_A+4x_B)+1(x_A)=5x_A+8x_B</annotation></semantics></math>,
+and the corresponding resource values give
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>40</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>1</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>92</mn></mrow><annotation encoding="application/x-tex">2(40)+1(12)=92</annotation></semantics></math>.
+These nonnegative prices form a dual feasible certificate. Each is a
+local marginal interpretation. If the hour allocation increases enough
+for the B cap to bind, these dual prices need not remain valid.</p>
+<h3 id="integrality-creates-a-different-kind-of-difficulty">Integrality
+creates a different kind of difficulty</h3>
+<p>If clients are counted as indivisible people,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>A</mi></msub><annotation encoding="application/x-tex">x_A</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>B</mi></msub><annotation encoding="application/x-tex">x_B</annotation></semantics></math>
+should be integers. In the example, the continuous optimum happens to
+use integers, so no difference arises. That coincidence should not be
+assumed generally. Consider
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>max</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">\max x</annotation></semantics></math>
+subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>x</mi><mo>≤</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">2x\le3</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x\ge0</annotation></semantics></math>.
+The continuous optimum is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>1.5</mn></mrow><annotation encoding="application/x-tex">x=1.5</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+counts vehicles, the integer optimum is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">x=1</annotation></semantics></math>.
+The relaxation’s value 1.5 remains an upper bound for the integer
+maximisation, but it is not a feasible operating plan.</p>
+<p>For facility-location models, this gap can be substantial. An integer
+solver may use branch-and-bound or cutting planes to prove that no
+undiscovered integer solution can improve the incumbent beyond a stated
+bound. A solution marked “feasible” has a different status from one
+marked “optimal.” Teaching students to read that distinction is as
+important as teaching them how to call the solver.</p>
+<h2 id="a-short-network-flow-derivation">A short network-flow
+derivation</h2>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+be the node-edge incidence matrix of a directed network, with one
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>+</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math>
+at the tail and one
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>
+at the head of each directed edge. A flow
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+must satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Bf=b</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+records net injection at each node. Summing all node equations gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>B</mi><mi>f</mi><mo>=</mo><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">\mathbf1^{\mathsf T}Bf=\mathbf1^{\mathsf T}b</annotation></semantics></math>.
+Because every edge contributes one
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>+</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math>
+and one
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>B</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbf1^{\mathsf T}B=0</annotation></semantics></math>
+and therefore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>v</mi></msub><msub><mi>b</mi><mi>v</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sum_v b_v=0</annotation></semantics></math>
+is necessary for feasibility. Total supply must equal total demand in
+the simplified lossless network.</p>
+<p><em>Proposition.</em> A flow satisfying
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Bf=b</annotation></semantics></math>
+can exist only if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>v</mi></msub><msub><mi>b</mi><mi>v</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sum_vb_v=0</annotation></semantics></math>.</p>
+<p><em>Proof.</em> Multiplying
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">Bf=b</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>𝟏</mn><mi>𝖳</mi></msup><annotation encoding="application/x-tex">\mathbf1^{\mathsf T}</annotation></semantics></math>
+gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>B</mi><mi>f</mi><mo>=</mo><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">\mathbf1^{\mathsf T}Bf=\mathbf1^{\mathsf T}b</annotation></semantics></math>.
+Every column of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+sums to zero, so the left side is zero. Hence the right side must be
+zero. ◻</p>
+<p>In a water-distribution model with leakage, the loss must be
+represented as an additional sink or accounted for in the balance.
+Otherwise a solver may report infeasibility for a system that is
+physically possible, or report a mathematically feasible plan that
+ignores lost water. Physical conservation is a structural property that
+can reveal modelling mistakes early.</p>
+<h2 id="why-shortest-path-does-not-solve-vehicle-routing">Why shortest
+path does not solve vehicle routing</h2>
+<p>A shortest-path problem asks for one low-cost path from a source to a
+destination. A vehicle-routing problem may require visiting several
+customers, observing vehicle capacity, returning to a depot and
+respecting deadlines. Even when every pairwise shortest path is known,
+finding the best visiting order is a separate combinatorial problem. A
+small delivery cooperative may save substantial time by changing its
+visit sequence, but those savings cannot be inferred from a
+point-to-point route alone.</p>
+<p>An elementary illustration has depot
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>O</mi><annotation encoding="application/x-tex">O</annotation></semantics></math>
+and deliveries
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>,</mo><mi>B</mi><mo>,</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">A,B,C</annotation></semantics></math>.
+Suppose symmetric travel times are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>O</mi><mo>,</mo><mi>A</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">d(O,A)=5</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>O</mi><mo>,</mo><mi>B</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">d(O,B)=6</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>O</mi><mo>,</mo><mi>C</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">d(O,C)=7</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>A</mi><mo>,</mo><mi>B</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">d(A,B)=3</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>A</mi><mo>,</mo><mi>C</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">d(A,C)=8</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>B</mi><mo>,</mo><mi>C</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">d(B,C)=4</annotation></semantics></math>.
+The route
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo>→</mo><mi>A</mi><mo>→</mo><mi>B</mi><mo>→</mo><mi>C</mi><mo>→</mo><mi>O</mi></mrow><annotation encoding="application/x-tex">O\to A\to B\to C\to O</annotation></semantics></math>
+takes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>7</mn><mo>=</mo><mn>19</mn></mrow><annotation encoding="application/x-tex">5+3+4+7=19</annotation></semantics></math>
+time units. The route
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo>→</mo><mi>C</mi><mo>→</mo><mi>A</mi><mo>→</mo><mi>B</mi><mo>→</mo><mi>O</mi></mrow><annotation encoding="application/x-tex">O\to C\to A\to B\to O</annotation></semantics></math>
+takes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><mo>+</mo><mn>8</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>6</mn><mo>=</mo><mn>24</mn></mrow><annotation encoding="application/x-tex">7+8+3+6=24</annotation></semantics></math>.
+Enumerating every tour establishes the best route in this tiny instance.
+For realistic networks, more efficient algorithms and carefully
+evaluated heuristics are necessary.</p>
+<p>The model also needs demand quantities and loading rules. A vehicle
+that can carry only 20 boxes cannot necessarily serve three customers
+needing 15 each on one tour. Its route may require returning for more
+stock, using another vehicle or changing delivery dates. Distance
+optimisation without capacity and operational scheduling gives
+incomplete advice.</p>
+<h2 id="robustness-as-a-family-of-tests-not-a-single-algorithm">Robustness
+as a family of tests, not a single algorithm</h2>
+<p>An uncertain parameter may be continuous, such as demand between 80
+and 120, or discrete, such as a bridge being open or closed. Robust
+optimisation typically seeks decisions that remain feasible over a
+specified uncertainty set. The size and shape of this set matter as much
+as the solver. If the set is too small, the solution may fail under
+plausible conditions. If too large, it may be excessively costly. An
+uncertainty set should be based on evidence or transparently selected
+planning scenarios rather than invented after the optimisation to
+produce a preferred result.</p>
+<p>For a constraint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>a</mi><mi>𝖳</mi></msup><mi>x</mi><mo>≤</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a^{\mathsf T}x\le b</annotation></semantics></math>
+with uncertain
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+lying in a box
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="false">{</mo><mover><mi>a</mi><mo accent="true">‾</mo></mover><mo>+</mo><mi>u</mi><mo>:</mo><mrow><mo form="prefix" stretchy="true">|</mo><msub><mi>u</mi><mi>j</mi></msub><mo form="postfix" stretchy="true">|</mo></mrow><mo>≤</mo><msub><mi>δ</mi><mi>j</mi></msub><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{\bar a+u:|u_j|\le\delta_j\}</annotation></semantics></math>
+and nonnegative
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,
+robust feasibility requires</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mover><mi>a</mi><mo accent="true">‾</mo></mover><mi>𝖳</mi></msup><mi>x</mi><mo>+</mo><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>δ</mi><mi>j</mi></msub><msub><mi>x</mi><mi>j</mi></msub><mo>≤</mo><mi>b</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\bar a^{\mathsf T}x+\sum_j\delta_jx_j\le b.
+</annotation></semantics></math></p>
+<p>Why? The worst permitted perturbation chooses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mi>j</mi></msub><mo>=</mo><msub><mi>δ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">u_j=\delta_j</annotation></semantics></math>
+for each nonnegative decision component. The derivation is elementary,
+yet it makes the conservatism visible: the model protects against every
+coefficient taking its worst value at once. If such simultaneous
+extremes are physically implausible, a less conservative uncertainty set
+may be justified <span class="citation" data-cites="bertsimas2004 benTal2009">(Bertsimas and Sim 2004; Ben-Tal,
+El Ghaoui, and Nemirovski 2009)</span>.</p>
+<figure id="fig-ch5-enumerate">
+<img alt="An exhaustive comparison on an invented three-candidate problem. The visual shows how the cost falls when two sites may be opened; it is not a cost estimate for an actual Ugandan district." src="figures/ch05_enumeration.png"/>
+<figcaption aria-hidden="true"><span class="caption-label">Figure 5.1. </span>An exhaustive comparison on an invented
+three-candidate problem. The visual shows how the cost falls when two
+sites may be opened; it is not a cost estimate for an actual Ugandan
+district.</figcaption>
+</figure>
+<h2 id="how-to-present-an-optimisation-result-responsibly">How to
+present an optimisation result responsibly</h2>
+<p>The final decision note should give the objective in interpretable
+units, the key constraints, a feasible baseline, the optimised choice,
+the best available bound, and the sensitivity of the result to uncertain
+parameters. It should report the communities or clients experiencing
+worse outcomes under the plan as well as those who benefit. It should
+separate quantities observed in the world from those supplied as policy
+assumptions. If the preferred location changes when a single unverified
+road-speed assumption changes, the conclusion should explain this
+weakness openly.</p>
+<p>The strongest practical recommendation may therefore be an
+information-gathering action: check whether a bridge is passable,
+confirm a clinic’s actual capacity, or measure vehicle loading times.
+The optimisation may show that this missing observation is the pivotal
+factor. That is a rigorous and useful outcome, even before a new road,
+vehicle or facility is purchased.</p>
+<h2 id="laboratory-extension-building-a-trustworthy-transport-cost-matrix">Laboratory
+extension: building a trustworthy transport-cost matrix</h2>
+<p>In a real location model, the travel-cost matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">D=(d_{ij})</annotation></semantics></math>
+is as important as the optimisation algorithm. It encodes assumptions
+about roads, speeds and access that determine which communities appear
+close to a service. Begin with a dated road graph and a dated set of
+population or village points. Confirm that both use compatible
+coordinates. Snap each population point and candidate facility to
+appropriate reachable road nodes; record the snapping distance. A
+village several kilometres from the nearest mapped road should be
+flagged, not assigned an unrealistically short route simply because its
+coordinate was rounded to the road.</p>
+<p>For each population point
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>,
+calculate travel cost to each candidate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+If no route exists in the supplied network, mark
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">d_{ij}=\infty</annotation></semantics></math>
+or record the pair as unreachable; do not invent a straight-line
+fallback without explicitly treating it as a different scenario. Review
+a sample of routes on the ground with a partner. Geometry may contain
+roads that cannot be traversed by the intended vehicle, especially after
+heavy rain.</p>
+<p>Once the matrix is constructed, check a few entries by hand. Does a
+10-kilometre segment at 20 km/h contribute 30 minutes? Are one-way roads
+respected? Does an apparent shortcut cross a river without a bridge? Are
+walking paths being treated as vehicle routes? Small systematic errors
+in these calculations can dominate the supposed gain from choosing one
+optimisation method over another.</p>
+<h3 id="why-optimistic-road-speeds-can-distort-facility-choices">Why
+optimistic road speeds can distort facility choices</h3>
+<p>Suppose one candidate site is close to most villages by rough tracks,
+while another is farther away by well-maintained roads. If all roads are
+assigned the same speed, the first site may look better. Under
+vehicle-specific speeds, the second may have lower travel time and more
+reliable access. Conduct at least three sensitivity scenarios:
+documented conservative speeds, plausible nominal speeds and disruptive
+conditions where selected links are unusable. Report when the selected
+site changes.</p>
+<p>The result should be a stability table with one row per scenario,
+preferred sites, weighted travel time, worst-served group and
+feasibility violations. If the selected site changes in every scenario,
+the recommendation is contingent on information that needs verification.
+A robust location analysis is not merely a solver producing an answer
+despite uncertainty; it identifies which uncertainty matters to the
+decision.</p>
+<h2 id="a-mathematical-comparison-of-mean-access-and-worst-case-access">A
+mathematical comparison of mean access and worst-case access</h2>
+<p>For a selected facility set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>,
+let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">d_i(S)</annotation></semantics></math>
+denote the travel time for settlement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.
+A mean-cost objective is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub><msub><mi>d</mi><mi>i</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>/</mi><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">M(S)=\sum_ip_id_i(S)/\sum_ip_i</annotation></semantics></math>.
+A worst-access objective is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mo>max</mo><mi>i</mi></msub><msub><mi>d</mi><mi>i</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">W(S)=\max_id_i(S)</annotation></semantics></math>.
+These criteria generally order alternatives differently. The mean
+criterion reflects population totals, while the maximum gives the most
+remote settlement a dominant role. Neither is a universally correct
+measure of equity.</p>
+<p>Consider two possible plans serving three equally weighted villages.
+Plan A produces travel times
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>10</mn><mo>,</mo><mn>10</mn><mo>,</mo><mn>60</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(10,10,60)</annotation></semantics></math>
+minutes, so mean time is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>80</mn><mi>/</mi><mn>3</mn><mo>≈</mo><mn>26.7</mn></mrow><annotation encoding="application/x-tex">80/3\approx26.7</annotation></semantics></math>
+and maximum is 60. Plan B produces
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>30</mn><mo>,</mo><mn>30</mn><mo>,</mo><mn>30</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(30,30,30)</annotation></semantics></math>
+minutes, giving mean 30 and maximum 30. A mean objective prefers A,
+while the worst-case objective prefers B. The example shows how an
+implicit ethical choice appears as a mathematical objective. A public
+policy report should make this difference visible rather than announce a
+single mathematically optimal site.</p>
+<h3 id="a-compromise-with-an-explicit-maximum-travel-constraint">A
+compromise with an explicit maximum travel constraint</h3>
+<p>A planner may minimise population-weighted mean time subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>S</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≤</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">d_i(S)\le T</annotation></semantics></math>
+for every priority village. This combines efficiency with an access
+guarantee. Its feasibility depends on the threshold
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+and candidate network. If no candidate set meets the threshold within
+budget, the model should return infeasible and identify which areas
+fail. The honest response may be to seek funds for a second mobile team
+or improve a critical road link.</p>
+<p>A further refinement is to report the fraction of population within
+30, 60 and 90 minutes rather than optimise one arbitrary threshold.
+These descriptive curves let decision-makers see how an intervention
+affects different access standards. The thresholds should follow service
+needs and policy guidance where available; they are not learned from the
+route algorithm.</p>
+<h2 id="cost-accounting-beyond-a-single-objective">Cost accounting
+beyond a single objective</h2>
+<p>A facility may have construction, staffing, transport, maintenance
+and energy costs. The cheapest site to build may have high recurring
+operating costs, and a remote location may require expensive backup
+power. A multiyear present-value calculation can represent recurring
+costs under a specified discount rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">V</mi></mrow></msub><mo>=</mo><msub><mi>C</mi><mn>0</mn></msub><mo>+</mo><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></munderover><mfrac><msub><mi>C</mi><mi>t</mi></msub><msup><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mo>+</mo><mi>r</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>t</mi></msup></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+C_{\mathrm{PV}}=C_0+\sum_{t=1}^{T}\frac{C_t}{(1+r)^t}.
+</annotation></semantics></math></p>
+<p>The discount rate, time horizon and price assumptions must be
+declared. This calculation does not automatically value improvements in
+health or access; those outcomes may be reported alongside costs rather
+than reduced to a disputed monetary equivalent.</p>
+<p>If the planning office is financially constrained today but expects
+future funding, a present-value optimum may violate the immediate cash
+budget. Include annual expenditure constraints as well as a long-run
+cost objective when necessary. The mathematical model should represent
+how the organisation actually receives and spends resources, not how a
+hypothetical unconstrained investor would act.</p>
+<h2 id="field-questions-that-mathematics-cannot-answer-alone">Field
+questions that mathematics cannot answer alone</h2>
+<p>A map may show an optimal facility location on private land. The
+chosen site may lack clean water or have unsuitable ground conditions.
+Residents may prefer a different location for reasons not represented by
+travel time. Health workers may need accommodation or security. These
+are not “soft” details to dismiss after optimisation; they determine
+feasibility and acceptance. A practical planning process uses
+mathematics to compare declared possibilities, then returns to affected
+users and specialists to verify what the model could not know.</p>
+<h2 id="exercises-and-investigations">Exercises and investigations</h2>
+<ol type="1">
+<li><p>Derive the dual of a two-variable minimisation programme of your
+own design. Verify weak duality for one feasible primal-dual
+pair.</p></li>
+<li><p>Show how the optimal staff-hour allocation changes if the maximum
+number of A clients is reduced to ten. Explain when the continuous
+relaxation ceases to be a meaningful implementation.</p></li>
+<li><p>Construct a four-node directed network in which the
+shortest-distance path has greater travel time than a longer path. State
+all edge costs and verify both paths by hand.</p></li>
+<li><p>Explain why
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\sum_jx_{ij}=1</annotation></semantics></math>
+is insufficient to represent a capacitated facility network. Supply the
+missing constraints and units.</p></li>
+<li><p>In the location example, introduce an equity rule limiting each
+village’s travel time to 45 minutes. Identify whether either single-site
+solution remains feasible.</p></li>
+<li><p>Derive the M/M/1 waiting time when arrival rate is 7 per hour and
+service rate is 10 per hour. What assumption is broken when arrival rate
+reaches 10?</p></li>
+<li><p>Compare expected-cost, worst-case and chance-constrained
+decisions for two invented road-closure scenarios. Explain what
+additional evidence would justify assigning scenario
+probabilities.</p></li>
+<li><p><em>Field investigation.</em> Obtain an approved road dataset and
+a documented facility list. Reconcile the geographic coordinate systems,
+flag disconnected sites, and write a one-page explanation of what
+remains unverified.</p></li>
+</ol>
+<h5 id="what-this-chapter-establishes.">What this chapter
+establishes.</h5>
+<p>Optimisation can clarify trade-offs and reveal resource bottlenecks.
+Its guarantees refer to the mathematical model and stated constraints.
+Whether the recommended action works depends on data, implementation,
+people and uncertain conditions. The next chapter asks when learning
+algorithms add enough value to justify their cost.</p>
+</article><div class="page-links"><a href="chapter04.html">← Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place →</a></div><p class="notice"><a href="reader.html">Open facing-page reader</a> · <a href="book.pdf">PDF edition</a> · <a href="resources.html">Teaching resources</a></p></main></div><script src="search.js"></script></body></html>

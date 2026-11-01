@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Appendix C — Evidence &amp; failure modes | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><div class="reader-access"><a class="reader-entry" href="reader.html">Open facing-page reader</a><a href="book.pdf">PDF edition</a></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html" class="current">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-failures">A Catalogue of Common Failure Modes</h1>
+<p>A useful handbook should tell readers how apparently successful
+projects go wrong. The following cases recur across disciplines. Each
+case gives a misleading conclusion and a better test.</p>
+<h2 id="the-outcome-is-not-the-quantity-of-interest">The outcome is not
+the quantity of interest</h2>
+<p>Recorded medicine issues may represent available stock rather than
+actual demand. A traffic counter may miss vehicles when the sensor
+fails. A school attendance sheet may be filled only on days when the
+teacher is present. Ask what process produces the measured number and
+whether it changes under the proposed intervention.</p>
+<h2 id="the-units-are-wrong">The units are wrong</h2>
+<p>A water-volume balance may mix litres with litres per second, or a
+cost model may add annual and daily expenditure. List the units of every
+term and check dimensional consistency before numerical optimisation.
+Mathematically precise arithmetic with inconsistent units is not a model
+of the intended system.</p>
+<h2 id="a-missing-record-becomes-a-zero">A missing record becomes a
+zero</h2>
+<p>A blank stock count is treated as zero stock; an unvisited settlement
+is treated as zero demand; an absent survey answer is treated as no
+service use. Preserve missingness explicitly and investigate whether it
+depends on the outcome. Report bounds or scenarios when the quantity is
+not identifiable.</p>
+<h2 id="the-test-set-leaks-future-information">The test set leaks future
+information</h2>
+<p>A forecast for tomorrow uses a feature calculated from next week’s
+deliveries. A spatial prediction is tested by randomly withholding rows
+collected at the same monitoring station. Use a validation design that
+matches the proposed deployment decision, including time and site
+separation.</p>
+<h2 id="an-optimiser-solves-the-wrong-problem">An optimiser solves the
+wrong problem</h2>
+<p>A facility-location solution minimises average distance but violates
+a maximum access requirement. A schedule satisfies a solver’s time
+budget but ignores travel or cleaning time. Revisit the problem record
+and write explicit feasibility checks with the affected service
+users.</p>
+<h2 id="a-high-score-hides-costly-mistakes">A high score hides costly
+mistakes</h2>
+<p>A classifier is accurate overall but misses the rare cases that
+trigger serious harm. Evaluate errors in relation to operational
+consequences, calibration, uncertainty and affected groups. Compare the
+model with a simple baseline and permit abstention when essential
+information is missing.</p>
+<h2 id="code-tests-pass-but-the-operation-fails">Code tests pass but the
+operation fails</h2>
+<p>An offline application saves correctly in one session but duplicates
+a stock deduction when the same event is uploaded twice. A backup exists
+but cannot be restored by local staff. Test failure and recovery on
+intended devices and require independently verified reconciliation.</p>
+<h2 id="a-pilot-improves-but-the-cause-is-unclear">A pilot improves but
+the cause is unclear</h2>
+<p>Service improves after installation while new budgets, staff or
+supplier contracts change at the same time. Record the assignment
+mechanism and choose a defensible comparison. If a causal design is not
+available, report the change as an observation with explicit alternative
+explanations.</p>
+<h2 id="a-tool-has-no-owner-after-the-project-ends">A tool has no owner
+after the project ends</h2>
+<p>A student or external developer leaves, maintenance stops and the
+only copy of the data becomes inaccessible. Specify ownership,
+documentation, export, training, spare parts, funding and a withdrawal
+procedure before scaling.</p>
+<h2 id="success-is-copied-into-a-different-context">Success is copied
+into a different context</h2>
+<p>An algorithm that worked in one district is deployed elsewhere
+without checking data definitions, travel conditions, regulatory duties
+or service costs. Distinguish transferable mathematics from locally
+estimated inputs and intervention effects. Revalidate in the target
+environment.</p>
+<h2 id="a-manuscript-describes-invented-figures-as-field-impact">A
+manuscript describes invented figures as field impact</h2>
+<p>Synthetic data are useful for explaining a method and checking a
+computation. They do not demonstrate real-world benefits. Label them
+clearly, use measured data only where authorised and available, and
+distinguish mathematical proofs, retrospective observations, operational
+tests and credible causal evidence.</p>
+<h5 id="the-recurring-remedy.">The recurring remedy.</h5>
+<p>Start with the actual decision, ask what information and resources it
+requires, construct a checkable method, and make its limits visible.
+This is the common discipline joining all twelve chapters.</p>
+</article><div class="page-links"><a href="appendixB.html">← Appendix B — Computational reproducibility</a><a href="resources.html">Laboratories &amp; notebooks →</a></div><p class="notice"><a href="reader.html">Open facing-page reader</a> · <a href="book.pdf">PDF edition</a> · <a href="resources.html">Teaching resources</a></p></main></div><script src="search.js"></script></body></html>

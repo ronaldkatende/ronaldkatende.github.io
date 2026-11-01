@@ -1,0 +1,3 @@
+evidence,assumed_uptime_hours,assumed_repair_hours,model_availability,simulated_availability
+SYNTHETIC,240.0,12.0,0.9523810,0.9526002
+SYNTHETIC,240.0,3.0,0.9876543,0.9877133

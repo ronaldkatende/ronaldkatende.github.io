@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="A rigorous applied mathematics and computing book for resource-constrained environments" name="description"/><title>Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook | From Problems to Working Solutions</title><link href="style.css" rel="stylesheet"/></head><body>
+<div class="site-layout"><aside><div class="brand">From Problems to<br/>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input aria-label="Search the book" class="search" id="search" placeholder="Search the book"/><div id="results"></div><div class="reader-access"><a class="reader-entry" href="reader.html">Open facing-page reader</a><a href="book.pdf">PDF edition</a></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a class="current" href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><p class="chapter-banner">Chapter 12 · <a href="reader.html#page=228">Read in facing pages</a></p><h1 id="sec-capstone">From Problems to Working Solutions: An Integrated
+Field Handbook</h1>
+<blockquote>
+<p><em>This final chapter is a working journey, not a summary of twelve
+topics. We begin with a community service problem and carry one
+transparent set of assumptions through problem definition, data
+checking, mathematics, prediction, optimisation, software, testing,
+evaluation and handover. The reader finishes with a completed
+illustrative solution dossier and an exact template for developing a
+real one.</em></p>
+</blockquote>
+<h2 id="a-question-that-deserves-an-answer">A question that deserves an
+answer</h2>
+<p>Four settlements report difficult access to safe water. A local
+authority has a limited investment budget and can operate no more than
+two new distribution points. Some households are distant from the
+nearest existing source; others live close to an unreliable one. A
+sponsor proposes a mobile application that predicts where water will be
+needed. Yet the first decision may be more basic: <em>which new points,
+if any, should be built, and how will we know they improve
+access?</em></p>
+<p>We do not begin by developing the mobile application. We begin by
+visiting the service process conceptually: where does water come from,
+how is it stored, how do people reach it, who has the right to make
+siting decisions, and which records describe demand? Chapter <a href="chapter01.html#sec-problems">Chapter 1</a> taught this discipline.
+The people who collect water may care about distance, cost, queuing,
+safety and hours of availability, while administrators also face capital
+budgets, land permissions and maintenance liabilities. The mathematical
+model should make these differences visible.</p>
+<p>The complete case in this chapter is a <em>teaching example with
+invented numbers</em>. It is not a report about actual settlements or
+measured improvements. All quantities that would require field
+measurement are marked as assumptions. That convention is part of the
+work, not an apology for it.</p>
+<h2 id="stage-1-write-the-problem-definition-record">Stage 1: write the
+problem definition record</h2>
+<p>A compact problem definition includes the decision owner, affected
+population, alternatives, outcome, feasibility conditions and risks. For
+the invented water-service case, the decision maker is the local
+authority, the primary decision is a set of distribution points, and the
+primary planning outcomes are accessibility and capital expense. Whether
+the built points deliver safe water reliably is a separate operational
+outcome that requires real monitoring.</p>
+<table id="tbl-ch12-problem">
+<caption><span class="caption-label">Table 12.1. </span>A completed <em>illustrative</em> problem definition record.</caption>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Defined for this teaching case</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Population</td>
+<td>Four invented settlement groups A–D</td>
+</tr>
+<tr class="even">
+<td>Decision</td>
+<td>Select at most two candidate water points and allocate planned
+demand</td>
+</tr>
+<tr class="odd">
+<td>Primary planning criterion</td>
+<td>Minimise total weighted travel distance for demand served</td>
+</tr>
+<tr class="even">
+<td>Capital constraint</td>
+<td>Maximum 85 budget units (invented, no currency conversion)</td>
+</tr>
+<tr class="odd">
+<td>Other constraints</td>
+<td>Installed site capacities, at most two facilities, full planned
+coverage</td>
+</tr>
+<tr class="even">
+<td>Affected groups</td>
+<td>Residents, maintenance workers, users requiring accessible
+routes</td>
+</tr>
+<tr class="odd">
+<td>Evidence status</td>
+<td>All numerical inputs invented; feasibility is mathematical only</td>
+</tr>
+<tr class="even">
+<td>Field evidence still required</td>
+<td>Survey demand, walkable routes, source yield, water quality, land
+rights, financing</td>
+</tr>
+</tbody>
+</table>
+<p>This record prevents the problem from changing unnoticed during model
+development. In a real study the stakeholders may discover that meeting
+a maximum travel-time standard matters more than minimising average
+travel distance. That is not a nuisance to suppress: it is a reason to
+revise the objective and document who authorised the change.</p>
+<h2 id="stage-2-understand-the-system-and-audit-the-observations">Stage
+2: understand the system and audit the observations</h2>
+<p>A facility may serve water continuously or only at particular hours.
+Demand may mean population count, litres per day or observed visits, and
+these are not equivalent. Chapter <a href="chapter02.html#sec-model">Chapter 2</a> introduced dimensional
+reasoning: a daily water volume cannot be substituted for a head count
+in a capacity constraint without an explicit conversion. In this case
+our simplified demand unit is <em>one planning service unit per
+represented resident</em>, and capacities are measured in the same
+planning units. No claim about litres or hydraulic delivery follows
+without a corresponding physical model.</p>
+<p>A field dataset should record the population denominator, observation
+date, season, source, units, missing values, coordinate accuracy, road
+conditions and consent or governance requirements. To avoid misleading
+travel distances, compare mapped travel paths with field observations,
+especially where rivers, slopes or seasonal routes matter. If population
+figures come from a gridded model rather than a census count, note the
+modelling and uncertainty. For service siting, uncertainty concentrated
+in remote settlements may change the decision even when the total
+population estimate is accurate.</p>
+<h2 id="stage-3-formulate-the-mathematical-choice">Stage 3: formulate
+the mathematical choice</h2>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>I</mi><annotation encoding="application/x-tex">I</annotation></semantics></math>
+index settlement groups,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>J</mi><annotation encoding="application/x-tex">J</annotation></semantics></math>
+candidate sites,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>i</mi></msub><annotation encoding="application/x-tex">d_i</annotation></semantics></math>
+planned service demand,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>j</mi></msub><annotation encoding="application/x-tex">c_j</annotation></semantics></math>
+the opening cost,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>K</mi><mi>j</mi></msub><annotation encoding="application/x-tex">K_j</annotation></semantics></math>
+the site capacity, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\ell_{ij}</annotation></semantics></math>
+the travel distance for settlement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+to site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+Introduce
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>j</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">z_j\in\{0,1\}</annotation></semantics></math>
+for opening a site and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x_{ij}\ge0</annotation></semantics></math>
+for the amount of settlement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>’s
+demand allocated to site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+A basic capacitated facility-location model is</p>
+<p class="numbered-equation" id="eq-ch12-location"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>min</mo><mrow><mi>x</mi><mo>,</mo><mi>z</mi></mrow></munder><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>I</mi></mrow></munder><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msubsup><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></msubsup><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>j</mi></mrow></msub><mspace width="1.0em"></mspace><mrow><mtext mathvariant="normal">with </mtext><mspace width="0.333em"></mspace></mrow><msubsup><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></msubsup><mo>:=</mo><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>d</mi><mi>i</mi></msub></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mrow><mo form="prefix" stretchy="true">(</mo><mi>i</mi><mo>∈</mo><mi>I</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>I</mi></mrow></munder><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>K</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub></mtd><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mrow><mo form="prefix" stretchy="true">(</mo><mi>j</mi><mo>∈</mo><mi>J</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msub><mi>c</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub><mo>≤</mo><mi>B</mi><mo>,</mo><mspace width="2.0em"></mspace><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></munder><msub><mi>z</mi><mi>j</mi></msub><mo>≤</mo><mn>2</mn><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>x</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≥</mo><mn>0</mn><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>z</mi><mi>j</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\min_{x,z}\quad &amp;\sum_{i\in I}\sum_{j\in J}d_{ij}^{\mathrm{served}}\ell_{ij}\quad\text{with }d_{ij}^{\mathrm{served}}:=x_{ij},\\
+\text{subject to}\quad &amp;\sum_{j\in J}x_{ij}=d_i &amp;&amp;(i\in I),\\
+&amp;\sum_{i\in I}x_{ij}\le K_jz_j &amp;&amp;(j\in J),\\
+&amp;\sum_{j\in J}c_jz_j\le B,\qquad\sum_{j\in J}z_j\le2,\\
+&amp;x_{ij}\ge0,\qquad z_j\in\{0,1\}.
+\end{aligned}
+</annotation></semantics></math><span aria-label="Equation 12.1" class="equation-number">(12.1)</span></p>
+
+<p>The first constraint serves all assumed demand; the second forbids
+sending demand to closed sites and limits capacity. The cost and
+site-count constraints express explicit institutional limits. Fractional
+allocations are interpreted as dividing aggregate demand across sites;
+if each settlement must be assigned to exactly one site, the model needs
+binary assignment variables instead. Chapter <a href="chapter05.html#sec-optimisation">Chapter 5</a> supplies the wider
+optimisation background <span class="citation" data-cites="hillier2021 boyd2004">(Hillier and Lieberman 2021; Boyd and
+Vandenberghe 2004)</span>.</p>
+<p>The objective is total person-distance under the teaching convention.
+Minimising it is not equivalent to minimising maximum distance, nor to
+guaranteeing water quality. When fairness requires a maximum acceptable
+distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mo>max</mo></msub><annotation encoding="application/x-tex">L_{\max}</annotation></semantics></math>,
+a route whose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&gt;</mo><msub><mi>L</mi><mo>max</mo></msub></mrow><annotation encoding="application/x-tex">\ell_{ij}&gt;L_{\max}</annotation></semantics></math>
+must be forbidden for relevant users, or the constraint must be
+formulated at an appropriate individual level. A policy decision is
+hidden whenever an analyst describes average distance as if it were
+every household’s experience.</p>
+<h2 id="stage-4-put-all-illustrative-assumptions-on-one-page">Stage 4:
+put all illustrative assumptions on one page</h2>
+<table id="tbl-ch12-inputs">
+<caption><span class="caption-label">Table 12.2. </span><em>Invented teaching inputs</em> for the capstone. Distances
+are illustrative kilometres.</caption>
+<colgroup>
+<col style="width: 20%"/>
+<col style="width: 20%"/>
+<col style="width: 20%"/>
+<col style="width: 20%"/>
+<col style="width: 20%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Settlement</th>
+<th>Assumed demand</th>
+<th>Distance to S1</th>
+<th>Distance to S2</th>
+<th>Distance to S3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>30</td>
+<td>2</td>
+<td>6</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>25</td>
+<td>3</td>
+<td>3</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>20</td>
+<td>11</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td>15</td>
+<td>12</td>
+<td>6</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Candidate capacity</td>
+<td></td>
+<td>45</td>
+<td>50</td>
+<td>55</td>
+</tr>
+<tr class="even">
+<td>Candidate opening cost</td>
+<td></td>
+<td>48</td>
+<td>41</td>
+<td>35</td>
+</tr>
+</tbody>
+</table>
+<p>The overall assumed demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mo>+</mo><mn>25</mn><mo>+</mo><mn>20</mn><mo>+</mo><mn>15</mn><mo>=</mo><mn>90</mn></mrow><annotation encoding="application/x-tex">30+25+20+15=90</annotation></semantics></math>
+service units. No single site’s capacity covers it. Opening S1 and S2
+costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>89</mn><annotation encoding="application/x-tex">89</annotation></semantics></math>
+units, above the budget
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>=</mo><mn>85</mn></mrow><annotation encoding="application/x-tex">B=85</annotation></semantics></math>.
+The remaining two-site combinations, S1+S3 at cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>83</mn><annotation encoding="application/x-tex">83</annotation></semantics></math>
+and S2+S3 at cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>76</mn><annotation encoding="application/x-tex">76</annotation></semantics></math>,
+have enough total capacity. These facts can be verified before using a
+solver; such simple checks catch mistakes in code and assumptions.</p>
+<h3 id="one-explicitly-feasible-allocation">One explicitly feasible
+allocation</h3>
+<p>For S1+S3, allocate 30 units from A and 15 from B to S1, and the
+remaining 10 from B plus all of C and D to S3. Its site loads are 45 and
+45, and weighted travel is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>2</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>15</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>3</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>10</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>10</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>20</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>15</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>2</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>315</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+30(2)+15(3)+10(10)+20(4)+15(2)=315.
+</annotation></semantics></math></p>
+<p>This is a feasible plan, <em>not automatically the global
+optimum</em>; a correct algorithm must check all feasible allocations.
+In this two-site case we can verify its optimality by examining the
+difference in cost between routing each settlement to S1 and S3: A saves
+10 per unit at S1, B saves 7, while C and D are cheaper at S3. Since S1
+has capacity 45, we first send all A’s 30 units and the next 15 units of
+B to S1. That exactly gives the plan above. For S2+S3, the same savings
+argument must be repeated under S2’s capacity.</p>
+<p><span id="sec-ch12-two-site"></span></p>
+<p><em>Proposition.</em> Suppose exactly two sites
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>,</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">j,k</annotation></semantics></math>
+are open, demand can be split continuously, their combined capacity
+covers total demand, and every unit must be served. Define savings
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub><mo>=</mo><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>−</mo><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">s_i=\ell_{ik}-\ell_{ij}</annotation></semantics></math>
+from assigning settlement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+to site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+rather than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.
+Any feasible optimum can be found by allocating site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>’s
+available capacity to the largest positive savings first, while
+respecting the minimum total allocation to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+imposed by site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>’s
+capacity.</p>
+<p><em>Proof.</em> Begin with all units provisionally assigned to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.
+Moving
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mi>i</mi></msub><annotation encoding="application/x-tex">u_i</annotation></semantics></math>
+units of group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+changes cost by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mi>s</mi><mi>i</mi></msub><msub><mi>u</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">-s_i u_i</annotation></semantics></math>.
+The problem is to maximise
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>s</mi><mi>i</mi></msub><msub><mi>u</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\sum_i s_i u_i</annotation></semantics></math>
+subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>u</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>d</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">0\le u_i\le d_i</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>u</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>K</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\sum_i u_i\le K_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>u</mi><mi>i</mi></msub><mo>≥</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>d</mi><mi>i</mi></msub><mo>−</mo><msub><mi>K</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\sum_i u_i\ge\sum_i d_i-K_k</annotation></semantics></math>.
+For two groups
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a,b</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mi>a</mi></msub><mo>&gt;</mo><msub><mi>s</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">s_a&gt;s_b</annotation></semantics></math>,
+if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mi>a</mi></msub><mo>&lt;</mo><msub><mi>d</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">u_a&lt;d_a</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mi>b</mi></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">u_b&gt;0</annotation></semantics></math>,
+shifting a feasible small amount
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>δ</mi><annotation encoding="application/x-tex">\delta</annotation></semantics></math>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+increases the objective by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>s</mi><mi>a</mi></msub><mo>−</mo><msub><mi>s</mi><mi>b</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\delta(s_a-s_b)&gt;0</annotation></semantics></math>.
+Repeating exchanges sorts assignments by decreasing savings; the total
+allocation is chosen to satisfy the stated bounds. This proves the
+greedy characterisation for this divisible, two-site special case. ◻</p>
+<p>The proposition is not valid for arbitrary nondivisible household
+assignments or general multi-site integer optimisation. the companion
+program enumerates feasible opening pairs and optimises the continuous
+two-site allocations in this small example. It also asserts
+conservation, budgets and capacities as automatic tests.</p>
+<h2 id="stage-5-make-competing-objectives-visible">Stage 5: make
+competing objectives visible</h2>
+<p>A plan that minimises person-distance may still leave an unacceptable
+burden on some individuals. Record not just the mean but the maximum
+assigned route, weighted share above a chosen limit and the worst-served
+subgroup. Here the decision maker could impose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>≤</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\ell_{ij}\le 10</annotation></semantics></math>
+for every route that carries positive demand. The proposed S1+S3
+allocation meets that threshold only at the limit for B’s diverted
+demand. A stricter maximum may render both currently affordable pairs
+infeasible under the assumed capacities; the correct output is then
+<em>infeasible</em>, accompanied by an explanation, rather than a
+fabricated compromise.</p>
+<p>One can formulate a two-objective problem: minimise
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mi>C</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo><mi>T</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>x</mi><mo>,</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(C(x,z),T(x,z))</annotation></semantics></math>,
+with capital opening cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+and travel burden
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>,
+under specified service constraints. A Pareto-efficient solution has no
+alternative that is at least as good in both criteria and strictly
+better in one. The pair of affordable opening options illustrates why
+the authority should inspect both costs and accessibility rather than
+hide the choice behind a single arbitrary weighted sum. If a weighting
+is used, it must express a decision-maker preference in consistent
+units.</p>
+<figure id="fig-ch12-tradeoff">
+<img alt="Cost and travel burden of the two feasible opening pairs in the fully invented water-service example. No real locations or measured travel times are used." src="figures/ch12_tradeoff.png"/>
+<figcaption aria-hidden="true"><span class="caption-label">Figure 12.1. </span>Cost and travel burden of the two
+feasible opening pairs in the fully invented water-service example. No
+real locations or measured travel times are used.</figcaption>
+</figure>
+<h2 id="stage-6-prediction-only-when-it-changes-the-decision">Stage 6:
+prediction only when it changes the decision</h2>
+<p>We have treated demand as known. Real demand varies by season,
+opening hours, population movement and source reliability. To forecast
+the next period, start with a transparent baseline such as a rolling
+mean, then compare against more complex models using an appropriate
+temporal and spatial hold-out. A prediction method earns its place only
+if it improves the quality of a decision enough to justify the extra
+data and maintenance requirements <span class="citation" data-cites="hyndman2021 roberts2017">(Hyndman and Athanasopoulos 2021;
+Roberts 2017)</span>.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>i</mi></msub><annotation encoding="application/x-tex">D_i</annotation></semantics></math>
+denote uncertain future demand. A simple robust version of <a href="chapter12.html#eq-ch12-location">equation (12.1)</a> may require enough
+capacity for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+in a declared uncertainty set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒰</mi><annotation encoding="application/x-tex">\mathcal U</annotation></semantics></math>.
+The larger the set, the more expensive the required plan may become. A
+stochastic version instead evaluates expected cost under a fitted and
+validated distribution. Neither is better by definition. Use the
+approach whose assumptions and consequences are defensible <span class="citation" data-cites="benTal2009 bertsimas2004">(Ben-Tal, El
+Ghaoui, and Nemirovski 2009; Bertsimas and Sim 2004)</span>.</p>
+<p><em>Example.</em> Suppose future demand at settlement A could rise
+from 30 to 40 service units without a change elsewhere. S1’s capacity is
+already fully allocated in the illustrated S1+S3 plan, but S3 has 10
+spare units. The extra A demand could be routed to S3 only at a long
+assumed travel distance. A model that reports merely “capacity
+sufficient” ignores the access consequence. If service to A at that
+distance is unacceptable, additional capacity or a revised location
+choice is required.</p>
+<p>This is why sensitivity analysis belongs inside a planning decision.
+The purpose is not to produce dozens of plots but to determine which
+uncertain inputs could reverse the chosen action.</p>
+<h2 id="stage-7-build-only-the-application-that-is-needed">Stage 7:
+build only the application that is needed</h2>
+<p>For this project, a small offline tool could store settlement
+definitions, verified site capacities, approved cost estimates, planned
+demand, route measurements and each version of the allocation decision.
+A spreadsheet with transparent formulas may be sufficient initially. If
+several field officers must collect data independently, an offline-first
+application with unique record identifiers and transactional
+reconciliation may be justified, using Chapter <a href="chapter07.html#sec-infrastructure">Chapter 7</a>’s engineering
+principles <span class="citation" data-cites="kleppmann2017">(Kleppmann
+2017)</span>.</p>
+<p>The tool should display a rejected recommendation as clearly as an
+accepted one. For example, “S1+S2 rejected: capital cost 89 exceeds
+limit 85” is more useful than an empty output. It should also report the
+date and source of demand assumptions and distinguish verified data from
+illustrative placeholders. The software must not silently substitute a
+default zero when a village’s demand estimate is missing.</p>
+<h2 id="stage-8-verification-is-a-sequence-of-tests">Stage 8:
+verification is a sequence of tests</h2>
+<p>The book’s companion capstone script checks these properties, which
+should later become automated tests for any operational
+implementation:</p>
+<ol type="1">
+<li><p><em>Arithmetic.</em> Total allocated demand equals total declared
+demand, within numerical tolerance.</p></li>
+<li><p><em>Capacity.</em> No site serves more than its declared
+capacity, and closed sites serve zero.</p></li>
+<li><p><em>Budget.</em> Opening cost respects the approved
+limit.</p></li>
+<li><p><em>Units.</em> Inputs and outputs are labelled consistently;
+costs and travel burdens are not added as if they have the same
+units.</p></li>
+<li><p><em>Monotonicity check.</em> Removing budget or capacity cannot
+enlarge the mathematical feasible set.</p></li>
+<li><p><em>Failure behaviour.</em> Missing data, impossible budgets and
+negative capacities raise explicit errors rather than plausible
+numbers.</p></li>
+<li><p><em>Reproduction.</em> A second reader obtains the same decision
+table with the same input and code version.</p></li>
+</ol>
+<p><span id="sec-ch12-nesting"></span></p>
+<p><em>Proposition.</em> For a fixed optimisation model, if the only
+change is to reduce available budget from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mn>2</mn></msub><annotation encoding="application/x-tex">B_2</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mn>1</mn></msub><annotation encoding="application/x-tex">B_1</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>B</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>B</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">B_1\le B_2</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ℱ</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>⊆</mo><mi>ℱ</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>B</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathcal F(B_1)\subseteq\mathcal F(B_2)</annotation></semantics></math>.
+Likewise, decreasing a capacity upper bound while fixing all other
+assumptions cannot add a feasible allocation.</p>
+<p><em>Proof.</em> Every solution satisfying
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>c</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub><mo>≤</mo><msub><mi>B</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\sum_j c_jz_j\le B_1</annotation></semantics></math>
+also satisfies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>c</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub><mo>≤</mo><msub><mi>B</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\sum_j c_jz_j\le B_2</annotation></semantics></math>.
+The rest of its constraints are unchanged. The capacity statement
+follows from the same inclusion argument. ◻</p>
+<p>The proposition is elementary but powerful as a software test. If the
+optimiser reports a new feasible plan only after the budget is reduced,
+check whether the underlying input, solver tolerance or other constraint
+changed unnoticed.</p>
+<h2 id="stage-9-from-a-mathematical-plan-to-a-real-pilot">Stage 9: from
+a mathematical plan to a real pilot</h2>
+<p>The decision to build a distribution point requires more than a
+feasible allocation. The authority must verify water yield, safety, land
+agreements, maintenance funding and the actual routes used by residents.
+A pilot could then compare access, queuing time, service reliability and
+cost under a defensible evaluation design. If a comparison settlement is
+used, define why its trend is a credible counterfactual; if sites are
+randomised, analyse by the assignment unit. Chapter <a href="chapter09.html#sec-impact">Chapter 9</a> provides the logic.</p>
+<p>A plausible outcome is median minutes spent collecting a specified
+quantity of water over a defined observation period. Record water
+quality and availability separately. A shorter walk to an unsafe or
+frequently dry source is not a successful solution. Report who benefits
+and who bears extra travel or maintenance work. If only a feasibility
+plan has been produced, the manuscript should say exactly that.</p>
+<h2 id="stage-10-decide-whether-the-service-can-survive">Stage 10:
+decide whether the service can survive</h2>
+<p>The mathematical solution is a recommendation, not an operating
+institution. Staff must know who cleans, maintains, tests and repairs
+the water system, who pays, and what happens if a source fails. The
+service requires budgets and a route for complaints, physical
+inspections, backup supplies and a clear owner. Chapter <a href="chapter10.html#sec-deployment">Chapter 10</a> showed how to express
+those obligations and verify that they exist. Software reports can
+support the process, but cannot replace the infrastructure or decision
+authority.</p>
+<p>A deployment readiness record therefore includes technical acceptance
+tests, institutional permissions, funding commitments, procurement
+rules, training, water-quality monitoring and a stop procedure. The
+absence of a reliable water-quality monitoring mechanism may be a reason
+not to commission the service, regardless of predicted travel
+savings.</p>
+<h2 id="stage-11-what-changes-in-another-country">Stage 11: what changes
+in another country?</h2>
+<p>A version of the project could be developed in any country where
+service-access problems exist, but the data schema alone is portable.
+Demand units, route measurements, climate, maintenance capacity, land
+permissions, tariffs and service rights may differ. An adaptation
+exercise should redo the problem definition and use documented local
+data rather than copying our invented example. Chapter <a href="chapter11.html#sec-transfer">Chapter 11</a> provides the transport
+and re-optimisation tools. Public WHO/UNICEF WASH estimates can provide
+contextual information, but they cannot supply missing village-level
+routes and engineering costs <span class="citation" data-cites="jmp2026">(WHO/UNICEF Joint Monitoring Programme
+2026)</span>.</p>
+<h2 id="stage-12-the-solution-dossier">Stage 12: the solution
+dossier</h2>
+<p>A completed project should leave a structured record that another
+person can inspect or contest. The <em>Solution Dossier</em> developed
+through the book contains twelve elements corresponding to the
+intellectual journey, not a claim to have invented a new scientific
+method.</p>
+<table id="tbl-ch12-dossier">
+<caption><span class="caption-label">Table 12.3. </span>Solution Dossier: the book’s integrated set of deliverables.</caption>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Chapter</th>
+<th>Evidence or artefact</th>
+<th>Question answered</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Problem definition record</td>
+<td>Whose decision and what consequence?</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Mathematical model and assumptions</td>
+<td>Which system and units are represented?</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Data provenance and quality audit</td>
+<td>Can the measurements be trusted?</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Prediction validation report</td>
+<td>What can be predicted, for whom?</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Feasibility and optimisation record</td>
+<td>What action fits the constraints?</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Model comparison and cost audit</td>
+<td>Is AI worth using here?</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Software tests and recovery plan</td>
+<td>Does the tool work under actual conditions?</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>Domain safety and service analysis</td>
+<td>What consequences matter in practice?</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>Impact evaluation protocol or evidence</td>
+<td>Did the intervention cause an improvement?</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>Ownership and maintenance plan</td>
+<td>Who keeps it operating and funded?</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>Adaptation record</td>
+<td>What must be remeasured elsewhere?</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>Integrated acceptance and handover</td>
+<td>Can another team verify and continue the work?</td>
+</tr>
+</tbody>
+</table>
+<p>The case’s dossier is complete as a <em>teaching prototype</em>: the
+inputs and objective are explicit, the feasible assignments are
+checkable, the code reproduces the comparison, the field measurements
+and validation still needed are named, and no improvement in real access
+is asserted. A production dossier cannot earn the same acceptance until
+field evidence and governance records exist.</p>
+<h2 id="three-further-capstones">Three further capstones</h2>
+<p>A book of methods should not dictate only one field of application.
+Each proposed project below uses the same reasoning but a different
+practical domain.</p>
+<h3 id="essential-medicines-across-a-district">Essential medicines
+across a district</h3>
+<p>Define a measurable medicine-availability outcome; audit issue and
+stock records for censored demand; develop a ledger-conserving inventory
+model; compare simple and advanced demand forecasts; optimise orders
+under budgets, delivery time and expiry; implement a transparent offline
+tool; plan a defensible pilot; document training and maintenance; and
+assess adaptation to another supply-chain structure. The critical task
+is distinguishing improved simulation results from observed patient
+benefit.</p>
+<h3 id="school-resource-allocation">School resource allocation</h3>
+<p>Begin with a specific education decision: how to distribute scarce
+laboratory equipment or teaching time fairly across schools. Model
+student counts, class size, distance, timetables and staffing; check
+whether data correspond to the same school year; optimise allocations
+while protecting minimum service; develop a small auditable allocation
+tool; then evaluate whether actual access to lessons improves. The
+project must account for qualitative classroom constraints rather than
+infer educational value solely from equipment counts.</p>
+<h3 id="flood-warning-decisions">Flood-warning decisions</h3>
+<p>Choose a limited geographic area with available hydrological
+observations and agreed local warning responsibilities. Compare simple
+physical or threshold rules against predictive models using time-aware
+validation. Optimise a warning threshold against missed-event and
+false-alarm consequences, assess the cost and power needs of
+communication, test failure procedures, and design a prospective
+evaluation. Do not claim disaster-risk reduction from a retrospective
+prediction metric alone. This is a domain in which false confidence is
+particularly dangerous.</p>
+<h2 id="a-practical-assessment-rubric">A practical assessment
+rubric</h2>
+<p>A capstone should reward disciplined reasoning and responsible
+evidence, not the use of fashionable algorithms. The following suggested
+marks total 100 points and can be adapted to course level.</p>
+<table id="tbl-ch12-rubric">
+<caption><span class="caption-label">Table 12.4. </span>Suggested marking rubric for a final-year project.</caption>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Criterion</th>
+<th>Marks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clear problem and decision ownership; affected population and
+ethical limits</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>Model correctness, derivations, units, assumptions and failure
+cases</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>Data provenance, quality audit and honest evidence
+classification</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>Independent prediction/decision validation and appropriate
+baselines</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>Feasibility, resource cost and equity implications</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>Working, reproducible software with tests and failure handling</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>Credible impact-evaluation plan or appropriately qualified field
+evidence</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>Deployment, maintenance, transfer and quality of communication</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<p>A project may score highly as a rigorous prototype despite having no
+measured deployment impact, provided it labels that limitation and
+provides a credible pathway to a field study. A project presenting
+invented observations as real data should not receive credit for
+apparent impact, whatever the sophistication of its model.</p>
+<h2 id="instructor-and-practitioner-guide">Instructor and practitioner
+guide</h2>
+<p>For an introductory course, assign Chapters 1–3 to a
+problem-definition and data-audit exercise, followed by one chosen
+application from Chapters 4–8. For an advanced undergraduate course,
+require mathematical justification, computational tests and an explicit
+baseline comparison. For a master’s or professional training programme,
+add Chapters 9–11 and require a written evaluation and deployment
+protocol in collaboration with a domain specialist. All levels can
+complete a version of the final dossier; expectations differ in the
+evidence and mathematical depth required.</p>
+<p>The companion code is designed for a modest computer and an offline
+Python environment after installation. It does not require paid cloud
+services or a GPU. A university may distribute the synthetic fixtures
+with the exercises, but third-party observed datasets must be obtained
+and used under their own documented licences and protections. A
+reproducible result is useful only when another reader can discover what
+was actually run <span class="citation" data-cites="sandve2013 oberkampf2010">(Sandve et al. 2013; Oberkampf and
+Roy 2010)</span>.</p>
+<h2 id="sec-ch12-medicine">A second integrated capstone: essential
+medicine ordering</h2>
+<p>The water case teaches where infrastructure should be placed. A
+medicine-ordering project teaches another lesson: even when
+infrastructure exists, the institution may not observe the quantity it
+needs to predict. We return to the health-service problem of Chapter <a href="chapter08.html#sec-health">Chapter 8</a> and use it to show how the
+twelve chapters cooperate rather than simply sit next to one
+another.</p>
+<p>A district clinic reports that a particular medicine is frequently
+unavailable. Staff propose training a neural network to forecast monthly
+issues. The project team first asks whether the ledger records actual
+demand. Suppose dispensing is capped by stock: if 40 patients need the
+item but only 25 units are available, the ledger records 25 issued
+units. A forecast fitted only to issues may predict 25 and appear
+accurate, while the unobserved need remains 40. This is the central
+measurement problem. The right next step may be a record of unfilled
+requests, not a neural network.</p>
+<h3 id="the-problem-record">The problem record</h3>
+<p>The decision is an order quantity for specified medicines at a stated
+review time. The primary service aim is to reduce verified stock-out
+days without violating budget, storage, expiry and clinical safety
+constraints. The decision owner is the responsible pharmacy or
+supply-chain team, not an autonomous algorithm. The target population
+includes people served by the clinic, with attention to vulnerable
+groups who may face the greatest harm from shortages.</p>
+<p>A full problem definition also identifies the existing policy and
+alternatives. These might include fixed reorder points, order-up-to
+levels, a simple moving-average forecast and a more complex predictive
+method. The intervention is not simply the introduction of software; it
+is a specified change to the ordering practice, training and record
+review. Its consequences may be affected by supplier delays and
+procurement cycles outside the facility’s control.</p>
+<h3 id="an-illustrative-stock-equation">An illustrative stock
+equation</h3>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+be physical stock immediately before the daily transaction window,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+receipts,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+issues,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>t</mi></msub><annotation encoding="application/x-tex">W_t</annotation></semantics></math>
+wastage and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>t</mi></msub><annotation encoding="application/x-tex">A_t</annotation></semantics></math>
+authorised corrections. A simplified balance is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>I</mi><mi>t</mi></msub><mo>+</mo><msub><mi>R</mi><mi>t</mi></msub><mo>−</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><msub><mi>W</mi><mi>t</mi></msub><mo>+</mo><msub><mi>A</mi><mi>t</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+I_{t+1}=I_t+R_t-Y_t-W_t+A_t.
+</annotation></semantics></math></p>
+<p>An observed issue
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_t</annotation></semantics></math>
+is not necessarily latent clinical demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>.
+When dispensing is stock-constrained,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>D</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">Y_t\le D_t</annotation></semantics></math>,
+and uncertainty about unmet demand must be retained. The model also
+needs the ordering pipeline: physical on-hand stock differs from
+inventory position, which includes outstanding confirmed orders and
+possibly commitments. A simple order rule that ignores these quantities
+can cause over-ordering or false reassurance.</p>
+<h3 id="a-fully-labelled-example">A fully labelled example</h3>
+<p>For an illustration only, assume item A has mean demand 30 units per
+week and a two-week replenishment delay; item B has mean demand 20 per
+week and a three-week delay. Under a deterministic-demand
+simplification, lead-time demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>60</mn><annotation encoding="application/x-tex">60</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>60</mn><annotation encoding="application/x-tex">60</annotation></semantics></math>.
+Suppose the team adds hypothetical safety allowances of 15 and 10 units.
+The resulting illustrative reorder points are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>75</mn><annotation encoding="application/x-tex">75</annotation></semantics></math>
+for A and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>70</mn><annotation encoding="application/x-tex">70</annotation></semantics></math>
+for B. The safety allowances here are assumptions, not clinically
+validated quantities or statistical estimates.</p>
+<p>If item A has 55 units on hand and 10 confirmed in transit, its
+inventory position is 65, below 75. Item B has 65 on hand and none in
+transit, also below its reorder point of 70. Both might trigger review.
+Deciding quantities requires the target order-up-to levels, pack sizes,
+budget, expiry and supplier rules. A simple threshold comparison is not
+a complete procurement optimisation.</p>
+<p>Suppose proposed purchases are 40 units of A at four cost units each
+and 20 units of B at six units each. The illustrative cost is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>40</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>20</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>6</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>280</mn></mrow><annotation encoding="application/x-tex">40(4)+20(6)=280</annotation></semantics></math>,
+within a budget of 300. That arithmetic alone does not establish that
+the plan is safe, optimal or appropriately balanced. A budget-feasible
+purchase could still run out before the next delivery or waste stock
+through expiry. The clinic’s actual clinical decision requires verified
+demand, lead-time variability, approved medicine lists and professional
+oversight.</p>
+<h3 id="from-forecast-to-tested-policy">From forecast to tested
+policy</h3>
+<p>To compare forecasting methods, hold out future periods rather than
+randomly shuffling daily records. Compare their predictive accuracy and
+the outcomes of the order rule when fed those forecasts. If outcomes are
+evaluated by retrospective policy simulation, account for the fact that
+changing the order policy changes stock availability and therefore what
+dispensing records would have been generated. Simply replaying observed
+issues under a new policy may understate unmet demand.</p>
+<p>A sound report might compare a fixed threshold, a moving-average
+policy and an enhanced forecasting policy. For each, report assumptions
+on demand during stock-outs, delivery delays, expiry, budget and
+emergency orders. Then compare the resulting stock-out metrics, working
+capital and sensitivity to adverse scenarios. Do not claim a simulated
+reduction in unfilled requests is an observed reduction in patients
+denied medication.</p>
+<h3 id="from-policy-simulator-to-offline-service">From policy simulator
+to offline service</h3>
+<p>The clinic needs a usable tool that records stock events, reconciles
+physical counts, rejects duplicate submissions, explains each
+recommendation and survives power loss. A correction must remain
+auditable. Staff must be able to override unsafe recommendations, and
+the system should state when required information is missing. These are
+the engineering duties developed in Chapter <a href="chapter07.html#sec-infrastructure">Chapter 7</a> and the
+institutional duties in Chapter <a href="chapter10.html#sec-deployment">Chapter 10</a>.</p>
+<p>Before actual use, the team must test recovery on intended hardware
+and establish data permissions, training, maintenance and a manual
+fallback. If a system is intended to influence clinical care, local
+regulatory and ethical requirements must be checked. The textbook’s
+invented numbers cannot be used as a medicine-ordering policy.</p>
+<h3 id="from-rollout-to-causal-evidence">From rollout to causal
+evidence</h3>
+<p>A reasonable pilot could compare the changed ordering practice with a
+credible alternative in suitable facilities, using independent
+verification of physical availability and carefully defined reporting
+periods. The design should account for supplier changes, concurrent
+budgets and shared procurement depots. Its evaluation would examine
+service outcomes and patient consequences, not merely the number of
+orders generated or the time the application remained open.</p>
+<p>The team should expect the result to be uncertain at first. A pilot
+may find that staff can operate the system but that improvement in
+availability is not yet established. This can still justify a new
+measurement protocol or a revised design. Chapter <a href="chapter09.html#sec-impact">Chapter 9</a>’s causal reasoning tells
+the institution what its evidence does and does not permit it to
+claim.</p>
+<h2 id="the-mathematics-of-a-solution-portfolio">The mathematics of a
+solution portfolio</h2>
+<p>An institution may face several possible innovations at once: an
+inventory tool, a water-point improvement, a school timetable, and a
+maintenance programme. It cannot finance every project. The book’s
+methods can help compare projects, but only after their outcomes are
+expressed responsibly. A simple portfolio abstraction is</p>
+<p class="numbered-equation" id="eq-ch12-portfolio"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>max</mo><mrow><msub><mi>z</mi><mi>j</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo></mrow></munder><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><msub><mi>b</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub><mspace width="1.0em"></mspace><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><msub><mi>c</mi><mi>j</mi></msub><msub><mi>z</mi><mi>j</mi></msub><mo>≤</mo><mi>B</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\max_{z_j\in\{0,1\}}\sum_{j=1}^m b_jz_j
+\quad\text{subject to}\quad\sum_{j=1}^m c_jz_j\le B,
+</annotation></semantics></math><span aria-label="Equation 12.2" class="equation-number">(12.2)</span></p>
+
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>b</mi><mi>j</mi></msub><annotation encoding="application/x-tex">b_j</annotation></semantics></math>
+is the documented benefit on a comparable scale,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>j</mi></msub><annotation encoding="application/x-tex">c_j</annotation></semantics></math>
+total resource requirement and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+the available budget. This expression is not a universal formula for
+social value. Water safety, patient care and educational opportunity
+cannot necessarily be converted into one invented score without
+institutional and ethical decisions.</p>
+<p>The portfolio may instead use mandatory standards, a multi-criteria
+assessment and staged investments. One project can collect information
+needed before another is justified. A pilot may have value not only
+through its immediate service outcome but through reducing uncertainty
+about future decisions. The model should distinguish demonstrated
+benefit from hoped-for impact and avoid using optimistic scores merely
+to win funding.</p>
+<h2 id="the-value-of-learning-before-spending">The value of learning
+before spending</h2>
+<p>Suppose a proposed intervention costs much more than a targeted data
+audit. The team is uncertain whether shortages arise primarily from
+demand unpredictability or supplier delay. A short measurement study of
+requests, issued units and delivery dates may distinguish the two
+mechanisms. If the main problem is slow delivery, a forecasting system
+might offer little benefit; if the main problem is systematic
+under-ordering, a better policy could help. Measuring the actual
+mechanism before buying software may have high decision value.</p>
+<p>Formally, for uncertain state
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>,
+loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">L(a,\theta)</annotation></semantics></math>
+and current information
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℐ</mi><annotation encoding="application/x-tex">\mathcal I</annotation></semantics></math>,
+the minimum posterior expected loss is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><munder><mo>min</mo><mi>a</mi></munder><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>∣</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+V(\mathcal I)=\min_a\mathbb E[L(a,\theta)\mid\mathcal I].
+</annotation></semantics></math></p>
+<p>Additional observation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+can reduce expected optimised loss under standard decision-theoretic
+assumptions. The expected value of sample information can be written</p>
+<p class="numbered-equation" id="eq-ch12-evsi"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">V</mi><mi mathvariant="normal">S</mi><mi mathvariant="normal">I</mi></mrow><mo>=</mo><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>𝔼</mi><mi>Z</mi></msub><mrow><mo form="prefix" stretchy="true">[</mo><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo>,</mo><mi>Z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>∣</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathrm{EVSI}=V(\mathcal I)-\mathbb E_Z[V(\mathcal I,Z)\mid\mathcal I].
+</annotation></semantics></math><span aria-label="Equation 12.3" class="equation-number">(12.3)</span></p>
+
+<p>This is nonnegative when the decision maker can ignore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+at no cost: after seeing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>,
+they can always choose the previous action. The argument does not imply
+that data collection is free or that every survey is worthwhile. The net
+value subtracts the cost and burden of measurement, including privacy
+and opportunity costs <span class="citation" data-cites="raiffa1968">(Raiffa 1968)</span>.</p>
+<p><em>Proposition.</em> Suppose the set of admissible actions is the
+same with and without new information
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>,
+all relevant expectations exist, and observing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+is free and may be ignored. Then the EVSI in <a href="chapter12.html#eq-ch12-evsi">equation (12.3)</a> is nonnegative.</p>
+<p><em>Proof.</em> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mn>0</mn></msub><annotation encoding="application/x-tex">a_0</annotation></semantics></math>
+minimise expected loss given
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℐ</mi><annotation encoding="application/x-tex">\mathcal I</annotation></semantics></math>.
+After observing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>,
+the optimal conditional choice has loss no larger than choosing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mn>0</mn></msub><annotation encoding="application/x-tex">a_0</annotation></semantics></math>
+in each state of information:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo>,</mo><mi>Z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≤</mo><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>a</mi><mn>0</mn></msub><mo>,</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>∣</mo><mi>ℐ</mi><mo>,</mo><mi>Z</mi><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">V(\mathcal I,Z)\le\mathbb E[L(a_0,\theta)\mid\mathcal I,Z]</annotation></semantics></math>.
+Taking conditional expectations over
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+and applying the tower property gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝔼</mi><mi>Z</mi></msub><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo>,</mo><mi>Z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≤</mo><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>a</mi><mn>0</mn></msub><mo>,</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>∣</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">]</mo></mrow><mo>=</mo><mi>V</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>ℐ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb E_ZV(\mathcal I,Z)\le\mathbb E[L(a_0,\theta)\mid\mathcal I]=V(\mathcal I)</annotation></semantics></math>. ◻</p>
+<p>This proposition gives a mathematical justification for a modest but
+important innovation principle: learning the right fact can be more
+valuable than computing an answer more accurately from the wrong
+facts.</p>
+<h2 id="from-the-book-to-a-functioning-local-course">From the book to a
+functioning local course</h2>
+<p>An institution using this book need not teach all twelve chapters in
+one semester. A problem-definition and measurement course can use Part
+I. An applied modelling and computing course can use Part II, selecting
+cases relevant to students’ backgrounds. A final-year project or
+professional laboratory can use Part III to demand impact-evaluation
+thinking, maintenance and transfer. The complete capstone provides
+continuity across these modules.</p>
+<p>For students with limited programming experience, begin with hand
+arithmetic and a spreadsheet before moving to Python. Make each variable
+and unit explicit. For more advanced students, require proofs or
+counterexamples, independent computational verification and sensitivity
+analysis. For a professional team, require a decision owner, realistic
+data provenance and a written institutional handover. The same example
+can support different levels of study without sacrificing intellectual
+honesty.</p>
+<h2 id="a-final-guard-against-impressive-but-empty-claims">A final guard
+against impressive but empty claims</h2>
+<p>The final report should answer five questions in one page. What was
+the exact decision? What information supports it, and which observations
+are missing? Which mathematical and computational checks were passed?
+What real-world outcome was measured, and what alternative explanation
+remains? Who can operate, challenge or withdraw the solution after the
+original team leaves?</p>
+<p>If the answer to the fourth question is “no field outcome was
+measured,” write that. If a mathematical theorem is proved, present the
+assumptions and proof. If a software test passes, show the conditions
+and result. If an intervention reduces measured harm under a credible
+comparison, report the magnitude and uncertainty. These distinctions do
+not weaken a strong book; they make its examples safe to learn from and
+its reasoning more widely reusable.</p>
+<h2 id="sec-ch12-deeper">A second look at the capstone numbers</h2>
+<p>The small water example is deliberately simple enough to check by
+hand. That simplicity makes it a useful testing ground for serious
+habits. A solver should not be trusted because it returns a decimal. It
+should be trusted to the extent that its constraints represent the
+decision, its solution can be checked, and its limitations are
+understood.</p>
+<p>For S1+S3, the opening cost is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>48</mn><mo>+</mo><mn>35</mn><mo>=</mo><mn>83</mn></mrow><annotation encoding="application/x-tex">48+35=83</annotation></semantics></math>,
+total capacity is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>45</mn><mo>+</mo><mn>55</mn><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">45+55=100</annotation></semantics></math>,
+and total demand is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>90</mn><annotation encoding="application/x-tex">90</annotation></semantics></math>.
+The pair is affordable and has sufficient aggregate capacity. For S2+S3,
+opening cost is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>41</mn><mo>+</mo><mn>35</mn><mo>=</mo><mn>76</mn></mrow><annotation encoding="application/x-tex">41+35=76</annotation></semantics></math>
+and capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>50</mn><mo>+</mo><mn>55</mn><mo>=</mo><mn>105</mn></mrow><annotation encoding="application/x-tex">50+55=105</annotation></semantics></math>.
+This pair is also feasible. S1+S2 costs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>48</mn><mo>+</mo><mn>41</mn><mo>=</mo><mn>89</mn></mrow><annotation encoding="application/x-tex">48+41=89</annotation></semantics></math>,
+which exceeds the budget of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>85</mn><annotation encoding="application/x-tex">85</annotation></semantics></math>
+although it has enough capacity. Thus a simple resource calculation
+eliminates one option before any travel optimisation.</p>
+<p>For S2+S3, the optimal continuous assignment follows savings relative
+to S3. A unit of B saves
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>10</mn><mo>−</mo><mn>3</mn><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">10-3=7</annotation></semantics></math>
+travel units at S2; a unit of A saves
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>−</mo><mn>6</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">12-6=6</annotation></semantics></math>;
+a unit of C saves
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>−</mo><mn>2</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">4-2=2</annotation></semantics></math>;
+a unit of D would cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>−</mo><mn>2</mn><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">6-2=4</annotation></semantics></math>
+more. Site S2 has capacity 50, so allocate all 25 units of B and 25
+units of A to it. The remaining 5 units of A, 20 units of C and 15 units
+of D go to S3. The weighted travel burden is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>25</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>3</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>25</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>6</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>5</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>12</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>20</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mn>15</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>2</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>395</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+25(3)+25(6)+5(12)+20(4)+15(2)=395.
+</annotation></semantics></math></p>
+<p>Compare this with 315 for S1+S3. The more expensive opening pair
+reduces assumed aggregate travel by 80 person-kilometres per service
+cycle. The capital difference is seven invented budget units. Neither
+the arithmetic nor the book can determine whether seven budget units are
+worth saving 80 person-kilometres without a locally defined time,
+welfare and cost model. That is the policy choice the model makes
+visible.</p>
+<h3 id="the-danger-in-a-false-notion-of-optimality">The danger in a
+false notion of optimality</h3>
+<p>The continuous allocation splits A between two water points in the
+cheaper plan. This is mathematically legitimate when individual users
+may choose different locations or the settlement represents multiple
+households. It is not legitimate if regulations or operational
+arrangements require all of a settlement’s residents to use one
+designated point. In the latter problem, assignments are binary at group
+level, and the optimum may change. A research report must not describe a
+fractional solution as an implementable household-level instruction
+without checking its meaning.</p>
+<p>Likewise, the opening cost is not the total cost of water service. It
+excludes land acquisition, pipes, pumping energy, water treatment,
+staffing, testing and maintenance. It would be irresponsible to announce
+that the district can solve its water problem for 83 units. The exact
+claim supported here is that one <em>specified</em> and
+<em>invented</em> facility-location model has a feasible solution
+satisfying its declared cost and capacity constraints.</p>
+<h2 id="what-happens-when-the-policy-demands-more-fairness">What happens
+when the policy demands more fairness?</h2>
+<p>Suppose the local authority decides that no household should be
+assigned a route longer than eight kilometres. In the S1+S3
+configuration, settlement B’s units beyond the 45-unit S1 capacity would
+have to use S3 at ten kilometres. The demand of A and B totals 55, but
+S1 can take only 45. Thus S1+S3 cannot satisfy the eight-kilometre
+ceiling while serving everyone. In the S2+S3 configuration, A can reach
+S2 at six kilometres but not S3 within the limit, while B can reach only
+S2 at three kilometres (S3 is ten). The total of A and B is 55, above
+S2’s capacity of 50. This configuration also fails. The mathematical
+conclusion is infeasibility under the additional limit, not that the
+eight-kilometre principle is unreasonable.</p>
+<p>The next step is to ask which change could restore feasibility. The
+authority might raise the budget, increase site capacity, consider a
+fourth site, improve a route, or negotiate a staged service target. Each
+action has different costs and equity implications. A good optimiser can
+identify the violated constraint, but only stakeholders and evidence can
+determine which change is acceptable.</p>
+<p><em>Proposition.</em> For a set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>⊆</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">H\subseteq I</annotation></semantics></math>
+of settlement groups and a maximum permitted distance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>,
+let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>L</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>H</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">N_L(H)</annotation></semantics></math>
+be the set of open sites reachable within
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+by at least one group in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>.
+If a feasible allocation serves every group’s full demand using only
+routes of length at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>,
+then</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>H</mi></mrow></munder><msub><mi>d</mi><mi>i</mi></msub><mo>≤</mo><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><msub><mi>N</mi><mi>L</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>H</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></munder><msub><mi>K</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\sum_{i\in H}d_i\le\sum_{j\in N_L(H)}K_j.
+</annotation></semantics></math></p>
+<p><em>Proof.</em> Every unit of demand from a group in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+must be assigned to a site in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>L</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>H</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">N_L(H)</annotation></semantics></math>.
+Summing allocations from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+across those sites gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>H</mi></mrow></msub><msub><mi>d</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{i\in H}d_i</annotation></semantics></math>.
+The total allocation into these sites, including any demand from outside
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>,
+cannot exceed their combined capacities. Therefore the displayed
+inequality is necessary. ◻</p>
+<p>The condition is a capacity test related to familiar network-flow
+feasibility ideas <span class="citation" data-cites="hillier2021">(Hillier and Lieberman 2021)</span>. It is only
+necessary as stated; it is not an implementation algorithm. For S1+S3
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">L=8</annotation></semantics></math>,
+take
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>=</mo><mo form="prefix" stretchy="false">{</mo><mi>A</mi><mo>,</mo><mi>B</mi><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">H=\{A,B\}</annotation></semantics></math>:
+both can use only S1 within the ceiling, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>55</mn><mo>&gt;</mo><mn>45</mn></mrow><annotation encoding="application/x-tex">55&gt;45</annotation></semantics></math>.
+For S2+S3, the same
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>
+can use only S2, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>55</mn><mo>&gt;</mo><mn>50</mn></mrow><annotation encoding="application/x-tex">55&gt;50</annotation></semantics></math>.
+The proof identifies exactly why each option fails and what additional
+capacity would be required.</p>
+<h2 id="constructing-the-data-audit-in-a-real-service">Constructing the
+data audit in a real service</h2>
+<p>The field survey should not start from a spreadsheet with prefilled
+“demand” values. It should ask what is to be measured and why. If daily
+volume is the target, then household number alone is insufficient: the
+calculation needs consumption, use patterns, alternative sources and
+seasonal changes. If travel time is the target, map-based straight-line
+distance is not a substitute. Test a sample of mapped routes with actual
+journeys at relevant times, noting whether walking, cycling or vehicle
+access is assumed.</p>
+<p>The observations should be recorded in an auditable data dictionary.
+A recommended entry includes variable name, precise meaning, unit,
+allowed range, collection method, observation date, geographic
+resolution, source organisation, licence and likely errors. Retain
+missing values as missing; do not replace a settlement’s absent demand
+with zero because a solver requires a number. A missing high-demand
+settlement could make the whole plan look cheaply feasible while leaving
+its residents unserved.</p>
+<h3 id="a-second-model-for-physical-feasibility">A second model for
+physical feasibility</h3>
+<p>The abstract planning units of the toy optimisation must eventually
+connect to a hydraulic and operational model. For example, a storage
+tank obeys a balance like the one derived in Chapter 2, while a network
+may be constrained by pipe capacity, pressure and source yield. Demand
+served at a point may depend on operating hours and queueing as well as
+nominal installation capacity. If the facility-location stage chooses
+sites whose source cannot provide the required water, the planning
+solution is physically invalid even though its linear constraints are
+satisfied.</p>
+<p>A staged model hierarchy is often better than an unnecessarily
+complex monolithic system. Use a simple location model to explore
+alternatives, then verify shortlisted sites with hydraulic and field
+calculations, updating the optimisation constraints as necessary.
+Document when the simpler model was sufficient and when more detailed
+information changed the decision.</p>
+<h2 id="testing-the-code-against-the-mathematics">Testing the code
+against the mathematics</h2>
+<p>The companion Python script is intentionally auditable rather than
+optimised for scale. It enumerates opening pairs, rejects those that
+exceed budget, checks combined capacity and solves the two-open-site
+continuous allocation by a savings ordering justified in Proposition <a href="chapter12.html#sec-ch12-two-site">the proposition</a>. Its output contains
+both the summary and each nonzero assignment. The test checks that each
+settlement’s allocation sums to the declared demand, each open site
+respects capacity, and tightening the budget does not add feasible
+options.</p>
+<p>A useful student extension is to implement a completely independent
+enumeration of settlement-level binary assignments. This will generally
+produce a different feasible set, allowing the student to discover the
+consequence of changing decision variables. Another extension is to use
+a standard linear or mixed-integer solver and compare its solution
+against the hand-checked small instance. The point is not to celebrate
+agreement as proof of every implementation detail, but to establish
+layered evidence: a mathematical formulation, an independent
+calculation, an executable test and a documented limitation.</p>
+<h3 id="a-failed-test-should-teach-something">A failed test should teach
+something</h3>
+<p>Delete one settlement from the demand file and run the optimiser.
+Without an input completeness check, it may happily recommend a cheaper
+plan. The program has not broken; the interpretation has. A production
+system must know which settlements are required, recognise an omitted
+record, and refuse to present the incomplete result as a district-wide
+solution. Similarly, changing a distance’s unit from kilometres to
+metres without conversion can dominate the objective while leaving all
+the code syntactically valid.</p>
+<p>This is why software tests must include semantic checks, not only a
+successful exit status. A project dossier should list expected records,
+valid units, acceptable missingness and circumstances that require human
+review.</p>
+<h2 id="how-the-twelve-chapters-join-in-a-field-investigation">How the
+twelve chapters join in a field investigation</h2>
+<p>The book’s arc can be read as three repeated questions at increasing
+levels of responsibility. The first is: <em>what is the problem and what
+is known?</em> It demands careful stakeholder engagement, a model and
+data evidence. The second is: <em>what should be done, and will the
+proposed system function?</em> It demands comparison, optimisation,
+domain expertise, computing and reliable engineering. The third is:
+<em>did it improve anything, will the institution sustain it, and does
+it apply elsewhere?</em> It demands evaluation, governance and
+adaptation.</p>
+<p>A team may discover at any point that the correct next step is not
+another algorithm. The data may be inadequate; the proposed site may
+have no water rights; the institution may lack funds for testing; or a
+comparison may reveal no worthwhile impact. Each is an intellectually
+valid result, provided it is documented. The desire to produce a
+successful project should never override evidence.</p>
+<h2 id="a-final-practical-template-for-a-project-team">A final practical
+template for a project team</h2>
+<p>Start a new project folder with these files or equivalents:
+<code>problem.md</code> for the decision record; <code>model.tex</code>
+for equations and assumptions; <code>data_dictionary.csv</code> for
+field meanings and licences; <code>audit.py</code> for input checks;
+<code>baseline.py</code> and <code>candidate.py</code> for competing
+methods; <code>tests/</code> for verification; <code>results/</code> for
+reproducible outputs; <code>evaluation.md</code> for the causal evidence
+plan; <code>operations.md</code> for support and maintenance; and
+<code>adaptation.md</code> for target-context differences. These
+filenames are examples, not a mandated platform or a newly invented
+scientific standard.</p>
+<p>Record the software environment, random seeds, data access conditions
+and the exact command required to reproduce each table. Where private
+data cannot be redistributed, supply a synthetic test fixture and a
+clear procedure that authorised reviewers can execute on the protected
+source. A package that needs undocumented manual edits is not
+reproducible simply because it contains Python code.</p>
+<p>The final dossier should end with a clear decision statement: what
+may proceed now, what requires measurement or approval, and what must
+not be claimed. This is a practical discipline applicable to a
+university project, a ministry analysis, a community innovation or a
+startup. It is how a model becomes part of a solution without being
+mistaken for the solution itself.</p>
+<h2 id="sec-ch12-laboratory">Field laboratory: write the actual solution
+dossier</h2>
+<p>This laboratory makes the book’s central task tangible. A student
+group or working institution should choose a problem with a real
+decision owner, even if access to operational data is not yet possible.
+The project may produce a fully verified teaching prototype, an analysis
+using documented public data, a partner-tested tool, or a formally
+evaluated intervention. These are legitimate but different achievements.
+The final report must make the evidence level clear.</p>
+<h3 id="part-a-the-first-conversation-with-a-decision-maker">Part A: the
+first conversation with a decision maker</h3>
+<p>Before writing code, conduct a structured interview or simulate one
+with a documented role description. Ask: what outcome is currently
+unsatisfactory; who experiences it; how is it observed; what decisions
+can change it; which options are already under consideration; what
+money, staff, legal permissions and time are available; and what would
+count as a worthwhile improvement? Write down disagreements as well as
+agreements. If the problem is “poor clinic service”, narrow it to
+something observable and actionable rather than building a complex
+system around a slogan.</p>
+<p>The resulting problem record should be short enough for a service
+manager to read and precise enough for a mathematician to formalise.
+Include the named decision owner and an agreed date for revisiting
+assumptions. In a classroom exercise, fictional roles must be identified
+as such; an imaginary stakeholder interview is not field research.</p>
+<h3 id="part-b-make-a-model-that-can-be-checked-without-software">Part
+B: make a model that can be checked without software</h3>
+<p>For the chosen problem, state variables, units, parameters, decisions
+and constraints. Derive at least one conservation, accounting or
+probabilistic identity with visible assumptions. Construct a small
+instance that can be solved or checked by hand. In the water capstone,
+the sum of allocated units equals 90, opening cost must be at most 85,
+and no site load may exceed its declared capacity. Those are independent
+checks on any code.</p>
+<p>An important part of this exercise is to create a counterexample.
+Change one assumption so that the proposed solution fails: a road
+closes, a supplier doubles its lead time, a school loses a teacher, or a
+tank level sensor develops bias. Explain whether the old model becomes
+invalid, the optimal decision changes, or only the uncertainty
+increases. The ability to identify failure conditions is evidence of
+understanding.</p>
+<h3 id="part-c-prepare-a-defensible-data-audit">Part C: prepare a
+defensible data audit</h3>
+<p>Make a data dictionary with every field’s definition, unit, source,
+sampling frame, collection time, missingness rule and permitted uses. If
+there is no operational dataset, say that explicitly and use labelled
+synthetic fixtures. If a public dataset is used, preserve the original
+download, its licence and checksum, and distinguish its estimates from
+the institution’s own observations.</p>
+<p>For survey data, inspect weighting and clustering; for monitoring
+data, inspect sensor calibration and time alignment; for routine service
+logs, inspect whether records are censored by service failure. Explain
+which planned conclusions are not identifiable from the available
+measurements. Inadequate data may justify a new sampling plan rather
+than a more complicated prediction model.</p>
+<h3 id="part-d-compare-a-simple-method-with-the-proposed-method">Part D:
+compare a simple method with the proposed method</h3>
+<p>Every substantial computational proposal should have a relevant
+baseline. Examples include a fixed reorder threshold, a moving-average
+forecast, a simple assignment rule, or a spreadsheet that applies a
+verified formula. Compare it with a more complex alternative on exactly
+defined tasks and held-out evidence. Measure not just prediction error
+but the resulting decision loss, computational time, memory use, device
+requirements and support workload when relevant.</p>
+<p>If a sophisticated method offers no useful improvement over a simpler
+one, the project should be allowed to recommend the simpler method. The
+aim is not to demonstrate that AI can be used, but to find a sound and
+affordable solution to the stated problem.</p>
+<h3 id="part-e-produce-one-independently-reproducible-result">Part E:
+produce one independently reproducible result</h3>
+<p>A final-year project should provide the command that reproduces its
+main table or figure from declared inputs. Fix random seeds where
+randomness is used; record versions; include an expected output check;
+and explain which observations are invented, publicly obtained or
+operationally measured. The Chapter 12 example can be rerun from a
+command line and produces two CSV files: one for feasible site
+combinations and one for each allocation. An instructor can compare
+those files with the hand derivation of 315 and 395 person-distance
+units.</p>
+<p>Reproducibility does not mean every reader has permission to publish
+confidential source data. A protected project can release its code,
+synthetic fixtures and verification instructions while making actual
+observations available only to authorised reviewers. The final report
+should not imply that a synthetic fixture is a de-identified real
+dataset.</p>
+<h3 id="part-f-demonstrate-the-tool-in-a-failure-scenario">Part F:
+demonstrate the tool in a failure scenario</h3>
+<p>A practical application must survive the environment in which it is
+intended to operate. Choose a failure: loss of internet during an entry,
+duplicate submission, incorrect user permission, power interruption,
+invalid units or missing records. Before running the test, state the
+expected safe behaviour. Afterwards, record observed behaviour and any
+discrepancy. A system that rejects unsafe input with an intelligible
+explanation may be more valuable than one that continues producing a
+precise but false number.</p>
+<p>The demonstration should be carried out on suitable low-cost hardware
+where possible. If only a development laptop is available, call the
+result a software test, not evidence of performance on a specific field
+device. Hardware performance claims require measurements on that
+hardware.</p>
+<h3 id="part-g-design-the-impact-evaluation-before-claiming-impact">Part
+G: design the impact evaluation before claiming impact</h3>
+<p>Define what an improvement would look like to actual service users.
+For water access, possible outcomes include travel time, water quality,
+service uptime and household cost; for medicine inventory, availability,
+unfilled requests, expired stock and patient burden. Identify a feasible
+comparison and its assumptions, the planned measurement period,
+missingness rules, potentially affected groups and the institution’s
+permission to collect data. Write a plan for what would count as
+negative or inconclusive evidence.</p>
+<p>If the project has not reached deployment, the evaluation protocol is
+a deliverable but not an evaluation result. An impressive simulation
+does not justify changing the wording to “demonstrated improvement.”
+That distinction must survive editing and publication.</p>
+<h3 id="part-h-institutional-ownership-and-another-context">Part H:
+institutional ownership and another context</h3>
+<p>Prepare a one-year operating plan showing who will run the service,
+maintain the hardware and software, correct records, answer incidents,
+fund recurring costs and safely withdraw it if necessary. Then choose
+one realistic alternative setting and ask which data, constraints,
+language, permissions and infrastructure would have to change. The
+adaptation record should distinguish reusable mathematics and code from
+empirical assumptions that require new evidence.</p>
+<p>A final report should give a manager an answer and give another
+researcher a way to challenge it. It is not sufficient merely to present
+equations and screenshots; the work must show what it does not
+establish.</p>
+<h2 id="what-a-complete-project-submission-looks-like">What a complete
+project submission looks like</h2>
+<p>A model solution should contain the following narrative sequence: the
+observed or proposed problem; the decision and competing objectives; the
+verified mathematical structure; the measurement and data limits; the
+baseline and selected method; the feasibility and uncertainty results;
+the tested software; the impact-evaluation evidence or protocol; the
+deployment obligations; and the transfer and limitations statement.
+Equations, code, figures and tables should be placed where they answer a
+question in that story.</p>
+<p>A useful oral examination asks each student to explain an important
+choice without reading a slide: why a particular decision variable was
+used, why a piece of data could be trusted, why the baseline was
+appropriate, what test could falsify the conclusion, and what the
+institution would need to do next. Someone who can answer those
+questions has learned more than a sequence of Python commands.</p>
+<h2 id="an-example-of-a-defensible-final-recommendation">An example of a
+defensible final recommendation</h2>
+<p>For the invented water case, a transparent recommendation would be:
+“Under the stated planning units, capital budget, candidate capacities
+and divided-demand assumption, S1+S3 minimises weighted travel among the
+two affordable pairs. S2+S3 is cheaper but has larger weighted travel.
+Neither configuration can meet an eight-kilometre
+maximum-assigned-distance requirement with all planned demand served.
+The inputs are invented, so no physical site should be selected from
+this calculation. A real decision requires verified demand, actual route
+accessibility, water quality and yield tests, site permissions,
+maintenance costing and consultation with residents.”</p>
+<p>That statement contains a meaningful mathematical result, its policy
+trade-off, its exact limitation and an actionable next step. It embodies
+the book’s aim better than a dramatic conclusion unsupported by
+observations. When field evidence is eventually available, the same
+structure can support a stronger recommendation with measured
+outcomes.</p>
+<h2 id="final-exercises-and-fieldwork">Final exercises and
+fieldwork</h2>
+<ol type="1">
+<li><p>Reproduce the two-site feasibility check using the invented
+demand, costs and capacities. List all three two-site opening pairs and
+explain which is financially infeasible.</p></li>
+<li><p>Prove Proposition <a href="chapter12.html#sec-ch12-two-site">the proposition</a> by a pairwise
+exchange argument. Explain why the proof does not handle indivisible
+households.</p></li>
+<li><p>Run the capstone script and compare feasible opening pairs.
+Explain why a lower capital cost need not mean lower travel
+burden.</p></li>
+<li><p>Impose a distance ceiling of eight kilometres. Identify which
+routes cannot carry demand and analyse whether the remaining capacity is
+sufficient.</p></li>
+<li><p>Increase settlement A’s assumed demand by ten units and
+recalculate a feasible allocation or show why the old one must
+change.</p></li>
+<li><p>Convert the aggregate allocation variables into binary
+whole-settlement assignments and compare the feasible set. Which model
+is more suitable when a village must use a single service
+point?</p></li>
+<li><p>Prepare a data dictionary for a real water-service study.
+Identify units, sampling frame, provenance, errors and licence
+conditions.</p></li>
+<li><p>Choose one possible prediction model and one simple baseline.
+Specify a geographically independent test of their use in the siting
+decision.</p></li>
+<li><p>Write five acceptance tests for a small offline application
+collecting site capacity, access and cost estimates. Include failure and
+rollback behaviour.</p></li>
+<li><p>Draft an impact-evaluation protocol that distinguishes shorter
+journeys from improved availability and safe water quality.</p></li>
+<li><p>Develop a three-year maintenance budget and identify the
+institution responsible for every recurring cost.</p></li>
+<li><p>Write a Country Adaptation Record for a different setting, naming
+five assumptions that must be rechecked.</p></li>
+<li><p><em>Final submission.</em> Produce the twelve-part dossier in
+Table <a href="chapter12.html#tbl-ch12-dossier">12.3</a>. Mark each
+claim as mathematical, simulated, retrospective empirical,
+prototype-tested or impact-evaluated. Supply code, data permissions,
+tests, evidence limits and a decision about what may proceed
+next.</p></li>
+</ol>
+<h2 class="unnumbered" id="a-final-word">A final word</h2>
+<p>A working solution begins as a question that somebody can answer and
+ends as a responsibility somebody can carry. Between the two stand
+models, observations, mistakes, calculations, software, people and
+institutions. None should be hidden. An elegant result has value even if
+it tells us that a proposed service is not yet affordable, the data
+cannot identify demand, or the benefit cannot yet be established. Such
+answers can prevent waste and protect people.</p>
+<p>The enduring skill is not knowing a particular algorithm. It is being
+able to explain, in language a colleague can check, what problem was
+addressed, why the method was chosen, what was observed, what remains
+uncertain, and what it would take for the result to improve someone’s
+life. That discipline is not limited by national income. It is the
+foundation of useful innovation anywhere.</p>
+</article><div class="page-links"><a href="chapter11.html">← Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="appendixA.html">Appendix A — Printable records →</a></div><p class="notice"><a href="reader.html">Open facing-page reader</a> · <a href="book.pdf">PDF edition</a> · <a href="resources.html">Teaching resources</a></p></main></div><script src="search.js"></script></body></html>

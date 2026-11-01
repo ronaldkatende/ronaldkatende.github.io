@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="A rigorous applied mathematics and computing book for resource-constrained environments" name="description"/><title>Chapter 2 — Turning Reality into a Mathematical Model | From Problems to Working Solutions</title><link href="style.css" rel="stylesheet"/></head><body>
+<div class="site-layout"><aside><div class="brand">From Problems to<br/>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input aria-label="Search the book" class="search" id="search" placeholder="Search the book"/><div id="results"></div><div class="reader-access"><a class="reader-entry" href="reader.html">Open facing-page reader</a><a href="book.pdf">PDF edition</a></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a class="current" href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><p class="chapter-banner">Chapter 2 · <a href="reader.html#page=30">Read in facing pages</a></p><h1 id="sec-model">Turning Reality into a Mathematical Model</h1>
+<blockquote>
+<p><em>A model does not have to contain everything that exists. It must
+contain what is necessary to answer a particular question, in units and
+relationships that can be checked.</em></p>
+</blockquote>
+<h2 id="a-water-tank-serves-several-neighbourhoods">A water tank serves
+several neighbourhoods</h2>
+<p>Consider a town that distributes water from a storage tank. Some days
+enough water arrives from the source; on others it does not. Demand
+varies. Leaks can occur between the source and the customers. The town
+must decide whether to increase storage, repair a pipe, ration
+deliveries or change its pumping schedule. It may have only a few
+measurements: the volume entering storage, the water-level indicator and
+a daily estimate of the amount delivered.</p>
+<p>An engineer could begin with a sophisticated network model. The
+engineer could also begin with the simplest meaningful equation: water
+cannot appear from nowhere. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math>
+is stored water at the beginning of day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+is water entering the tank,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+is water delivered and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math>
+is water lost, then a basic balance is</p>
+<p class="numbered-equation" id="eq-balance"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+S_{t+1}=S_t+I_t-D_t-\ell_t.
+</annotation></semantics></math><span aria-label="Equation 2.1" class="equation-number">(2.1)</span></p>
+
+<p>The symbols turn a verbal description into a claim that can be
+tested. Yet the equation is incomplete unless we say what each term
+means, which time interval it covers and whether the tank can run empty
+or overflow.</p>
+<p>A model is therefore not just an equation. It is an equation together
+with definitions, assumptions, boundary conditions, a domain of validity
+and a purpose. This chapter develops those ingredients through the water
+system, then shows how the same principles lead to networks,
+differential equations, probability models and constrained
+optimisation.</p>
+<h2 id="choose-the-boundary-before-counting-what-crosses-it">Choose the
+boundary before counting what crosses it</h2>
+<p>Imagine drawing a line around the tank. Water that crosses the line
+into the tank contributes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>.
+Water that crosses out contributes to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math>.
+This simple act of choosing a <em>system boundary</em> is essential. If
+the outlet meter sits downstream from an unmeasured leak, what the meter
+reads may differ from the amount leaving the tank. If pumps return
+treated water to storage, counting the return as fresh supply can
+double-count part of the flow.</p>
+<p>To apply equation <a href="chapter02.html#eq-balance">(2.1)</a>,
+the quantities must refer to the same system and period. The storage
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math>
+is a volume, measured here in cubic metres
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>).
+Daily inflow, delivery and loss are volumes over one day, not flow
+rates. If the inflow is recorded as a rate in litres per second, it must
+be integrated over the day before it can be added to storage. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">q_t</annotation></semantics></math>
+denotes the numerical value of a flow rate measured in litres per second
+and that rate is constant for one day, the volume entering over that day
+is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>t</mi></msub><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>q</mi><mi>t</mi></msub><mspace width="0.167em"></mspace><mfrac><mi mathvariant="normal">L</mi><mi mathvariant="normal">s</mi></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mrow><mo form="prefix" stretchy="true">(</mo><mn>86</mn><mspace width="0.167em"></mspace><mn>400</mn><mspace width="0.167em"></mspace><mfrac><mi mathvariant="normal">s</mi><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">y</mi></mrow></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mrow><mo form="prefix" stretchy="true">(</mo><mfrac><mrow><mn>1</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><mrow><mn>1000</mn><mspace width="0.167em"></mspace><mi mathvariant="normal">L</mi></mrow></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">y</mi></mrow><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>86.4</mn><mspace width="0.167em"></mspace><msub><mi>q</mi><mi>t</mi></msub><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><mo>,</mo></mrow><annotation encoding="application/x-tex">
+I_t=\left(q_t\,\frac{\mathrm L}{\mathrm s}\right)
+ \left(86\,400\,\frac{\mathrm s}{\mathrm{day}}\right)
+ \left(\frac{1\,\mathrm{m}^3}{1000\,\mathrm L}\right)
+ (1\,\mathrm{day})
+ =86.4\,q_t\,\mathrm{m}^3,
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">q_t</annotation></semantics></math>
+is the numerical rate in litres per second. With a time-varying rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mi>t</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>τ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q_t(\tau)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>
+is measured in seconds from the start of day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+the volume is instead
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>t</mi></msub><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mi>/</mi><mn>1000</mn><mo form="postfix" stretchy="true">)</mo></mrow><msubsup><mo>∫</mo><mn>0</mn><mrow><mn>86</mn><mspace width="0.167em"></mspace><mn>400</mn></mrow></msubsup><msub><mi>q</mi><mi>t</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>τ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>τ</mi></mrow><annotation encoding="application/x-tex">I_t=(1/1000)\int_{0}^{86\,400}q_t(\tau)\,\mathrm d\tau</annotation></semantics></math>
+cubic metres. The daily quantities
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math>
+in the balance are all volumes in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>,
+not rates. Units are not decoration: their agreement is one of the
+easiest ways to detect a wrong model before running it.</p>
+<table id="tbl-waterdict">
+<caption><span class="caption-label">Table 2.1. </span>A minimal data dictionary for a daily storage balance</caption>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Unit</th>
+<th>Meaning and measurement caveat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math></td>
+<td>Water in the tank at the start of day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>;
+depends on an accurately calibrated level indicator.</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math></td>
+<td>Total volume entering the chosen tank boundary during day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math></td>
+<td>Actual volume delivered from the tank, not necessarily requested
+demand.</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math></td>
+<td>Volume lost inside the boundary; may include physical leaks and
+unmeasured releases.</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math></td>
+<td>Maximum physical storage capacity.</td>
+</tr>
+</tbody>
+</table>
+<p>A good data dictionary also records time zone, collection interval,
+sensor resolution, missing-value codes and whether values are estimated
+or directly observed. Without such details, matching datasets can
+introduce errors even when each dataset is internally correct.</p>
+<h2 id="a-feasible-storage-model">A feasible storage model</h2>
+<p>Equation <a href="chapter02.html#eq-balance">(2.1)</a> allows
+negative stored water if the requested delivery exceeds what is
+available. Negative volume is mathematically possible as a number but
+physically meaningless. The correction is not to set negative
+predictions to zero after the analysis and move on. We must distinguish
+<em>demand requested</em> from <em>water actually served</em>.</p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Q_t</annotation></semantics></math>
+denote demand during day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+denote tank capacity. For a simple ordering of events in which inflow
+arrives, a prescribed loss occurs and delivery follows, define</p>
+<p class="numbered-equation" id="eq-feasiblewater"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>A</mi><mi>t</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>max</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub><mo form="postfix" stretchy="false">}</mo><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>D</mi><mi>t</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>min</mo><mo form="prefix" stretchy="false">{</mo><msub><mi>Q</mi><mi>t</mi></msub><mo>,</mo><msub><mi>A</mi><mi>t</mi></msub><mo form="postfix" stretchy="false">}</mo><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>U</mi><mi>t</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mi>Q</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>E</mi><mi>t</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>max</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><msub><mi>A</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><mi>K</mi><mo form="postfix" stretchy="false">}</mo><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>min</mo><mo form="prefix" stretchy="false">{</mo><mi>K</mi><mo>,</mo><msub><mi>A</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo form="postfix" stretchy="false">}</mo><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+ A_t&amp;=\max\{0,S_t+I_t-\ell_t\},\\
+ D_t&amp;=\min\{Q_t,A_t\},\\
+ U_t&amp;=Q_t-D_t,\\
+ E_t&amp;=\max\{0,A_t-D_t-K\},\\
+ S_{t+1}&amp;=\min\{K,A_t-D_t\}.
+\end{aligned}
+</annotation></semantics></math><span aria-label="Equation 2.2" class="equation-number">(2.2)</span></p>
+
+<p>Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>t</mi></msub><annotation encoding="application/x-tex">A_t</annotation></semantics></math>
+is water available before delivery,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>U</mi><mi>t</mi></msub><annotation encoding="application/x-tex">U_t</annotation></semantics></math>
+is unmet demand and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>E</mi><mi>t</mi></msub><annotation encoding="application/x-tex">E_t</annotation></semantics></math>
+is overflow or spill. The timing is an assumption; another system may
+overflow before some daily demand is supplied. A finer time step may be
+needed to model that process correctly. The important point is to state
+the sequence of events instead of hiding it inside a programming
+convention.</p>
+<p>An equivalent conservation check for this ordering is</p>
+<p class="numbered-equation" id="eq-concheck"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>A</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mi>E</mi><mi>t</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+S_{t+1}=A_t-D_t-E_t,
+</annotation></semantics></math><span aria-label="Equation 2.3" class="equation-number">(2.3)</span></p>
+
+<p>with an additional check that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">A_t= S_t+I_t-\ell_t</annotation></semantics></math>
+whenever
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>≥</mo><msub><mo>ℓ</mo><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">S_t+I_t\geq\ell_t</annotation></semantics></math>.
+If the assumed loss exceeds the available water, the simple clipping in
+<a href="chapter02.html#eq-feasiblewater">equation (2.2)</a> needs to be
+interpreted explicitly: the system cannot physically lose more water
+than it has. A practical implementation would cap realised loss and
+report the shortfall or revisit the loss model.</p>
+<p><em>Proposition.</em> Suppose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">K\geq0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>S</mi><mn>0</mn></msub><mo>≤</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">0\leq S_0\leq K</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mi>t</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Q_t\geq0</annotation></semantics></math>.
+Under equations <a href="chapter02.html#eq-feasiblewater">equation (2.2)</a>,
+storage stays within its physical bounds:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>S</mi><mi>t</mi></msub><mo>≤</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">0\leq S_t\leq K</annotation></semantics></math>
+for every subsequent day.</p>
+<p><em>Proof.</em> Assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>S</mi><mi>t</mi></msub><mo>≤</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">0\leq S_t\leq K</annotation></semantics></math>.
+By construction
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">A_t\geq0</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>=</mo><mo>min</mo><mo form="prefix" stretchy="false">{</mo><msub><mi>Q</mi><mi>t</mi></msub><mo>,</mo><msub><mi>A</mi><mi>t</mi></msub><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">D_t=\min\{Q_t,A_t\}</annotation></semantics></math>
+satisfies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>D</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>A</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">0\leq D_t\leq A_t</annotation></semantics></math>.
+Hence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">A_t-D_t\geq0</annotation></semantics></math>.
+Its minimum with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+is between zero and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>.
+The statement follows by induction from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>. ◻</p>
+<p>Notice what has and has not been proved. We have proved a property of
+a proposed mathematical update rule. We have not proved that the real
+tank will operate safely. The rule may omit pressure constraints,
+contamination, minimum operating reserves or the actual sequence of
+pumping decisions. Verification of equations and validation against the
+physical system answer different questions.</p>
+<h2 id="a-reproducible-twenty-day-illustration">A reproducible
+twenty-day illustration</h2>
+<p>Consider a fictional tank with initial storage
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>55</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">55\,\mathrm{m}^3</annotation></semantics></math>,
+capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>75</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">75\,\mathrm{m}^3</annotation></semantics></math>
+and a prescribed loss of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">2\,\mathrm{m}^3</annotation></semantics></math>
+each day. We invent twenty days of inflows, then compare constant
+demands of 16 and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>22</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">22\,\mathrm{m}^3</annotation></semantics></math>
+per day. The companion program computes equations <a href="chapter02.html#eq-feasiblewater">equation (2.2)</a> without importing
+any observed utility data.</p>
+<figure id="fig-water">
+<img alt="Simulated storage under two constant demand assumptions. The inflows and losses are invented for teaching. The plot makes no claim about an actual Ugandan water system." src="figures/water_storage.png"/>
+<figcaption aria-hidden="true"><span class="caption-label">Figure 2.1. </span>Simulated storage under two constant
+demand assumptions. The inflows and losses are invented for teaching.
+The plot makes no claim about an actual Ugandan water
+system.</figcaption>
+</figure>
+<table id="tbl-waterout">
+<caption><span class="caption-label">Table 2.2. </span>Calculated outcomes for the invented twenty-day tank scenario</caption>
+<colgroup>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+<col style="width: 25%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Demand
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>/day)</th>
+<th>Final storage
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>)</th>
+<th>Total unmet
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>)</th>
+<th>Total spill
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathrm{m}^3</annotation></semantics></math>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>16</td>
+<td>18.0</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>0.0</td>
+<td>102.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<p>The larger-demand scenario experiences shortages in this artificial
+sequence. This does not show that households consume too much or that
+rationing is desirable. It shows that a decision about demand, storage
+or supply is connected to an accounting identity. If the recorded
+inflows are uncertain, a sensible analysis should repeat the calculation
+for plausible alternatives and find where the preferred decision
+changes.</p>
+<p>The example also illustrates a danger of using aggregate
+measurements. Suppose a daily balance suggests that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">3\,\mathrm{m}^3</annotation></semantics></math>
+is disappearing between inlet and outlet measurements. The equation can
+show an unexplained difference, but it cannot say which pipe is leaking.
+To make that distinction, we need additional information about the
+network.</p>
+<h2 id="when-a-network-is-needed">When a network is needed</h2>
+<p>A water distribution system, road map, electricity network and
+delivery route can all be represented by a graph. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>V</mi><annotation encoding="application/x-tex">V</annotation></semantics></math>
+be the nodes and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+the edges. Choose an arbitrary orientation for each edge and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mi>e</mi></msub><annotation encoding="application/x-tex">q_e</annotation></semantics></math>
+represent flow in that orientation. The node-edge incidence matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>
+at the starting node of an edge,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>+</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math>
+at the receiving node and zero elsewhere. A signed net injection vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+must satisfy</p>
+<p class="numbered-equation" id="eq-networkbalance"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>q</mi><mo>=</mo><mi>s</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+Bq=s.
+</annotation></semantics></math><span aria-label="Equation 2.4" class="equation-number">(2.4)</span></p>
+
+<p>The sign convention matters. Under the convention just stated, a
+positive component of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+represents net flow <em>into</em> a node from the directed edges. If
+instead injections from reservoirs are defined positive, the right-hand
+side changes sign. Both conventions are valid; silently switching
+between them is not.</p>
+<p>For a network with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+edges and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+nodes,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+is an
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>×</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n\times m</annotation></semantics></math>
+matrix. Every column sums to zero. Consequently,</p>
+<p class="numbered-equation" id="eq-netcondition"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>s</mi><mo>=</mo><msup><mn>𝟏</mn><mi>𝖳</mi></msup><mi>B</mi><mi>q</mi><mo>=</mo><mn>0</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\boldsymbol{1}^{\mathsf T}s=\boldsymbol{1}^{\mathsf T}Bq=0.
+</annotation></semantics></math><span aria-label="Equation 2.5" class="equation-number">(2.5)</span></p>
+
+<p>Total net flow must balance in the modeled closed network. If
+measured injections do not sum to zero, the difference may indicate a
+leak, measurement error, unrecorded consumption or simply a boundary
+that omitted part of the system. The equation identifies an
+inconsistency, not its cause.</p>
+<figure id="fig-network">
+<img alt="A small illustrative four-node water network showing alternate paths for flow." src="figures/2_diagram2.png"/>
+<figcaption aria-hidden="true"><span class="caption-label">Figure 2.2. </span>A small illustrative four-node water
+network showing alternate paths for flow.</figcaption>
+</figure>
+<p>For the diagram, conservation alone allows different choices of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mn>1</mn></msub><annotation encoding="application/x-tex">q_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mn>2</mn></msub><annotation encoding="application/x-tex">q_2</annotation></semantics></math>
+that sum to the same total. Without pressures, pipe characteristics,
+flow meters or other constraints, the internal distribution is not
+uniquely determined. This is an example of <em>identifiability</em>: two
+different internal states can generate the same observations. A model
+cannot infer which state is real merely by using a more complicated
+algorithm.</p>
+<h2 id="state-variables-parameters-and-decisions">State variables,
+parameters and decisions</h2>
+<p>Water storage changes from day to day, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math>
+is a <em>state variable</em>. Tank capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
+is a <em>parameter</em> of the model, usually taken as fixed during a
+particular study. Pumping duration or the opening of a valve might be a
+<em>decision variable</em>. Rainfall or unplanned outages might be
+uncertain external inputs. The categories can change with the purpose.
+If we are designing a new tank, capacity becomes a decision rather than
+a fixed parameter.</p>
+<p>A general discrete-time system can be written as</p>
+<p class="numbered-equation" id="eq-state"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mi>F</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo>,</mo><msub><mi>a</mi><mi>t</mi></msub><mo>,</mo><msub><mi>ξ</mi><mi>t</mi></msub><mo>;</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>y</mi><mi>t</mi></msub><mo>=</mo><mi>H</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo>;</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><msub><mi>ε</mi><mi>t</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+x_{t+1}=F(x_t,a_t,\xi_t;\theta),\qquad y_t=H(x_t;\theta)+\varepsilon_t,
+</annotation></semantics></math><span aria-label="Equation 2.6" class="equation-number">(2.6)</span></p>
+
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>t</mi></msub><annotation encoding="application/x-tex">x_t</annotation></semantics></math>
+is the state,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>a</mi><mi>t</mi></msub><annotation encoding="application/x-tex">a_t</annotation></semantics></math>
+the action,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ξ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\xi_t</annotation></semantics></math>
+an external disturbance,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+fixed parameters,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">y_t</annotation></semantics></math>
+observations and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\varepsilon_t</annotation></semantics></math>
+measurement noise. This notation separates how the system is believed to
+evolve from how it is observed. It will be useful in the next chapter
+because the measured quantity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">y_t</annotation></semantics></math>
+is not necessarily the underlying state
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>t</mi></msub><annotation encoding="application/x-tex">x_t</annotation></semantics></math>.</p>
+<p>A continuous-time balance may be more appropriate when processes
+change rapidly. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q_{\mathrm{in}}(t)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q_{\mathrm{out}}(t)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q_{\mathrm{loss}}(t)</annotation></semantics></math>
+are flow rates, then</p>
+<p class="numbered-equation" id="eq-waterode"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><mi>S</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{dS}{dt}=q_{\mathrm{in}}(t)-q_{\mathrm{out}}(t)-q_{\mathrm{loss}}(t).
+</annotation></semantics></math><span aria-label="Equation 2.7" class="equation-number">(2.7)</span></p>
+
+<p>Integrating over a day gives a balance in volumes. A discrete-time
+model is therefore not necessarily a different physical theory; it can
+be an integrated account over an observation interval. But if the rate
+and the decisions vary within the day, replacing every rate with a
+single daily average may hide important short-lived shortages.</p>
+<h2 id="probability-when-the-future-is-not-known">Probability when the
+future is not known</h2>
+<p>Demand tomorrow is not generally known. One approach is to assume a
+fixed demand such as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>20</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">20\,\mathrm{m}^3</annotation></semantics></math>.
+That is a scenario, not a probability model. A probabilistic
+representation instead assigns a distribution to uncertain demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Q_t</annotation></semantics></math>.
+For illustration, suppose</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mi>t</mi></msub><mo>=</mo><mrow><mo form="prefix" stretchy="true">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>16</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">with probability </mtext><mspace width="0.333em"></mspace></mrow><mn>0.7</mn><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>22</mn><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">with probability </mtext><mspace width="0.333em"></mspace></mrow><mn>0.3</mn><mi>.</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+Q_t=\begin{cases}16,&amp;\text{with probability }0.7,\\22,&amp;\text{with probability }0.3.
+ \end{cases}
+</annotation></semantics></math></p>
+<p>Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><msub><mi>Q</mi><mi>t</mi></msub><mo form="postfix" stretchy="true">]</mo></mrow><mo>=</mo><mn>17.8</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb E[Q_t]=17.8\,\mathrm{m}^3</annotation></semantics></math>.
+Planning only for mean demand would ignore the possibility of
+high-demand days. If shortages carry a nonlinear cost, the expected cost
+cannot generally be obtained by substituting the expected demand into
+the loss function:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><msub><mi>Q</mi><mi>t</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">]</mo></mrow><mo>≠</mo><mi>L</mi><mo form="prefix" maxsize="1.2" minsize="1.2" stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>𝔼</mi><mrow><mo form="prefix" stretchy="true">[</mo><msub><mi>Q</mi><mi>t</mi></msub><mo form="postfix" stretchy="true">]</mo></mrow><mo form="postfix" maxsize="1.2" minsize="1.2" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
+\mathbb E[L(a,Q_t)]\ne L\big(a,\mathbb E[Q_t]\big)
+</annotation></semantics></math></p>
+<p>in general. This is why uncertain inputs, chance constraints and
+robust decisions require care beyond a single average.</p>
+<p>The example probabilities are invented. With observed demand data,
+the modeller would have to examine seasonality, population served,
+demand suppressed by previous shortages and possible changes after new
+water connections. Recorded deliveries are not automatically equal to
+underlying demand. This distinction mirrors the clinic example in
+Chapter 1, where patients who leave a queue before service may vanish
+from service records without their need vanishing.</p>
+<h2 id="from-understanding-the-system-to-choosing-an-action">From
+understanding the system to choosing an action</h2>
+<p>Suppose a municipality wants to choose daily pumping
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>t</mi></msub><annotation encoding="application/x-tex">p_t</annotation></semantics></math>
+under a limit
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>p</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>P</mi><mo>max</mo></msub></mrow><annotation encoding="application/x-tex">0\leq p_t\leq P_{\max}</annotation></semantics></math>
+and an operating budget. If pumping contributes to inflow and carries an
+energy cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>t</mi></msub><msub><mi>p</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">c_t p_t</annotation></semantics></math>,
+a simple finite-horizon objective could be</p>
+<p class="numbered-equation" id="eq-controlobj"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>min</mo><mrow><msub><mi>p</mi><mn>0</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>p</mi><mrow><mi>T</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow></munder><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>T</mi><mo>−</mo><mn>1</mn></mrow></munderover><mo form="prefix" maxsize="1.2" minsize="1.2" stretchy="false">[</mo><msub><mi>c</mi><mi>t</mi></msub><msub><mi>p</mi><mi>t</mi></msub><mo>+</mo><msub><mi>c</mi><mi>u</mi></msub><msub><mi>U</mi><mi>t</mi></msub><mo form="postfix" maxsize="1.2" minsize="1.2" stretchy="false">]</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\min_{p_0,\ldots,p_{T-1}}\sum_{t=0}^{T-1}\big[c_t p_t + c_u U_t\big],
+</annotation></semantics></math><span aria-label="Equation 2.8" class="equation-number">(2.8)</span></p>
+
+<p>subject to a balance equation, capacity limits, pumping limits and
+any service requirements. Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>u</mi></msub><annotation encoding="application/x-tex">c_u</annotation></semantics></math>
+is the modelled cost of unmet demand. This is no longer merely a
+prediction problem. It is an optimisation problem: among feasible
+actions, find one that performs well according to the stated
+criterion.</p>
+<p>The optimisation is only as trustworthy as its constraints. If
+electricity interruptions disable the pump for several hours, an
+optimisation that assumes uninterrupted pumping can recommend an
+impossible schedule. If the pump cannot restart without a technician,
+that operational limitation belongs in the feasible set. Good modelling
+keeps physical and institutional realities visible rather than treating
+them as inconvenient details.</p>
+<p>There are different levels of complexity. A simple fixed pumping rule
+may be sufficient. A linear programme may help when costs and
+constraints are linear. A nonlinear model may be needed for
+pressure-dependent flows. The additional complexity is justified only
+when it represents a mechanism that affects the decision and can be
+supported by data.</p>
+<h2 id="assumptions-are-claims-to-be-challenged">Assumptions are claims
+to be challenged</h2>
+<p>Every model includes simplifying assumptions. The responsible
+question is not “Are there assumptions?” but “Which assumption could
+change the answer?” An assumption audit should identify the consequence
+of each choice and a practical way of testing its importance.</p>
+<table id="tbl-assumptions">
+<caption><span class="caption-label">Table 2.3. </span>An assumption audit for the fictional water model</caption>
+<colgroup>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+<col style="width: 33%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Assumption</th>
+<th>Possible failure</th>
+<th>A useful check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Daily inflow is known</td>
+<td>Inlet meter drifts or lacks power</td>
+<td>Compare independent readings and meter calibration</td>
+</tr>
+<tr class="even">
+<td>Loss is fixed at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">2\,\mathrm{m}^3</annotation></semantics></math></td>
+<td>Leakage varies with pressure or pipe faults</td>
+<td>Test a range of losses and seek pressure/flow data</td>
+</tr>
+<tr class="odd">
+<td>All demand is known</td>
+<td>Unserved customers disappear from delivery records</td>
+<td>Distinguish requests and deliveries; document shortage days</td>
+</tr>
+<tr class="even">
+<td>Tank capacity is usable in full</td>
+<td>Minimum reserve or pump intake prevents complete emptying</td>
+<td>Add minimum operating volume to constraints</td>
+</tr>
+<tr class="odd">
+<td>One-day time step is adequate</td>
+<td>Shortage or overflow occurs during the day</td>
+<td>Recompute at shorter intervals if observations permit</td>
+</tr>
+</tbody>
+</table>
+<p><span class="citation" data-cites="saltelli2008">Saltelli et al.
+(2008)</span> develop sensitivity analysis as a systematic way to
+investigate how model outputs depend on uncertain inputs. We will return
+to these methods in later chapters. For now, even a small scenario table
+can be revealing: vary initial storage, loss and demand, and observe
+whether the recommendation changes. If it does, the conclusion should be
+communicated conditionally.</p>
+<h2 id="verification-validation-and-the-limits-of-the-model">Verification,
+validation and the limits of the model</h2>
+<p><em>Verification</em> asks whether equations and code implement the
+intended mathematical description. For our storage model, a basic test
+checks that storage never becomes negative and never exceeds capacity;
+another tests conservation. These are valuable even before any real data
+are obtained.</p>
+<p><em>Validation</em> asks whether the description represents the
+intended physical system sufficiently well for its use. That requires
+evidence about actual storage, inflows, demand, deliveries and
+operational constraints. An error-free program can model the wrong
+system. An accurate prediction on one operating regime may fail during
+an unusual dry spell. The intended use determines which evidence matters
+most.</p>
+<p>An important consequence is that successful reproduction of Figure <a href="chapter02.html#fig-water">2.1</a> does not validate a
+water-management system. It verifies a particular illustrative
+computation. A later field study would need suitable measurements, a
+baseline, error reporting and operational review.</p>
+<h2 id="a-model-begins-with-a-question-not-an-equation">A model begins
+with a question, not an equation</h2>
+<p>A district water officer may want to know whether a storage tank can
+keep a health facility supplied during an interruption. A plumber may
+want to locate a leak. An engineer may want to size a pump. A finance
+officer may want to compare the cost of adding storage with the cost of
+improving delivery schedules. All four people are interested in the same
+water system, but the same mathematical model will not answer all four
+questions.</p>
+<p>The tank balance introduced earlier is adequate for an accounting
+question: how much water entered, left or remained in storage during
+each period? It is not by itself adequate for locating a leak. A network
+model is needed to represent how water moves through pipes. A hydraulic
+model may be needed to predict pressure. A cost model is needed before
+deciding whether a pump or storage upgrade is affordable. The lesson is
+not that increasingly complicated models are always better. It is that a
+model must contain the variables and mechanisms required by its intended
+question.</p>
+<p>This can be written with a simple observation map. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+represent the physical state and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
+the measurement process. The observed data are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>+</mo><mi>ε</mi></mrow><annotation encoding="application/x-tex">y=h(z)+\varepsilon</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ε</mi><annotation encoding="application/x-tex">\varepsilon</annotation></semantics></math>
+represents measurement error. A proposed quantity of interest is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q(z)</annotation></semantics></math>.
+If two different states
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mn>1</mn></msub><annotation encoding="application/x-tex">z_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mn>2</mn></msub><annotation encoding="application/x-tex">z_2</annotation></semantics></math>
+satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(z_1)=h(z_2)</annotation></semantics></math>
+but
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>≠</mo><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q(z_1)\ne q(z_2)</annotation></semantics></math>,
+then exact noiseless observations of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(z)</annotation></semantics></math>
+cannot distinguish the answers to the question. The ambiguity comes
+before any computation. No optimisation algorithm can infer an
+unmeasured distinction without introducing new assumptions or data.</p>
+<p><em>Proposition.</em> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>:</mo><mi>𝒵</mi><mo>→</mo><mi>𝒴</mi></mrow><annotation encoding="application/x-tex">h:\mathcal Z\to\mathcal Y</annotation></semantics></math>
+be a deterministic observation map and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>:</mo><mi>𝒵</mi><mo>→</mo><mi>𝒬</mi></mrow><annotation encoding="application/x-tex">q:\mathcal Z\to\mathcal Q</annotation></semantics></math>
+be the desired answer. There is a function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+on the observed image
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>𝒵</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(\mathcal Z)</annotation></semantics></math>
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q(z)=g(h(z))</annotation></semantics></math>
+for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><mi>𝒵</mi></mrow><annotation encoding="application/x-tex">z\in\mathcal Z</annotation></semantics></math>
+if and only if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+is constant on each set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="false">{</mo><mi>z</mi><mo>:</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>y</mi><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{z:h(z)=y\}</annotation></semantics></math>.</p>
+<p><em>Proof.</em> If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mi>g</mi><mo>∘</mo><mi>h</mi></mrow><annotation encoding="application/x-tex">q=g\circ h</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(z_1)=h(z_2)</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">q(z_1)=g(h(z_1))=g(h(z_2))=q(z_2)</annotation></semantics></math>.
+Conversely, assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+is constant on every fibre of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>.
+For any observed value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>∈</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>𝒵</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">y\in h(\mathcal Z)</annotation></semantics></math>,
+choose any
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">h(z)=y</annotation></semantics></math>
+and set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>y</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(y)=q(z)</annotation></semantics></math>.
+Constancy ensures that the definition does not depend on which
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+was chosen. Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(h(z))=q(z)</annotation></semantics></math>
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>. ◻</p>
+<p>The result is elementary, but its practical force is considerable. We
+may not be able to reconstruct every hidden pipe flow. Yet we might
+still recover a district-wide quantity such as total supply if that
+quantity is the same across every flow pattern consistent with the
+available meters. A decision often needs less information than a
+complete reconstruction of the system. The important question is which
+differences between states would change the decision.</p>
+<h3 id="a-leak-that-an-aggregate-meter-cannot-locate">A leak that an
+aggregate meter cannot locate</h3>
+<p>Consider two pipelines leaving a tank, with flows
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mn>1</mn></msub><annotation encoding="application/x-tex">f_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mn>2</mn></msub><annotation encoding="application/x-tex">f_2</annotation></semantics></math>.
+The tank meter measures
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>f</mi><mn>1</mn></msub><mo>+</mo><msub><mi>f</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">y=f_1+f_2</annotation></semantics></math>.
+A reading of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>100</mn><annotation encoding="application/x-tex">100</annotation></semantics></math>
+litres per minute is consistent with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>f</mi><mn>1</mn></msub><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>60</mn><mo>,</mo><mn>40</mn><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">(f_1,f_2)=(60,40)</annotation></semantics></math>
+and with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>80</mn><mo>,</mo><mn>20</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(80,20)</annotation></semantics></math>.
+If our question is total outflow,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>f</mi><mn>1</mn></msub><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mi>f</mi><mn>1</mn></msub><mo>+</mo><msub><mi>f</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">q(f_1,f_2)=f_1+f_2</annotation></semantics></math>,
+it is identifiable from the meter. If the question is how much water
+flows through pipe 1,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><msub><mi>f</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">q=f_1</annotation></semantics></math>,
+it is not. A second independent branch meter can resolve the ambiguity,
+subject to its accuracy. This is why specifying the decision before
+ordering sensors can save money.</p>
+<h2 id="units-time-scales-and-dimensional-reasoning">Units, time scales
+and dimensional reasoning</h2>
+<p>A plausible mathematical expression is not necessarily a meaningful
+one. Units reveal many errors before code is written. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math>
+is measured in cubic metres and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+in cubic metres per hour, then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">S_{t+1}=S_t+I_t-D_t</annotation></semantics></math>
+is wrong unless
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+already represent volumes over the time step. With flow rates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>q</mi><mi>t</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><annotation encoding="application/x-tex">q_t^{\mathrm{in}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>q</mi><mi>t</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msubsup><annotation encoding="application/x-tex">q_t^{\mathrm{out}}</annotation></semantics></math>,
+a consistent balance is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><mo form="prefix" maxsize="1.2" minsize="1.2" stretchy="false">(</mo><msubsup><mi>q</mi><mi>t</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>−</mo><msubsup><mi>q</mi><mi>t</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msubsup><mo form="postfix" maxsize="1.2" minsize="1.2" stretchy="false">)</mo><mi>Δ</mi><mi>t</mi><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+S_{t+1}=S_t+\big(q_t^{\mathrm{in}}-q_t^{\mathrm{out}}\big)\Delta t-\ell_t,
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>
+is measured in hours and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math>
+is a loss <em>volume</em> over the interval. Every additive term now has
+units of cubic metres.</p>
+<h3 id="a-realistic-distinction-between-a-volume-and-a-rate">A realistic
+distinction between a volume and a rate</h3>
+<p>Imagine a tank containing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>14</mn><annotation encoding="application/x-tex">14</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+A pump supplies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2.5</mn><annotation encoding="application/x-tex">2.5</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>/h
+and customers withdraw
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1.8</mn><annotation encoding="application/x-tex">1.8</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>/h.
+If the net loss is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.1</mn><annotation encoding="application/x-tex">0.1</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>/h,
+then in a two-hour interval the expected balance is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>14</mn><mo>+</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>2.5</mn><mo>−</mo><mn>1.8</mn><mo>−</mo><mn>0.1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>×</mo><mn>2</mn><mo>=</mo><mn>15.2</mn></mrow><annotation encoding="application/x-tex">14+(2.5-1.8-0.1)\times2=15.2</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+Adding the flow rates without multiplying by the two-hour interval would
+incorrectly give
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>14.6</mn><annotation encoding="application/x-tex">14.6</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+The error would be silent in a program that stores all quantities as
+floating-point numbers.</p>
+<p>Changing the time step also changes the assumptions. A daily balance
+may be good enough for long-term supply planning but too coarse to
+describe pressure during a brief morning peak. A ten-minute model can
+resolve peaks, but requires more detailed inflow and demand data. Making
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>
+small is not automatically an improvement if the input rates were
+measured only once per day. Fine numerical resolution cannot create fine
+physical information.</p>
+<p>The same question appears in statistics. Daily rainfall, monthly
+household spending and yearly business counts are different temporal
+measurements. Rescaling may be possible, but it must reflect what the
+variable represents. A monthly total can be divided into daily
+<em>averages</em>; it cannot be turned into observed rainfall on
+individual days without further evidence.</p>
+<h2 id="from-a-discrete-balance-to-a-differential-equation">From a
+discrete balance to a differential equation</h2>
+<p>The discrete tank equation may be understood as an accounting
+identity over successive intervals. If inflows and outflows vary
+continuously with time, a continuous formulation is</p>
+<p class="numbered-equation" id="eq-tankode"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><mi>S</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{dS}{dt}=q_{\mathrm{in}}(t)-q_{\mathrm{out}}(t)-q_{\mathrm{loss}}(t).
+</annotation></semantics></math><span aria-label="Equation 2.9" class="equation-number">(2.9)</span></p>
+
+<p>Integrating from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mn>0</mn></msub><annotation encoding="application/x-tex">t_0</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mn>1</mn></msub><annotation encoding="application/x-tex">t_1</annotation></semantics></math>
+gives</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><msub><mi>t</mi><mn>0</mn></msub><msub><mi>t</mi><mn>1</mn></msub></msubsup><mspace width="-0.167em"></mspace><mo form="prefix" maxsize="1.2" minsize="1.2" stretchy="false">[</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><msub><mi>q</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo form="postfix" maxsize="1.2" minsize="1.2" stretchy="false">]</mo><mi>d</mi><mi>t</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+S(t_1)-S(t_0)=\int_{t_0}^{t_1}\!\big[q_{\mathrm{in}}(t)-q_{\mathrm{out}}(t)-q_{\mathrm{loss}}(t)\big]dt.
+</annotation></semantics></math></p>
+<p>The integral expresses conservation. It does not presume that rates
+stay constant inside the interval. The earlier discrete formula is exact
+when the terms
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>t</mi></msub><mo>,</mo><msub><mi>D</mi><mi>t</mi></msub><mo>,</mo><msub><mo>ℓ</mo><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">I_t,D_t,\ell_t</annotation></semantics></math>
+are measured interval volumes; it becomes a numerical approximation when
+we insert instantaneous rates and multiply them by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>.</p>
+<h3 id="a-leakage-model-with-a-closed-form-answer">A leakage model with
+a closed-form answer</h3>
+<p>Suppose water enters at a constant rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>,
+customers withdraw at constant rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>,
+and leakage is proportional to stored volume,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>=</mo><mi>k</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">q_{\mathrm{loss}}=kS</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">k&gt;0</annotation></semantics></math>
+in units of inverse time. Then</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><mi>S</mi></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><mi>u</mi><mo>−</mo><mi>d</mi><mo>−</mo><mi>k</mi><mi>S</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{dS}{dt}=u-d-kS.
+</annotation></semantics></math></p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mi>u</mi><mo>−</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">a=u-d</annotation></semantics></math>.
+The integrating factor method yields</p>
+<p class="numbered-equation" id="eq-leaksol"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mfrac><mi>a</mi><mi>k</mi></mfrac><mo>+</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>S</mi><mn>0</mn></msub><mo>−</mo><mfrac><mi>a</mi><mi>k</mi></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><msup><mi>e</mi><mrow><mi>−</mi><mi>k</mi><mi>t</mi></mrow></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
+S(t)=\frac{a}{k}+\left(S_0-\frac{a}{k}\right)e^{-kt}.
+</annotation></semantics></math><span aria-label="Equation 2.10" class="equation-number">(2.10)</span></p>
+
+<p>Substituting into the differential equation verifies the result:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>′</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mi>−</mi><mi>k</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>S</mi><mn>0</mn></msub><mo>−</mo><mi>a</mi><mi>/</mi><mi>k</mi><mo form="postfix" stretchy="true">)</mo></mrow><msup><mi>e</mi><mrow><mi>−</mi><mi>k</mi><mi>t</mi></mrow></msup><mo>=</mo><mi>a</mi><mo>−</mo><mi>k</mi><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">S'(t)=-k(S_0-a/k)e^{-kt}=a-kS(t)</annotation></semantics></math>.
+With constant positive net inflow, the model approaches the equilibrium
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>/</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">a/k</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">a&lt;0</annotation></semantics></math>
+it predicts an eventual negative storage level, which is physically
+impossible. The solution is mathematically correct for the unconstrained
+ODE, but the operating model ceases to be valid before the tank reaches
+negative volume. A tank controller must stop withdrawal, alter flows or
+introduce a nonnegative-state condition. This is an example of
+mathematical correctness not guaranteeing physical feasibility.</p>
+<h3 id="eulers-method-and-an-error-we-can-measure">Euler’s method and an
+error we can measure</h3>
+<p>For illustration, use a forward step</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>n</mi></msub><mo>+</mo><mi>h</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>−</mo><mi>k</mi><msub><mi>S</mi><mi>n</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+S_{n+1}=S_n+h(a-kS_n).
+</annotation></semantics></math></p>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>e</mi><mi>n</mi></msub><annotation encoding="application/x-tex">e_n</annotation></semantics></math>
+be the difference between this numerical solution and the exact solution
+of <a href="chapter02.html#eq-leaksol">equation (2.10)</a> at the same time.
+For the scalar linear problem, errors in an existing perturbation
+propagate as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>e</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≈</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mo>−</mo><mi>h</mi><mi>k</mi><mo form="postfix" stretchy="true">)</mo></mrow><msub><mi>e</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">e_{n+1}\approx(1-hk)e_n</annotation></semantics></math>,
+in addition to local discretisation error. Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo form="prefix" stretchy="true">|</mo><mn>1</mn><mo>−</mo><mi>h</mi><mi>k</mi><mo form="postfix" stretchy="true">|</mo></mrow><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">|1-hk|&lt;1</annotation></semantics></math>
+is the usual linear stability condition for perturbations, or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>h</mi><mi>k</mi><mo>&lt;</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">0&lt;hk&lt;2</annotation></semantics></math>.
+But satisfying it does not automatically preserve nonnegative storage,
+especially with constraints and withdrawals. A stable computation may
+still violate a physical requirement.</p>
+<p>A smaller step should improve the discretisation error for
+sufficiently smooth inputs, but it does not repair wrong pump rates or
+leakage parameters. We will return to verification in more detail later;
+for now, one should compare a numerical result with the exact solution
+above before trusting the same code on a system for which no exact
+answer is available.</p>
+<figure id="fig-eulerexact">
+<img alt="An exact linear storage equation compared with forward Euler calculations at two time steps. The numerical illustration checks the algorithm, not a measured water system." src="figures/euler_vs_exact.png"/>
+<figcaption aria-hidden="true"><span class="caption-label">Figure 2.3. </span>An exact linear storage equation compared
+with forward Euler calculations at two time steps. The numerical
+illustration checks the algorithm, not a measured water
+system.</figcaption>
+</figure>
+<h2 id="networks-conservation-is-local-before-it-is-global">Networks:
+conservation is local before it is global</h2>
+<p>A storage tank is part of a distribution network. Denote nodes by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1,\ldots,n</annotation></semantics></math>
+and directed links by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">1,\ldots,m</annotation></semantics></math>.
+Choose an orientation for each link, even if the real flow may later
+reverse. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>∈</mo><msup><mi>ℝ</mi><mrow><mi>n</mi><mo>×</mo><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">B\in\mathbb R^{n\times m}</annotation></semantics></math>
+be the node–edge incidence matrix, with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>
+at the link’s starting node,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>+</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math>
+at its receiving node, and zero elsewhere. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>∈</mo><msup><mi>ℝ</mi><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">f\in\mathbb R^m</annotation></semantics></math>
+contains oriented flows, then</p>
+<p class="numbered-equation" id="eq-incidence"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>s</mi><mo>,</mo></mrow><annotation encoding="application/x-tex">
+Bf=s,
+</annotation></semantics></math><span aria-label="Equation 2.11" class="equation-number">(2.11)</span></p>
+
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+describes net arrival of flow at nodes under the same sign convention.
+The columns of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+sum to zero. Therefore
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>⊤</mi></msup><mi>B</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbf 1^\top B=0</annotation></semantics></math>
+and any feasible
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+must satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>𝟏</mn><mi>⊤</mi></msup><mi>s</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\mathbf 1^\top s=0</annotation></semantics></math>
+on a closed network with no unrepresented storage changes. This simple
+necessary condition often catches errors in a spreadsheet of node
+balances.</p>
+<h3 id="why-conservation-alone-does-not-determine-every-pipe-flow">Why
+conservation alone does not determine every pipe flow</h3>
+<p>Consider a network shaped like a triangle, with links
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>→</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">1\to2</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>→</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">2\to3</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>→</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">3\to1</annotation></semantics></math>.
+Its incidence matrix is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+B=\begin{pmatrix}-1&amp;0&amp;1\\1&amp;-1&amp;0\\0&amp;1&amp;-1\end{pmatrix}.
+</annotation></semantics></math></p>
+<p>The vector
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mi>⊤</mi></msup><annotation encoding="application/x-tex">(1,1,1)^\top</annotation></semantics></math>
+belongs to the nullspace of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>,
+because a circulation around the loop has no net effect on node
+balances. Therefore, if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+satisfies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>s</mi></mrow><annotation encoding="application/x-tex">Bf=s</annotation></semantics></math>,
+then so does
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>+</mo><mi>c</mi><msup><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">f+c(1,1,1)^\top</annotation></semantics></math>
+for any
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>.
+Node balances alone do not distinguish the flow around the loop.
+Hydraulic pressure relations, additional observations or engineering
+constraints must supply the missing information.</p>
+<p>This is a useful example for students accustomed to solving linear
+equations. The issue is not an inability to invert a matrix due to poor
+software. It is that the physical equations included so far do not
+uniquely determine the quantities requested. The rank of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+is at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math>,
+and each independent cycle typically introduces a flow degree of freedom
+before constitutive relations are imposed.</p>
+<h3 id="location-models-and-why-the-geometry-matters">Location models
+and why the geometry matters</h3>
+<p>A pipe network represents more than lengths. Different links may have
+different diameters, elevations, operational restrictions and failure
+risks. A simple road network may use edge weights representing driving
+time, while a water network might use pressure losses or allowed
+capacities. A shortest path computed using distance may not be fastest,
+safest or even passable. The graph is meaningful only after its edge
+values are defined and checked.</p>
+<p>For a transport example, let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mi>V</mi><mo>,</mo><mi>E</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">G=(V,E)</annotation></semantics></math>
+be a directed graph with travel-time weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>e</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">c_e\geq0</annotation></semantics></math>.
+A route from node
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+is a sequence of connected edges and has cost
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>e</mi><mo>∈</mo><mi>p</mi></mrow></msub><msub><mi>c</mi><mi>e</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{e\in p}c_e</annotation></semantics></math>.
+The shortest-path problem selects
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
+to minimise this sum. If rainy-season travel times are uncertain, the
+true cost becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>e</mi></msub><mrow><mo form="prefix" stretchy="true">(</mo><mi>ξ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">c_e(\xi)</annotation></semantics></math>;
+the shortest path under dry conditions need not remain optimal. One can
+compare expected costs, conservative scenarios or the regret of choosing
+a route that later becomes unusable. We should not call a map-derived
+route an observed journey time unless the edge costs actually came from
+travel observations.</p>
+<h2 id="constraints-are-part-of-the-system-not-decoration">Constraints
+are part of the system, not decoration</h2>
+<p>Many mathematical models produce attractive but impossible
+recommendations because constraints were added after the objective had
+been selected. Suppose a district operates a pump with rated capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mo>max</mo></msub><annotation encoding="application/x-tex">u_{\max}</annotation></semantics></math>
+and a tank of capacity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>u</mi><mi>t</mi></msub><annotation encoding="application/x-tex">u_t</annotation></semantics></math>
+is the volume pumped in period
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
+a feasible decision must satisfy</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mn>0</mn><mo>≤</mo><msub><mi>S</mi><mi>t</mi></msub><mo>≤</mo><mi>K</mi><mo>,</mo><mspace width="2.0em"></mspace><mn>0</mn><mo>≤</mo><msub><mi>u</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>u</mi><mo>max</mo></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>u</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+0\leq S_t\leq K,\qquad 0\leq u_t\leq u_{\max},\\
+S_{t+1}&amp;=S_t+u_t-D_t-\ell_t.
+\end{aligned}
+</annotation></semantics></math></p>
+<p>Depending on units, pump capacity may be specified per period rather
+than per hour. If the pump operates only when electricity is available,
+introduce an availability variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>t</mi></msub><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">z_t\in\{0,1\}</annotation></semantics></math>
+and require
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>u</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>z</mi><mi>t</mi></msub><msub><mi>u</mi><mo>max</mo></msub></mrow><annotation encoding="application/x-tex">0\leq u_t\leq z_tu_{\max}</annotation></semantics></math>.
+This is a mathematical way to express the operating fact that a working
+pump cannot supply water during a power outage unless it has independent
+power.</p>
+<p>A shortage variable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>t</mi></msub><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">r_t\geq0</annotation></semantics></math>
+may represent unmet customer demand. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>t</mi></msub><annotation encoding="application/x-tex">d_t</annotation></semantics></math>
+is desired delivery, then actual delivery is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>t</mi></msub><mo>=</mo><msub><mi>d</mi><mi>t</mi></msub><mo>−</mo><msub><mi>r</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">D_t=d_t-r_t</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><msub><mi>r</mi><mi>t</mi></msub><mo>≤</mo><msub><mi>d</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">0\leq r_t\leq d_t</annotation></semantics></math>.
+The system’s objective might be to minimise
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>t</mi></msub><msub><mi>c</mi><mi>r</mi></msub><msub><mi>r</mi><mi>t</mi></msub><mo>+</mo><msub><mi>c</mi><mi>e</mi></msub><msub><mi>u</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\sum_t c_r r_t+c_eu_t</annotation></semantics></math>
+subject to the balance and resource limits. Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>r</mi></msub><annotation encoding="application/x-tex">c_r</annotation></semantics></math>
+penalises shortages and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>e</mi></msub><annotation encoding="application/x-tex">c_e</annotation></semantics></math>
+represents a pumping cost per unit. Without a shortage variable, an
+infeasible model may simply have no solution on low-supply days. With
+it, the model can show what is impossible and how much demand cannot be
+met. We have to state whether unmet demand is permitted at all for a
+critical service.</p>
+<h3 id="the-difference-between-infeasible-and-expensive">The difference
+between infeasible and expensive</h3>
+<p>Suppose a tank initially holds
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>5</mn><annotation encoding="application/x-tex">5</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+During an interruption, the pump is unavailable, and the facility
+demands
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>8</mn><annotation encoding="application/x-tex">8</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>
+without incoming deliveries. Even with no leakage, a requirement to meet
+all demand is infeasible. Raising the financial penalty for unmet demand
+cannot create three cubic metres of water. A solver returning
+“infeasible” may be giving the most valuable possible warning. In an
+emergency setting, the next step is to consider a new action—reserve
+supply, delivery by truck, demand restriction or backup pumping—rather
+than hiding the deficit inside the objective function.</p>
+<p>Mathematical optimisation distinguishes a hard constraint from a
+preference. Patient safety limits, maximum tank capacity and legal
+operating limits belong in the feasible set. Cost and convenience can
+then be compared among feasible choices. Their relative weights must be
+documented, because the optimiser will pursue the exact mathematical
+criterion we give it, not the values we intended but did not write
+down.</p>
+<h2 id="linear-optimisation-duality-and-the-value-of-scarce-capacity">Linear
+optimisation, duality and the value of scarce capacity</h2>
+<p>Consider a simplified supply problem with two neighbourhoods. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">x_1,x_2</annotation></semantics></math>
+denote delivered cubic metres. Benefits per cubic metre are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">v_1=5</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">v_2=3</annotation></semantics></math>
+in illustrative units. A total of ten cubic metres can be delivered, and
+neighbourhood 1 can receive at most six. We solve</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>max</mo><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><mn>5</mn><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><mn>3</mn><msub><mi>x</mi><mn>2</mn></msub><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>≤</mo><mn>10</mn><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mn>1</mn></msub><mo>≤</mo><mn>6</mn><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>x</mi><mn>2</mn></msub><mo>≥</mo><mn>0</mn><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\max\quad&amp; 5x_1+3x_2,\\
+\text{subject to}\quad &amp; x_1+x_2\leq10,\\
+&amp;0\leq x_1\leq6,\qquad x_2\geq0.
+\end{aligned}
+</annotation></semantics></math></p>
+<p>Because the first neighbourhood yields larger marginal benefit,
+allocate six to it and four to the second:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>6</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">(x_1,x_2)=(6,4)</annotation></semantics></math>,
+objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>42</mn><annotation encoding="application/x-tex">42</annotation></semantics></math>.
+If total supply increases slightly from ten while the six-unit cap
+remains, an additional unit goes to neighbourhood 2 and adds three
+benefit units. Locally, the <em>shadow value</em> of total supply is
+therefore three per extra cubic metre. This interpretation depends on
+the active constraints and the range of the change; it is not a
+permanent economic price of water.</p>
+<p>We can see the same value through a dual programme. For the primal
+above, introduce nonnegative dual variables
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>
+for total supply and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
+for the neighbourhood 1 cap. One dual form is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>min</mo><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><mn>10</mn><mi>u</mi><mo>+</mo><mn>6</mn><mi>v</mi><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">subject to</mtext><mspace width="1.0em"></mspace></mtd><mtd columnalign="left" style="text-align: left"><mi>u</mi><mo>+</mo><mi>v</mi><mo>≥</mo><mn>5</mn><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mi>u</mi><mo>≥</mo><mn>3</mn><mo>,</mo><mspace width="1.0em"></mspace><mi>u</mi><mo>,</mo><mi>v</mi><mo>≥</mo><mn>0</mn><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\min\quad&amp;10u+6v,\\
+\text{subject to}\quad&amp;u+v\geq5,\\
+&amp;u\geq3,\quad u,v\geq0.
+\end{aligned}
+</annotation></semantics></math></p>
+<p>The solution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>=</mo><mn>3</mn><mo>,</mo><mi>v</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">u=3,v=2</annotation></semantics></math>
+has dual objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mo>+</mo><mn>12</mn><mo>=</mo><mn>42</mn></mrow><annotation encoding="application/x-tex">30+12=42</annotation></semantics></math>,
+equal to the primal optimum. This equality confirms optimality by strong
+duality for the feasible, bounded linear programme. The mathematics
+reveals a valuable question to take back to the water officer: is an
+extra unit of water worth the cost of obtaining it under the present
+operating constraints? The answer may change when demand, service
+priorities or capacity limits change. For systematic treatments of
+linear optimisation see <span class="citation" data-cites="hillier2021">Hillier and Lieberman (2021)</span>.</p>
+<h2 id="uncertainty-should-change-how-we-formulate-a-decision">Uncertainty
+should change how we formulate a decision</h2>
+<p>An average-demand model can understate shortages when demand
+fluctuates. Let next period’s demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>
+be uncertain with mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>D</mi></msub><annotation encoding="application/x-tex">\mu_D</annotation></semantics></math>
+and standard deviation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>σ</mi><mi>D</mi></msub><annotation encoding="application/x-tex">\sigma_D</annotation></semantics></math>.
+Suppose the planner chooses supply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+and wants to satisfy</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Pr</mo><mrow><mo form="prefix" stretchy="true">(</mo><mi>D</mi><mo>≤</mo><mi>a</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>≥</mo><mn>0.95</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\Pr(D\leq a)\geq0.95.
+</annotation></semantics></math></p>
+<p>If, and only if, demand is credibly approximately normal with those
+parameters, one would use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>≥</mo><msub><mi>μ</mi><mi>D</mi></msub><mo>+</mo><mn>1.645</mn><msub><mi>σ</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">a\geq\mu_D+1.645\sigma_D</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>D</mi></msub><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\mu_D=10</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>σ</mi><mi>D</mi></msub><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\sigma_D=2</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>,
+the illustrative required supply is about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>13.29</mn><annotation encoding="application/x-tex">13.29</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+The numerical quantile is not a universal safety factor. If demand is
+strongly skewed, seasonal or measured poorly, the normal assumption may
+misstate the tail.</p>
+<p>An alternative is scenario planning. Construct a small set of clearly
+declared demand and outage scenarios
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ξ</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>ξ</mi><mi>J</mi></msub></mrow><annotation encoding="application/x-tex">\xi_1,\ldots,\xi_J</annotation></semantics></math>,
+and assess how a candidate pump schedule performs in each. A robust
+formulation may minimise the maximum loss,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>min</mo><mrow><mi>a</mi><mo>∈</mo><mi>𝒜</mi></mrow></munder><munder><mo>max</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>J</mi></mrow></munder><mi>L</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><msub><mi>ξ</mi><mi>j</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\min_{a\in\mathcal A}\max_{j=1,\ldots,J}L(a,\xi_j).
+</annotation></semantics></math></p>
+<p>This protects against the worst specified scenario, not every event
+that nature could possibly produce. A scenario set invented for teaching
+cannot be called a measured distribution of outages. A practical study
+should obtain operational logs, expert review or sensitivity ranges
+justified by the system’s history.</p>
+<h3 id="what-a-sensitivity-experiment-really-asks">What a sensitivity
+experiment really asks</h3>
+<p>Suppose we do not know the leakage coefficient
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.
+Rather than choosing one value and reporting a precise optimal pump
+schedule, vary
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+over a declared range. Calculate how storage, shortages and costs
+respond. If the preferred design changes sharply with a small variation
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
+measuring leakage more accurately may be more valuable than making the
+optimiser more sophisticated. Sensitivity analysis examines how
+conclusions depend on uncertain inputs; it does not turn arbitrary input
+ranges into evidence. <span class="citation" data-cites="saltelli2008">Saltelli et al. (2008)</span> and <span class="citation" data-cites="morris1991">Morris (1991)</span> provide
+broader approaches to analysing sensitivity in computational models.</p>
+<p>A simple dimensionless sensitivity for an outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q(\theta)</annotation></semantics></math>
+is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mi>θ</mi></msub><mo>=</mo><mfrac><mi>θ</mi><mrow><mi>Q</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>θ</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></mfrac><mfrac><mrow><mi>∂</mi><mi>Q</mi></mrow><mrow><mi>∂</mi><mi>θ</mi></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+E_\theta=\frac{\theta}{Q(\theta)}\frac{\partial Q}{\partial\theta},
+</annotation></semantics></math></p>
+<p>when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+are nonzero. It measures the relative change in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+per relative change in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>.
+In the leakage model’s positive equilibrium
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>S</mi><mo>*</mo></msup><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mi>u</mi><mo>−</mo><mi>d</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>/</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">S^*=(u-d)/k</annotation></semantics></math>,
+this elasticity with respect to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>:
+a one-percent increase in the assumed leakage coefficient produces
+approximately a one-percent decrease in equilibrium storage, holding the
+other quantities fixed. An elasticity is local. It says nothing about
+whether the operating system can actually remain near equilibrium or
+whether the coefficient has been measured correctly.</p>
+<h2 id="numerical-verification-is-different-from-checking-the-model">Numerical
+verification is different from checking the model</h2>
+<p>A computer program may reproduce the equations perfectly while the
+equations omit a critical mechanism. Conversely, a well-chosen
+mathematical model can be implemented incorrectly. These are separate
+sources of failure. The terms <em>verification</em> and
+<em>validation</em> are used in scientific computing to distinguish
+checking whether we solved the equations correctly from checking whether
+those equations adequately represent the intended reality. <span class="citation" data-cites="oberkampf2010">Oberkampf and Roy
+(2010)</span> provides a detailed treatment.</p>
+<h3 id="four-tests-for-the-tank-model">Four tests for the tank
+model</h3>
+<p>First, <em>dimensional consistency</em>: all terms added to storage
+must be volumes. Second, <em>conservation</em>: the difference in stored
+water must equal net inflow less delivered water and losses. Third,
+<em>bounds</em>: physical storage must remain within its admissible
+range, and shortage must never be negative. Fourth, <em>analytical
+reference</em>: in the special constant-rate leakage case, a numerical
+solver should approach equation <a href="chapter02.html#eq-leaksol">(2.10)</a> as the time step is
+refined.</p>
+<p>A useful coding practice is to put tests next to the implementation.
+An example with a two-hour interval is:</p>
+<p>def tank_step(stock, inflow_rate, outflow_rate, loss_rate, dt):
+assert dt &gt; 0 return stock + dt * (inflow_rate - outflow_rate -
+loss_rate)</p>
+<p>next_stock = tank_step(14.0, 2.5, 1.8, 0.1, 2.0) assert
+abs(next_stock - 15.2) &lt; 1e-12</p>
+<p>This test establishes that the function implements the stated
+arithmetic for one case. It does not show that the physical tank’s
+inflow and loss rates are correct, that its capacity has been respected,
+or that it can operate safely during failure. These require separate
+evidence and additional tests.</p>
+<h3 id="a-conservation-ledger-for-a-longer-simulation">A conservation
+ledger for a longer simulation</h3>
+<p>For any sequence of periods, compute a cumulative residual</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>T</mi></msub><mo>=</mo><msub><mi>S</mi><mi>T</mi></msub><mo>−</mo><msub><mi>S</mi><mn>0</mn></msub><mo>−</mo><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>T</mi><mo>−</mo><mn>1</mn></mrow></munderover><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mi>D</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+R_T=S_T-S_0-\sum_{t=0}^{T-1}(I_t-D_t-\ell_t).
+</annotation></semantics></math></p>
+<p>If the discrete update was implemented consistently and uses the same
+values,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>T</mi></msub><annotation encoding="application/x-tex">R_T</annotation></semantics></math>
+should be approximately zero up to floating-point rounding. A nonzero
+residual can reveal an indexing error, a hidden intervention, or
+inconsistent accounting. But an exact zero can coexist with seriously
+wrong input measurements. A balance check certifies internal
+consistency, not the truth of every variable.</p>
+<h2 id="a-model-card-exercise-for-engineers-and-decision-makers">A
+model-card exercise for engineers and decision-makers</h2>
+<p>Before choosing a model for a real project, write one page describing
+its purpose and another documenting its limits. State the decision, the
+mathematical outputs required, the state variables, each input’s unit
+and origin, the geographical and temporal scales, and the operating
+constraints. Identify at least two plausible mechanisms that the model
+excludes. Name the tests that would detect a computational bug, and the
+observations that would challenge the model’s assumptions.</p>
+<p>For a water tank this record might say: the model predicts daily
+storage under measured deliveries and estimated demand; it does not
+predict pressure at individual taps. Its primary output is a shortage
+indicator; its most sensitive parameter is an uncertain leakage
+coefficient; its validation requires actual tank-level and delivery
+observations. That statement is modest, but it allows a colleague to
+judge whether the model is appropriate and what would be required before
+deployment.</p>
+<h5 id="extended-exercises.">Extended exercises.</h5>
+<p>Derive the equilibrium of the leakage model and explain when it is
+physically feasible. Show why the triangle network’s incidence matrix is
+singular and identify its nullspace. Recalculate the two-neighbourhood
+optimisation if total supply falls to five cubic metres; explain which
+marginal value changes. Construct a demand scenario in which the
+expected-cost solution violates a critical minimum supply constraint.
+Explain how one would distinguish numerical discretisation error from a
+biased inflow meter. A strong answer should make the question,
+assumptions, mathematics and evidence visible, rather than supplying
+only a final number.</p>
+<h2 id="estimating-parameters-is-an-inverse-problem">Estimating
+parameters is an inverse problem</h2>
+<p>Even a simple conservation equation requires numerical inputs that
+may not be known. A tank’s capacity can perhaps be measured from its
+geometry, but its leakage coefficient may not be printed on any
+engineering label. Demand may vary by season. If we use measurements of
+storage to estimate leakage, we are no longer merely predicting the
+state from parameters. We are working backwards from observations to
+infer a parameter. That is an inverse problem, and it has its own
+conditions for a reliable answer.</p>
+<p>In the continuous leakage model
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>′</mi><mo>=</mo><mi>a</mi><mo>−</mo><mi>k</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">S'=a-kS</annotation></semantics></math>,
+suppose
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+is known and storage is observed at several times. If the observations
+were exact and sufficiently informative, the solution</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mfrac><mi>a</mi><mi>k</mi></mfrac><mo>+</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>S</mi><mn>0</mn></msub><mo>−</mo><mfrac><mi>a</mi><mi>k</mi></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><msup><mi>e</mi><mrow><mi>−</mi><mi>k</mi><mi>t</mi></mrow></msup></mrow><annotation encoding="application/x-tex">
+S(t)=\frac{a}{k}+\left(S_0-\frac{a}{k}\right)e^{-kt}
+</annotation></semantics></math></p>
+<p>would allow a fit for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">k&gt;0</annotation></semantics></math>.
+In practice
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+may be only approximately known, water levels are noisy, and some
+operating intervals contain unrecorded withdrawals. We must therefore
+ask whether two different parameter settings can produce nearly the same
+observed trajectory. A highly precise numerical optimiser may return a
+parameter with many digits even when the data cannot distinguish those
+settings.</p>
+<h3 id="a-direct-identifiability-calculation">A direct identifiability
+calculation</h3>
+<p>Take the simpler case of no input or withdrawal,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>′</mi><mo>=</mo><mi>−</mi><mi>k</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">S'=-kS</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mi>S</mi><mn>0</mn></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">S(0)=S_0&gt;0</annotation></semantics></math>.
+Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><msub><mi>S</mi><mn>0</mn></msub><msup><mi>e</mi><mrow><mi>−</mi><mi>k</mi><mi>t</mi></mrow></msup></mrow><annotation encoding="application/x-tex">S(t)=S_0e^{-kt}</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>
+is known and we observe exact storage at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">t&gt;0</annotation></semantics></math>,
+we can recover</p>
+<p class="numbered-equation" id="eq-kestimate"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>−</mi><mfrac><mn>1</mn><mi>t</mi></mfrac><mo>log</mo><mrow><mo form="prefix" stretchy="true">(</mo><mfrac><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><msub><mi>S</mi><mn>0</mn></msub></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+k=-\frac{1}{t}\log\left(\frac{S(t)}{S_0}\right).
+</annotation></semantics></math><span aria-label="Equation 2.12" class="equation-number">(2.12)</span></p>
+
+<p>But the measurement must satisfy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">S(t)&gt;0</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>
+is unknown, a single storage observation is insufficient to distinguish
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:
+infinitely many pairs can give the same reading. Two exact observations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>,</mo><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">S(t_1),S(t_2)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>2</mn></msub><mo>&gt;</mo><msub><mi>t</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">t_2&gt;t_1</annotation></semantics></math>
+can identify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+through their ratio, provided the assumptions truly apply:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>−</mi><mfrac><mrow><mo>log</mo><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>−</mo><mo>log</mo><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow></mrow><mrow><msub><mi>t</mi><mn>2</mn></msub><mo>−</mo><msub><mi>t</mi><mn>1</mn></msub></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+k=-\frac{\log S(t_2)-\log S(t_1)}{t_2-t_1}.
+</annotation></semantics></math></p>
+<p>The equation explains why the measurement schedule matters. Two
+readings taken almost at the same time have a small denominator, so
+ordinary measurement error can produce a large parameter error. Waiting
+longer increases the observable decay, but also creates opportunities
+for unrecorded pumping, withdrawal or changing conditions. Experimental
+design is a balance between statistical information and the reliability
+of the assumptions.</p>
+<h3 id="how-uncertainty-in-storage-affects-the-fitted-parameter">How
+uncertainty in storage affects the fitted parameter</h3>
+<p>Differentiate <a href="chapter02.html#eq-kestimate">equation (2.12)</a> with
+respect to the later observed storage:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>∂</mi><mi>k</mi></mrow><mrow><mi>∂</mi><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></mfrac><mo>=</mo><mi>−</mi><mfrac><mn>1</mn><mrow><mi>t</mi><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\frac{\partial k}{\partial S(t)}=-\frac{1}{tS(t)}.
+</annotation></semantics></math></p>
+<p>Thus small measurement errors can strongly affect
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">S(t)</annotation></semantics></math>
+is small or the observation interval
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+is short. A first-order approximate variance for independent errors in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>0</mn></msub><annotation encoding="application/x-tex">S_0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">S(t)</annotation></semantics></math>
+is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>Var</mo><mrow><mo form="prefix" stretchy="true">(</mo><mover><mi>k</mi><mo accent="true">̂</mo></mover><mo form="postfix" stretchy="true">)</mo></mrow><mo>≈</mo><mfrac><mn>1</mn><msup><mi>t</mi><mn>2</mn></msup></mfrac><mrow><mo form="prefix" stretchy="true">(</mo><mfrac><msubsup><mi>σ</mi><mi>t</mi><mn>2</mn></msubsup><mrow><mi>S</mi><msup><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo>+</mo><mfrac><msubsup><mi>σ</mi><mn>0</mn><mn>2</mn></msubsup><msubsup><mi>S</mi><mn>0</mn><mn>2</mn></msubsup></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{Var}(\widehat k)\approx\frac{1}{t^2}\left(\frac{\sigma_t^2}{S(t)^2}
++\frac{\sigma_0^2}{S_0^2}\right).
+</annotation></semantics></math></p>
+<p>If the errors are correlated, a covariance term must also be
+included. This expression is not a complete uncertainty analysis when
+the model structure is uncertain. It nevertheless shows why apparently
+harmless measurement choices can dominate the stability of the inverse
+calculation.</p>
+<h3 id="why-fitting-several-unknowns-at-once-can-fail">Why fitting
+several unknowns at once can fail</h3>
+<p>Suppose both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+are unknown in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>′</mi><mo>=</mo><mi>a</mi><mo>−</mo><mi>k</mi><mi>S</mi></mrow><annotation encoding="application/x-tex">S'=a-kS</annotation></semantics></math>.
+A storage record that remains almost constant near its equilibrium may
+identify approximately the ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>/</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">a/k</annotation></semantics></math>
+without identifying either parameter separately. For example, many pairs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><mi>k</mi><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(a,k)</annotation></semantics></math>
+with the same ratio yield the same equilibrium level. A sequence of
+measured transients, or independent measurements of inflow and
+withdrawal, may help separate them. If the tank was observed only after
+it had settled, a more complicated optimiser is unlikely to create the
+missing transient information.</p>
+<p>The lesson for resource-constrained work is practical. If the current
+evidence identifies only a ratio that is sufficient for a planning
+decision, perhaps nothing more is needed. If the decision requires the
+separate leakage coefficient because a repair cost depends on it,
+targeted measurement is justified. Model identifiability should be
+assessed against the decision, not against an automatic requirement to
+estimate every parameter in an elaborate model.</p>
+<h2 id="what-counts-as-a-sufficient-model-for-an-engineering-choice">What
+counts as a sufficient model for an engineering choice?</h2>
+<p>It is common to describe models as either simple or sophisticated. A
+more useful distinction is whether a model is adequate for a particular
+decision. A reservoir balance with one state may be adequate to decide
+whether existing storage can bridge a scheduled six-hour interruption.
+The same model is inadequate for determining pressure losses in a
+branched network. A high-dimensional hydraulic simulator may be
+essential for an engineering design and unnecessary for a weekly
+accounting report.</p>
+<p>Adequacy must be tested on outputs that matter. If a new pump is
+selected because a model predicts a maximum daily shortage of one cubic
+metre, compare its predictions with observations on high-demand and
+outage days, not just quiet days. If a pipe size is selected because
+pressure must exceed a safety threshold, check error near that
+threshold. A small average prediction error over ordinary conditions may
+conceal unacceptable errors during the very conditions the intervention
+is meant to address.</p>
+<p>For the modeler, this creates a disciplined sequence: specify the
+decision threshold, identify the necessary physical outputs, derive the
+simplest model that represents them, establish which measurements
+constrain its uncertain components, and compare its outputs with
+independent evidence. Only after these steps does increased numerical
+complexity have a clear purpose. A model can be appropriately simple
+because the decision is simple, or appropriately complex because the
+missing mechanisms are consequential. Mathematical elegance is not a
+substitute for that judgement.</p>
+<h2 id="case-study-a-water-system-with-several-possible-models">Case
+study: a water system with several possible models</h2>
+<p>Consider a small district service supplying a health centre and two
+nearby settlements. The source feeds one tank; water leaves through
+separate branches. Some days the source is available, other days pumping
+is interrupted. The manager wants to know whether to purchase more
+storage, change pumping hours or improve distribution. No direct
+pipe-pressure records are available for this teaching case. Every
+numerical value below is assumed and should be treated as a scenario,
+not an observed Ugandan utility record.</p>
+<p>At the simplest level, the system is a tank with total demand. A
+daily balance can answer whether enough volume is available across a
+sequence of days. But it cannot show whether one settlement receives
+little water while another receives most of the supply. For that we must
+split demand and delivery by branch. If the decision is to locate an
+undetected leak, a branch-flow model alone may be insufficient unless
+there are meters at informative positions. If the decision concerns
+minimum pressure at taps, a hydraulic relation linking flows, pressure
+and pipe attributes is necessary.</p>
+<h3 id="a-model-ladder">A model ladder</h3>
+<p>We will write four versions, each retaining only what is needed for a
+different decision. Version A uses total tank storage
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>t</mi></msub><annotation encoding="application/x-tex">S_t</annotation></semantics></math>
+and total inflow
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>t</mi></msub><annotation encoding="application/x-tex">I_t</annotation></semantics></math>,
+demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
+and loss
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mo>ℓ</mo><mi>t</mi></msub><annotation encoding="application/x-tex">\ell_t</annotation></semantics></math>.
+Version B adds branch deliveries
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mn>1</mn><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">d_{1t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mn>2</mn><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">d_{2t}</annotation></semantics></math>
+and allocation rules. Version C treats the physical system as a network
+with nodes and links, with flow conservation. Version D adds uncertain
+demand, electricity availability and planned pumping. This progression
+does not imply that the fourth model should always be built. Version A
+may be all a manager needs to decide whether tomorrow’s planned delivery
+volume exceeds available storage.</p>
+<h3 id="version-a-an-exact-accounting-model">Version A: an exact
+accounting model</h3>
+<p>Let the initial storage be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>0</mn></msub><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">S_0=12</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+On day one, inflow is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mn>0</mn></msub><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">I_0=8</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>,
+total delivery is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mn>0</mn></msub><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">D_0=10</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>
+and measured or assumed losses are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mn>0</mn></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\ell_0=1</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+The resulting storage is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>=</mo><mn>12</mn><mo>+</mo><mn>8</mn><mo>−</mo><mn>10</mn><mo>−</mo><mn>1</mn><mo>=</mo><mn>9</mn></mrow><annotation encoding="application/x-tex">S_1=12+8-10-1=9</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+If an outage stops pumping on day two, with the same delivery and loss,
+the unconstrained equation gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>=</mo><mn>9</mn><mo>+</mo><mn>0</mn><mo>−</mo><mn>10</mn><mo>−</mo><mn>1</mn><mo>=</mo><mi>−</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">S_2=9+0-10-1=-2</annotation></semantics></math>
+m<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mn>3</mn></msup><annotation encoding="application/x-tex">^3</annotation></semantics></math>.
+That is a warning that the desired schedule cannot be supplied from the
+tank. It is not a physical prediction that the tank will contain
+negative water.</p>
+<p>A physically meaningful balance introduces actual delivery
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mn>1</mn><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></msubsup><mo>≤</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">D_1^{\mathrm{served}}\leq10</annotation></semantics></math>
+and unmet demand
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mn>1</mn></msub><mo>=</mo><mn>10</mn><mo>−</mo><msubsup><mi>D</mi><mn>1</mn><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">U_1=10-D_1^{\mathrm{served}}</annotation></semantics></math>.
+With storage nine and one unit lost, at most eight units can be served
+if no inflow occurs and storage may reach zero. Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mn>1</mn></msub><mo>≥</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">U_1\geq2</annotation></semantics></math>.
+If some water must be kept in reserve, unmet demand will be greater. The
+formulation reveals what policy needs to decide: how to allocate
+unavoidable shortages among uses with different consequences.</p>
+<h3 id="version-b-deliveries-are-not-interchangeable">Version B:
+deliveries are not interchangeable</h3>
+<p>Suppose the health centre requires at least three cubic metres per
+day for critical services and two settlements request four and three
+respectively. Total desired delivery is ten cubic metres. With only
+eight available for distribution, a policy that allocates proportionally
+would give the health centre
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2.4</mn><annotation encoding="application/x-tex">2.4</annotation></semantics></math>,
+below its required minimum. A policy with a hard minimum for critical
+care could first allocate three to the health centre, then distribute
+the remaining five according to a declared criterion. The mathematical
+model needs a constraint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>H</mi></msub><mo>≥</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">d_H\geq3</annotation></semantics></math>
+and an explicit rule for the other demands; merely minimising total
+unmet cubic metres cannot distinguish which community was shorted.</p>
+<p>One option is to minimise weighted shortage,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>min</mo><mspace width="1.0em"></mspace><msub><mi>w</mi><mi>H</mi></msub><msub><mi>u</mi><mi>H</mi></msub><mo>+</mo><msub><mi>w</mi><mi>A</mi></msub><msub><mi>u</mi><mi>A</mi></msub><mo>+</mo><msub><mi>w</mi><mi>B</mi></msub><msub><mi>u</mi><mi>B</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\min\quad w_Hu_H+w_Au_A+w_Bu_B,
+</annotation></semantics></math></p>
+<p>subject to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub><mo>+</mo><msub><mi>u</mi><mi>j</mi></msub><mo>=</mo><msub><mi>r</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">d_j+u_j=r_j</annotation></semantics></math>,
+nonnegative deliveries and shortages, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>H</mi></msub><mo>+</mo><msub><mi>d</mi><mi>A</mi></msub><mo>+</mo><msub><mi>d</mi><mi>B</mi></msub><mo>≤</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">d_H+d_A+d_B\leq8</annotation></semantics></math>.
+Weights can express priorities but should not quietly replace a
+non-negotiable minimum. A care minimum should remain a constraint, while
+any differences among noncritical shortages may be debated with the
+affected communities.</p>
+<h3 id="version-c-the-same-total-can-conceal-different-flows">Version C:
+the same total can conceal different flows</h3>
+<p>Suppose the tank has one outlet meter reporting eight cubic metres
+and two distribution branches with no separate measurement. The readings
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>A</mi></msub><mo>=</mo><mn>5</mn><mo>,</mo><msub><mi>d</mi><mi>B</mi></msub><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">d_A=5,d_B=3</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>A</mi></msub><mo>=</mo><mn>2</mn><mo>,</mo><msub><mi>d</mi><mi>B</mi></msub><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">d_A=2,d_B=6</annotation></semantics></math>
+are observationally identical at the outlet meter. A manager deciding
+where to repair a leaking branch cannot infer the answer from the total.
+Adding another day of total readings may help only if flows or demands
+vary in a way that distinguishes the branches under a justified model. A
+single reliable branch meter may be more informative than another month
+of aggregate tank readings. This is the distinguishability principle in
+action.</p>
+<h3 id="version-d-decisions-before-uncertainty-is-resolved">Version D:
+decisions before uncertainty is resolved</h3>
+<p>The manager may need to choose tomorrow’s pumping hours today, before
+knowing whether grid electricity will be available. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">z\in\{0,1\}</annotation></semantics></math>
+indicate whether pumping is available. An action
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+fixes a schedule in advance; actual inflow becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>a</mi><mo>,</mo><mi>z</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(a,z)</annotation></semantics></math>.
+One could minimise expected shortage or a risk-sensitive loss over a
+documented distribution for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>.
+If there is no defensible outage probability, compare a small set of
+scenarios without presenting them as frequencies observed in the
+district. Robust planning may choose a conservative schedule, but it
+should show the extra cost of protection.</p>
+<h2 id="a-complete-reproducible-tank-experiment">A complete reproducible
+tank experiment</h2>
+<p>A useful teaching programme must reveal how assumptions affect
+results. The following compact code simulates a tank under a schedule
+and records unmet demand. It implements a clearly stated operating
+policy: inflow enters at the start of each period, losses are then
+deducted up to the water available, and the remaining water is allocated
+to demand. The programme is not a hydraulic simulator; it ignores
+pressure, pipe capacity and within-period timing.</p>
+<p>def simulate_tank(initial, capacity, inflows, demand, losses): assert
+len(inflows) == len(demand) == len(losses) stock = float(initial)
+records = [] for t, (incoming, wanted, loss) in enumerate( zip(inflows,
+demand, losses)): assert incoming &gt;= 0 and wanted &gt;= 0 and loss
+&gt;= 0 available = min(capacity, stock + incoming) spill = max(0.0,
+stock + incoming - capacity) lost = min(loss, available) available -=
+lost served = min(wanted, available) unmet = wanted - served stock =
+available - served assert 0 &lt;= stock &lt;= capacity
+records.append((t, stock, served, unmet, spill, lost)) return
+records</p>
+<p>out = simulate_tank( initial=12, capacity=20, inflows=[8, 0, 6],
+demand=[10, 10, 8], losses=[1, 1, 1]) for row in out: print(row)</p>
+<p>Work through the programme by hand before trusting it. At the end of
+period one,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>+</mo><mn>8</mn><mo>−</mo><mn>1</mn><mo>−</mo><mn>10</mn><mo>=</mo><mn>9</mn></mrow><annotation encoding="application/x-tex">12+8-1-10=9</annotation></semantics></math>
+remains. Period two begins with nine, loses one, serves eight and leaves
+zero: unmet demand is two. Period three receives six, loses one, serves
+five and leaves zero: unmet demand is three. The program should
+reproduce those results. Note that the output depends on the assumed
+order of events. If a pump supplies water gradually throughout the day
+rather than at the beginning, the real service and its shortages may
+differ. A correct implementation of this policy does not prove that the
+policy represents actual pumping practice.</p>
+<h3 id="how-to-verify-the-calculation">How to verify the
+calculation</h3>
+<p>For each period, mass conservation requires previous stock plus
+inflow to equal new stock plus served demand, losses and spill, provided
+all terms refer to the same sequence of events. A suitable property test
+computes the residual independently and checks that it is nearly zero.
+Additional tests should cover an empty tank, full tank, zero demand,
+inflow far above capacity, and a loss request larger than the available
+water. These boundary cases find errors that an ordinary three-day
+example can miss.</p>
+<h3 id="how-to-validate-the-model">How to validate the model</h3>
+<p>Validation is a different project. With permission, record tank-level
+observations, pumping activity, water deliveries, significant leakage
+incidents and interruptions across a useful period. Convert level to
+volume using a verified tank geometry; check that clocks align and that
+all major inflows and outflows are included. Compare predicted stock
+with held-out periods, ideally including at least one outage. The
+discrepancy might reveal wrong demand, wrong leakage, poor timing
+assumptions or measurement error. It does not automatically tell us
+which cause dominates.</p>
+<h3 id="what-would-justify-a-purchase">What would justify a
+purchase?</h3>
+<p>A larger tank creates storage capacity, but not water. If the source
+is chronically insufficient, increasing tank capacity alone cannot close
+a persistent average deficit. If outages are short and production is
+plentiful when power returns, extra storage may help. If losses are the
+main issue, repairing leaks may dominate investment in storage. Compare
+at least a do-nothing baseline, a revised schedule and a capacity change
+under the same measured scenarios. Include costs, maintenance, local
+technical skills and failure risks. Only then does a numerical optimum
+become a potentially useful recommendation.</p>
+<h2 id="an-invitation-to-examine-the-mathematics-critically">An
+invitation to examine the mathematics critically</h2>
+<p>There are several ways for this case to fail, and finding them is
+part of learning applied mathematics. The objective might penalise
+shortages but overlook the consequences of contaminated water. The tank
+capacity may be known but the source yield may have been guessed. The
+model may assume one daily time step even though interruptions occur for
+two-hour periods. The branch-flow variables may be mathematically
+feasible but hydraulically impossible because the pipes cannot deliver
+the specified rates. The financial model may omit replacement costs or
+staff time.</p>
+<p>For each failure, ask whether we need new equations, new
+measurements, a different decision variable or a restriction on what we
+claim. A missing pressure equation is a modelling problem. An uncertain
+demand value is a data problem. A negative storage caused by an omitted
+nonnegative constraint is a formulation problem. An incorrect update
+index is a programming problem. A schedule that staff cannot implement
+is an operational problem. These failures are not interchangeable, and a
+good engineer should be able to name them before attempting a
+solution.</p>
+<h5 id="project-investigation.">Project investigation.</h5>
+<p>Write a short engineering memo for an imaginary district considering
+a backup water tank. State the purpose and the allowed decisions.
+Identify the simplest model adequate for the first decision and one more
+detailed model that would be needed for a later question. Give a
+numerical reference case that checks conservation, a failure case that
+exposes infeasibility, and a list of real measurements required before
+procurement. Conclude with one decision you would not allow the model to
+make without additional evidence.</p>
+<h2 id="worked-investigations-from-equations-to-trustworthy-decisions">Worked
+investigations: from equations to trustworthy decisions</h2>
+<p>A useful mathematical education should train a reader to judge the
+result as well as to obtain it. Each investigation below has a numerical
+or symbolic answer and a second, interpretive answer. Stopping at the
+first is not enough for a working solution.</p>
+<h3 id="investigation-1-a-numerical-method-and-a-physical-constraint">Investigation
+1: a numerical method and a physical constraint</h3>
+<p>Consider
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>′</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>3</mn><mo>−</mo><mn>0.5</mn><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">S'(t)=3-0.5S(t)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">S(0)=4</annotation></semantics></math>
+in a stated volume unit, and measure time in days. The exact solution is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo form="prefix" stretchy="true">(</mo><mi>t</mi><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>6</mn><mo>−</mo><mn>2</mn><msup><mi>e</mi><mrow><mi>−</mi><mn>0.5</mn><mi>t</mi></mrow></msup></mrow><annotation encoding="application/x-tex">S(t)=6-2e^{-0.5t}</annotation></semantics></math>.
+At day one the exact storage is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn><mo>−</mo><mn>2</mn><msup><mi>e</mi><mrow><mi>−</mi><mn>0.5</mn></mrow></msup><mo>≈</mo><mn>4.78694</mn></mrow><annotation encoding="application/x-tex">6-2e^{-0.5}\approx4.78694</annotation></semantics></math>.
+A forward Euler step of one day gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>=</mo><mn>4</mn><mo>+</mo><mn>1</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>3</mn><mo>−</mo><mn>0.5</mn><mo>×</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">S_1=4+1(3-0.5\times4)=5</annotation></semantics></math>.
+The absolute error is approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.21306</mn><annotation encoding="application/x-tex">0.21306</annotation></semantics></math>.
+With two half-day Euler steps, the first state is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>+</mo><mn>0.5</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>4.5</mn></mrow><annotation encoding="application/x-tex">4+0.5(1)=4.5</annotation></semantics></math>
+and the second is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4.5</mn><mo>+</mo><mn>0.5</mn><mrow><mo form="prefix" stretchy="true">(</mo><mn>3</mn><mo>−</mo><mn>0.5</mn><mo>×</mo><mn>4.5</mn><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mn>4.875</mn></mrow><annotation encoding="application/x-tex">4.5+0.5(3-0.5\times4.5)=4.875</annotation></semantics></math>.
+The error is then approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.08806</mn><annotation encoding="application/x-tex">0.08806</annotation></semantics></math>.</p>
+<p>The smaller time step improves the numerical approximation in this
+example. It does not mean we have measured the inflow or leakage
+coefficient accurately. If the true inflow is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2</mn><annotation encoding="application/x-tex">2</annotation></semantics></math>
+rather than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>,
+reducing the time step further converges to the wrong physical
+trajectory with great numerical precision. If the physical tank capacity
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>4.8</mn><annotation encoding="application/x-tex">4.8</annotation></semantics></math>,
+the continuous model above also eventually predicts an impossible level
+unless overflow or pump control is represented. These are three distinct
+issues: discretisation error, parameter uncertainty and a missing
+physical constraint.</p>
+<h3 id="investigation-2-a-network-balance-with-infinitely-many-flows">Investigation
+2: a network balance with infinitely many flows</h3>
+<p>Take the three-node cycle with incidence matrix</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+B=\begin{pmatrix}-1&amp;0&amp;1\\1&amp;-1&amp;0\\0&amp;1&amp;-1\end{pmatrix}.
+</annotation></semantics></math></p>
+<p>Let net nodal flow
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><msup><mrow><mo form="prefix" stretchy="true">(</mo><mi>−</mi><mn>4</mn><mo>,</mo><mn>4</mn><mo>,</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">s=(-4,4,0)^\top</annotation></semantics></math>.
+Solve
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>f</mi><mo>=</mo><mi>s</mi></mrow><annotation encoding="application/x-tex">Bf=s</annotation></semantics></math>
+using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><msup><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>f</mi><mn>1</mn></msub><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub><mo>,</mo><msub><mi>f</mi><mn>3</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">f=(f_1,f_2,f_3)^\top</annotation></semantics></math>.
+The equations are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><msub><mi>f</mi><mn>1</mn></msub><mo>+</mo><msub><mi>f</mi><mn>3</mn></msub><mo>=</mo><mi>−</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">-f_1+f_3=-4</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>1</mn></msub><mo>−</mo><msub><mi>f</mi><mn>2</mn></msub><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">f_1-f_2=4</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>2</mn></msub><mo>−</mo><msub><mi>f</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f_2-f_3=0</annotation></semantics></math>.
+Put
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>3</mn></msub><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">f_3=c</annotation></semantics></math>.
+Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>2</mn></msub><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">f_2=c</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mn>1</mn></msub><mo>=</mo><mn>4</mn><mo>+</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">f_1=4+c</annotation></semantics></math>,
+giving the entire family</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><msup><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo>+</mo><mi>c</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>c</mi><mo form="postfix" stretchy="true">)</mo></mrow><mi>⊤</mi></msup><mo>,</mo><mspace width="2.0em"></mspace><mi>c</mi><mo>∈</mo><mi>ℝ</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+f=(4+c,c,c)^\top,\qquad c\in\mathbb R.
+</annotation></semantics></math></p>
+<p>The family contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">f=(4,0,0)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>5</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">f=(5,1,1)</annotation></semantics></math>,
+which yield the same net node balances. If our question concerns how
+much water reaches node 2 in total, the flow conservation may answer it.
+If the decision concerns which pipe carries excess flow, we need
+additional information. Imposing an arbitrary minimum-norm solution does
+select a unique number, but it does so by introducing a mathematical
+preference, not by observing physical flow.</p>
+<p>For a water network, pressure differences and pipe laws are possible
+additional equations. If some pipes permit reverse flows, the sign and
+physical meaning of negative oriented flows must be understood; choosing
+an orientation is a bookkeeping convention, not a valve. If there are
+bounds on pipe capacity, the admissible interval for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+may shrink. The task of a modeller is to make those added physical
+assumptions visible rather than bury them in a solver’s defaults.</p>
+<h3 id="investigation-3-why-an-apparently-reasonable-allocation-fails">Investigation
+3: why an apparently reasonable allocation fails</h3>
+<p>A region has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>10</mn><annotation encoding="application/x-tex">10</annotation></semantics></math>
+units of water and two customer groups. The first can use at most six.
+Benefit is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>5</mn><annotation encoding="application/x-tex">5</annotation></semantics></math>
+per unit delivered to the first group and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>
+to the second. We found the optimal allocation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>6</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(6,4)</annotation></semantics></math>,
+with objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>42</mn><annotation encoding="application/x-tex">42</annotation></semantics></math>.
+Now a new minimum supply requirement is introduced: group 2 must receive
+at least five units. The former optimum violates this hard requirement.
+The best feasible allocation becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>5</mn><mo>,</mo><mn>5</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(5,5)</annotation></semantics></math>,
+objective
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>40</mn><annotation encoding="application/x-tex">40</annotation></semantics></math>.</p>
+<p>Notice what happened. The mathematical optimiser did not become less
+competent. The decision question changed because a policy requirement
+was stated explicitly. A system that continues to display
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>6</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(6,4)</annotation></semantics></math>
+after the policy change is solving an outdated model. If the demand of
+group 2 has a legal or health requirement, that requirement belongs in
+the constraints, not in a footnote next to an old optimum.</p>
+<p>Now reduce total available water to four units while insisting that
+group 2 receive at least five. The problem becomes infeasible. There is
+no numerical algorithm that can make four units satisfy a five-unit
+minimum. The system should report infeasibility and the missing unit, or
+offer an appropriately authorised emergency alternative. An optimisation
+tool that silently relaxes the minimum to print an answer has crossed an
+important boundary.</p>
+<h3 id="investigation-4-what-can-a-sensor-actually-tell-us">Investigation 4:
+what can a sensor actually tell us?</h3>
+<p>Consider the observation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>z</mi><mn>1</mn></msub><mo>+</mo><msub><mi>z</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">y=z_1+z_2</annotation></semantics></math>
+for nonnegative quantities
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>1</mn></msub><mo>,</mo><msub><mi>z</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">z_1,z_2</annotation></semantics></math>.
+If the sensor reads
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">y=8</annotation></semantics></math>,
+the pair
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>8</mn><mo>,</mo><mn>0</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(8,0)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>4</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(4,4)</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="true">(</mo><mn>0</mn><mo>,</mo><mn>8</mn><mo form="postfix" stretchy="true">)</mo></mrow><annotation encoding="application/x-tex">(0,8)</annotation></semantics></math>
+could all be correct. The observation identifies the total but not the
+components. Suppose we add a second measurement
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>2</mn></msub><mo>=</mo><msub><mi>z</mi><mn>1</mn></msub><mo>−</mo><msub><mi>z</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">y_2=z_1-z_2</annotation></semantics></math>.
+The two observations form</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo form="prefix" stretchy="true">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>y</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>y</mi><mn>2</mn></msub></mtd></mtr></mtable><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">)</mo></mrow><mrow><mo form="prefix" stretchy="true">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>z</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>z</mi><mn>2</mn></msub></mtd></mtr></mtable><mo form="postfix" stretchy="true">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\begin{pmatrix}y_1\\y_2\end{pmatrix}
+=\begin{pmatrix}1&amp;1\\1&amp;-1\end{pmatrix}
+\begin{pmatrix}z_1\\z_2\end{pmatrix}.
+</annotation></semantics></math></p>
+<p>The matrix is invertible, with determinant
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">-2</annotation></semantics></math>.
+Thus
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>1</mn></msub><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>y</mi><mn>1</mn></msub><mo>+</mo><msub><mi>y</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">z_1=(y_1+y_2)/2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mn>2</mn></msub><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>y</mi><mn>1</mn></msub><mo>−</mo><msub><mi>y</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">z_2=(y_1-y_2)/2</annotation></semantics></math>.
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>=</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">y_1=8</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>2</mn></msub><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">y_2=2</annotation></semantics></math>,
+we infer
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo form="prefix" stretchy="true">(</mo><msub><mi>z</mi><mn>1</mn></msub><mo>,</mo><msub><mi>z</mi><mn>2</mn></msub><mo form="postfix" stretchy="true">)</mo></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">(</mo><mn>5</mn><mo>,</mo><mn>3</mn><mo form="postfix" stretchy="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">(z_1,z_2)=(5,3)</annotation></semantics></math>.</p>
+<p>But if the second measurement is instead
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>2</mn></msub><mo>=</mo><mn>2</mn><msub><mi>z</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><msub><mi>z</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">y_2=2z_1+2z_2</annotation></semantics></math>,
+it contributes no independent distinction. Its matrix has determinant
+zero. Adding more observations of the same mixture improves precision
+under suitable noise assumptions, but cannot separate the underlying
+components. This is a reason to plan sensors around the decisions they
+must support. It is also a reason to resist high-resolution maps of
+quantities that were never independently observed.</p>
+<h3 id="investigation-5-evidence-required-before-recommending-storage">Investigation
+5: evidence required before recommending storage</h3>
+<p>Suppose the model predicts that installing a larger tank reduces
+shortages in simulated outage scenarios. What does that justify? It may
+justify additional engineering investigation. Before procurement we
+still need measurements of daily and subdaily water demand, source
+replenishment, historical outages, tank integrity, pipe capacity,
+installation cost and maintenance needs. We should identify the service
+objective: minimum supply to a critical facility may matter more than
+the average volume delivered.</p>
+<p>A transparent engineering report should therefore have at least three
+parts. The first states what was mathematically established under the
+model. The second lists operational measurements actually collected and
+describes how they were used to assess the model. The third specifies a
+decision rule, constraints, alternatives and what information remains
+missing. A result derived from invented input ranges is an informative
+scenario calculation; it is not a field-validated estimate of how many
+people will receive additional water.</p>
+<h2 id="laboratory-2-build-and-test-the-balance">Laboratory 2: build and
+test the balance</h2>
+<p>The companion program produces Figure <a href="chapter02.html#fig-water">2.1</a> and Table <a href="chapter02.html#tbl-waterout">2.2</a>. Students should first
+compute two days by hand and verify that the code uses the same ordering
+of inflow, loss, delivery and overflow. Then they should test the
+program with zero inflow, zero demand, high initial storage and extreme
+demand. The assertions in the script check the basic storage bounds.</p>
+<p>A useful extension is to replace the fixed loss with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>ℓ</mo><mi>t</mi></msub><mo>=</mo><mi>α</mi><msub><mi>S</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\ell_t=\alpha S_t</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+is a small nonnegative daily fraction. Explain the physical
+interpretation, check dimensional consistency and determine whether the
+change affects the choice between increasing capacity and reducing
+leakage. A more demanding extension adds pumping as a bounded decision
+and compares a fixed schedule with a rule responding to storage
+measurements. Neither exercise requires neural networks.</p>
+<h2 class="unnumbered" id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A tank contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>30</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">30\,\mathrm{m}^3</annotation></semantics></math>
+of water. During a day it receives 12, loses 2 and has requested demand
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>45</mn><mspace width="0.167em"></mspace><msup><mi mathvariant="normal">m</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">45\,\mathrm{m}^3</annotation></semantics></math>.
+Determine delivery, unmet demand and end storage under the ordering in
+<a href="chapter02.html#eq-feasiblewater">equation (2.2)</a>.</p></li>
+<li><p>Explain why
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>t</mi></msub><mo>+</mo><msub><mi>I</mi><mi>t</mi></msub><mo>−</mo><msub><mi>Q</mi><mi>t</mi></msub><mo>−</mo><msub><mo>ℓ</mo><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">S_{t+1}=S_t+I_t-Q_t-\ell_t</annotation></semantics></math>
+may be unsuitable if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Q_t</annotation></semantics></math>
+denotes requested rather than delivered water. Supply a
+counterexample.</p></li>
+<li><p>Derive the relation between continuous flow rates and daily
+volume balance. State the units of each term.</p></li>
+<li><p>For the network in Figure <a href="chapter02.html#fig-network">2.2</a>, exhibit two different
+nonnegative flow vectors that have the same flow into C. Explain what
+extra measurements could distinguish them.</p></li>
+<li><p>Construct an optimisation objective for a water service that
+values reliable delivery but is restricted by electricity cost. Identify
+an assumption that could make the computed optimum infeasible.</p></li>
+<li><p><em>Programming exercise.</em> Modify the companion program to
+allow time-varying demand and test conservation numerically for every
+time step.</p></li>
+</ol>
+<h5 id="what-this-chapter-establishes.">What this chapter
+establishes.</h5>
+<p>A useful model relates variables and decisions through explicit
+assumptions and physical or organisational constraints. But the next
+difficulty is unavoidable: even a well-constructed model can be misled
+by what we have measured. We must now examine the production and quality
+of the data themselves.</p>
+</article><div class="page-links"><a href="chapter01.html">← Chapter 1 — Problems Worth Solving</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted →</a></div><p class="notice"><a href="reader.html">Open facing-page reader</a> · <a href="book.pdf">PDF edition</a> · <a href="resources.html">Teaching resources</a></p></main></div><script src="search.js"></script></body></html>

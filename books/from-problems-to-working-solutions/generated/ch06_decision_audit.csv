@@ -1,0 +1,9 @@
+case,invented_probability,invented_outcome,automatic_action,realised_automatic_loss,conditional_expected_automatic_loss,action_with_deferral_minus1,minimum_conditional_expected_loss
+1,0.08,0,0,0.0,0.56,0,0.56
+2,0.15,0,0,0.0,1.05,-1,0.65
+3,0.23,0,1,2.0,1.54,-1,0.65
+4,0.37,1,1,0.0,1.26,-1,0.65
+5,0.48,0,1,2.0,1.04,-1,0.65
+6,0.57,1,1,0.0,0.8600000000000001,-1,0.65
+7,0.73,1,1,0.0,0.54,1,0.54
+8,0.88,1,1,0.0,0.24,1,0.24

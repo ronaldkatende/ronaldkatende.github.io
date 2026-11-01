@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Read From Problems to Working Solutions as a book, with page numbers and facing pages.">
+<title>Page-by-page reader · From Problems to Working Solutions</title>
+<style>
+:root{--ink:#263642;--muted:#586873;--accent:#315e68;--edge:#d3dcdf;--bg:#e8edef}
+*{box-sizing:border-box}body{background:var(--bg);margin:0;color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.topbar{background:#fcfdfd;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--edge);padding:10px max(16px,calc((100vw - 1520px)/2))}
+.topline{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.topline h1{font:500 17px/1.3 Georgia,serif;margin:0}.topline a{color:var(--accent);font:13px system-ui}
+.controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+button,select,input{font:13px/1.4 system-ui;padding:7px 9px;border:1px solid #b6c6ca;border-radius:4px;background:#fff;color:var(--ink)}
+button{cursor:pointer}button:hover:not(:disabled){border-color:var(--accent)}button:disabled{opacity:.45;cursor:default}
+#pageField{width:65px;text-align:center}.status{color:var(--muted);font-size:13px;min-width:126px}
+#chapterSelect{max-width:285px}
+main{padding:30px 20px 60px;overflow-x:auto;min-height:calc(100vh - 135px)}
+.reader{display:flex;align-items:flex-start;justify-content:center;gap:14px;min-width:0;width:max-content;margin:0 auto}
+.sheet{width:min(44vw,650px);min-width:0;margin:0;flex-shrink:0}
+.sheet canvas{display:block;width:100%;height:auto;background:white;border:1px solid #d8dde0;box-shadow:0 6px 19px #31444b24}
+.sheet figcaption{font:12px system-ui;color:#576a74;text-align:center;margin:9px 0 0}
+.sheet.blank canvas{visibility:hidden;border:0;box-shadow:none}
+.help{font:13px/1.6 system-ui;color:var(--muted);text-align:center;max-width:680px;margin:35px auto}
+.help a{color:var(--accent)}.single .sheet{width:min(85vw,790px)}.single .sheet.blank{display:none}
+.pdf-fallback{max-width:1100px;margin:auto;display:none;text-align:center}
+.pdf-fallback iframe{height:min(80vh,1000px);width:100%;background:#fff;border:1px solid var(--edge)}
+@media(max-width:900px){main{padding:15px 10px 45px}.reader .sheet{width:min(92vw,720px)}.reader .sheet.blank{display:none}.controls{gap:6px}.topbar{padding:10px 12px}}
+@media print{.topbar,.help{display:none}body{background:#fff}.reader{display:block}.sheet{width:100%;page-break-after:always;box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="topline"><h1>From Problems to Working Solutions <span style="color:#647783">· Page reader</span></h1>
+ <div><a href="index.html">Chapter view</a> &nbsp;·&nbsp; <a href="book.pdf">Complete PDF</a> &nbsp;·&nbsp; <a href="../">All books</a></div></div>
+ <div class="controls">
+  <button id="previous" aria-label="Previous pages">← Previous</button>
+  <label for="pageField">PDF page</label><input id="pageField" type="number" min="1" value="1" aria-label="Go to PDF page">
+  <button id="jump">Go</button><button id="next" aria-label="Next pages">Next →</button>
+  <span id="status" class="status" aria-live="polite">Opening the book…</span>
+  <select id="chapterSelect" aria-label="Jump to a chapter"><option value="">Jump to a chapter…</option></select>
+  <button id="mode" aria-pressed="false">Single page</button>
+  <button id="zoomout" aria-label="Zoom out">−</button><button id="zoomin" aria-label="Zoom in">+</button>
+ </div>
+</header>
+<main id="scrollView">
+ <div class="reader" id="spread" aria-label="Book pages">
+  <figure class="sheet blank" id="left"><canvas id="leftCanvas" aria-label="Left book page"></canvas><figcaption id="leftNumber"></figcaption></figure>
+  <figure class="sheet" id="right"><canvas id="rightCanvas" aria-label="Right book page"></canvas><figcaption id="rightNumber"></figcaption></figure>
+ </div>
+ <div class="pdf-fallback" id="pdfFallback">
+  <p>The book remains available in your browser's PDF reader.</p>
+  <iframe src="book.pdf#page=1" title="Full book PDF"></iframe>
+  <p><a href="book.pdf">Open the full book directly</a></p>
+ </div>
+ <p class="help">Use arrow keys to turn pages, or select a chapter. Large screens show facing pages; phones show one page. You can also read the searchable, accessible <a href="index.html">HTML chapters</a>.</p>
+ <noscript><p><a href="book.pdf">Open the complete book PDF</a> (JavaScript is needed for the facing-page reader).</p></noscript>
+</main>
+<script type="module">
+const chapters=[["Problems Worth Solving", 6], ["Turning Reality into a Mathematical Model", 30], ["Data That Can Be Trusted", 55], ["Mathematical Models for Prediction and Understanding", 82], ["Optimisation When Resources Are Scarce", 102], ["Machine Learning and AI That Earn Their Place", 120], ["Building for the Machine and Infrastructure People Actually Have", 137], ["Reliable Health Services and Essential Supplies", 152], ["Knowing Whether a Solution Actually Works", 171], ["Deployment, Governance and Long-Term Maintenance", 191], ["Adapting Solutions Across Countries and Contexts", 210], ["From Problems to Working Solutions: An Integrated Field Handbook", 228]];
+const status=document.getElementById('status'),field=document.getElementById('pageField');
+const spread=document.getElementById('spread'),view=document.getElementById('scrollView');
+const select=document.getElementById('chapterSelect');
+const previous=document.getElementById('previous'),next=document.getElementById('next');
+for(let i=0;i<chapters.length;i++){const o=document.createElement('option');o.value=chapters[i][1];o.textContent='Ch '+(i+1)+' · '+chapters[i][0];select.appendChild(o)}
+let pdf=null, page=1, single=false,zoom=1,token=0,total=268;
+function mobile(){return window.matchMedia('(max-width:900px)').matches}
+function one(){return single||mobile()}
+function start(p){p=Math.max(1,Math.min(total,p));return one()?p:(p===1?1:(p%2===0?p:p-1))}
+function hashPage(){let m=location.hash.match(/page=(\d+)/);return m?Number(m[1]):1}
+async function draw(n,side,t){
+ const el=document.getElementById(side), canvas=document.getElementById(side+'Canvas'),cap=document.getElementById(side+'Number');
+ if(!n){el.classList.add('blank');cap.textContent='';canvas.width=1;canvas.height=1;return}
+ el.classList.remove('blank');cap.textContent='PDF page '+n;
+ const pdfPage=await pdf.getPage(n); if(t!==token)return;
+ const width=(one()?Math.min(innerWidth-36,790):Math.min(innerWidth*.44,650))*zoom;
+ const viewport=pdfPage.getViewport({scale:1});
+ const resolution=Math.min(devicePixelRatio||1,2);
+ const size=pdfPage.getViewport({scale:Math.min(2.5,(width/viewport.width)*resolution)});
+ el.style.width=width+'px';canvas.width=Math.ceil(size.width);canvas.height=Math.ceil(size.height);
+ canvas.style.width='100%';canvas.style.height='auto';
+ await pdfPage.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport:size}).promise;
+}
+async function show(){
+ if(!pdf)return;page=start(page);const t=++token;
+ spread.classList.toggle('single',one());
+ let left,right;if(one()){left=null;right=page}else if(page===1){left=null;right=1}else{left=page;right=page+1<=total?page+1:null}
+ field.value=page;field.max=total;
+ status.textContent=one()?'Page '+page+' of '+total:(left?'Pages '+left+'–'+right+' of '+total:'Cover · '+total+' pages');
+ previous.disabled=page<=1;next.disabled=page>=total;
+ document.getElementById('mode').textContent=single?'Facing pages':'Single page';
+ document.getElementById('mode').setAttribute('aria-pressed',String(single));
+ history.replaceState(null,'','#page='+page);
+ try {await Promise.all([draw(left,'left',t),draw(right,'right',t)]);}catch(e){console.error('Book page rendering failed',e);fallback()}
+}
+function go(n){n=Number(n);if(!Number.isFinite(n))return;page=Math.round(n);show();view.scrollTo({top:0,left:0});window.scrollTo({top:0})}
+previous.onclick=()=>go(one()?page-1:(page===2?1:page-2));
+next.onclick=()=>go(one()?page+1:(page===1?2:page+2));
+document.getElementById('jump').onclick=()=>go(field.value);
+field.onkeydown=e=>{if(e.key==='Enter')go(field.value)};
+select.onchange=e=>{if(e.target.value)go(e.target.value)};
+document.getElementById('mode').onclick=()=>{single=!single;go(page)};
+document.getElementById('zoomin').onclick=()=>{zoom=Math.min(2,Math.round((zoom+.2)*10)/10);show()};
+document.getElementById('zoomout').onclick=()=>{zoom=Math.max(.6,Math.round((zoom-.2)*10)/10);show()};
+document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();next.click()}if(e.key==='ArrowLeft'){e.preventDefault();previous.click()}});
+window.addEventListener('resize',()=>{if(pdf)show()});
+function fallback(){document.querySelector('.controls').style.display='none';spread.style.display='none';document.getElementById('pdfFallback').style.display='block';status.textContent='PDF reading mode';}
+async function init(){
+ try{
+  let lib;
+  const urls=[
+   'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs',
+   'https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.min.mjs'
+  ];
+  for(const u of urls){try{lib=await import(u);lib.GlobalWorkerOptions.workerSrc=u.replace('pdf.min.mjs','pdf.worker.min.mjs');break}catch(e){console.warn('PDF renderer unavailable',u,e)}}
+  if(!lib)throw new Error('PDF.js unavailable');
+  pdf=await lib.getDocument({url:'book.pdf'}).promise;total=pdf.numPages;
+  page=hashPage();show();
+ }catch(e){console.warn('Using built-in PDF reader',e);fallback()}
+}
+init();
+</script></body></html>

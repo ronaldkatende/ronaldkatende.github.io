@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A rigorous applied mathematics and computing book for resource-constrained environments"><title>Appendix B — Computational reproducibility | From Problems to Working Solutions</title><link rel="stylesheet" href="style.css"></head><body>
+    <div class="site-layout"><aside><div class="brand">From Problems to<br>Working Solutions</div><div class="sub">Ronald Katende · Online reading edition</div><input class="search" id="search" placeholder="Search the book" aria-label="Search the book"><div id="results"></div><div class="reader-access"><a class="reader-entry" href="reader.html">Open facing-page reader</a><a href="book.pdf">PDF edition</a></div><nav><a href="index.html">Home</a><a href="preface.html">Before we begin</a><div class="group">Part I · Problems and evidence</div><a href="chapter01.html">Chapter 1 — Problems Worth Solving</a><a href="chapter02.html">Chapter 2 — Turning Reality into a Mathematical Model</a><a href="chapter03.html">Chapter 3 — Data That Can Be Trusted</a><div class="group">Part II · Solutions</div><a href="chapter04.html">Chapter 4 — Mathematical Models for Prediction and Understanding</a><a href="chapter05.html">Chapter 5 — Optimisation When Resources Are Scarce</a><a href="chapter06.html">Chapter 6 — Machine Learning and AI That Earn Their Place</a><a href="chapter07.html">Chapter 7 — Building for the Machine and Infrastructure People Actually Have</a><a href="chapter08.html">Chapter 8 — Reliable Health Services and Essential Supplies</a><div class="group">Part III · Lasting impact</div><a href="chapter09.html">Chapter 9 — Knowing Whether a Solution Actually Works</a><a href="chapter10.html">Chapter 10 — Deployment, Governance and Long-Term Maintenance</a><a href="chapter11.html">Chapter 11 — Adapting Solutions Across Countries and Contexts</a><a href="chapter12.html">Chapter 12 — From Problems to Working Solutions: An Integrated Field Handbook</a><div class="group">Reference material</div><a href="appendixA.html">Appendix A — Printable records</a><a href="appendixB.html" class="current">Appendix B — Computational reproducibility</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes</a><a href="resources.html">Laboratories &amp; notebooks</a><a href="references.html">References</a></nav></aside><main><article><h1 id="sec-code">Reproducing the Computational Examples</h1>
+<p>This appendix describes the supplied source package. The book’s
+numerical files are teaching demonstrations unless a specific chapter
+explicitly documents observed data. No programme downloads confidential
+records or silently replaces invented examples with real
+observations.</p>
+<h2 id="directory-structure-and-basic-environment">Directory structure
+and basic environment</h2>
+<p>The editable package contains <code>main.tex</code>, chapter files in
+<code>chapters/</code>, figures in <code>figures/</code>, Python
+programmes in <code>code/</code>, generated tabular outputs in
+<code>generated/</code>, the reference list and a requirements file. The
+source package includes its compiled PDF so that readers can inspect the
+edition without compiling it first.</p>
+<p>A standard Python 3 installation with <code>numpy</code>,
+<code>pandas</code>, <code>matplotlib</code> and
+<code>scikit-learn</code>, in versions compatible with
+<code>requirements.txt</code>, supports the earlier examples. The four
+new chapter programmes use Python’s standard library. The LaTeX document
+uses a conventional pdfLaTeX toolchain with common mathematical and
+graphical packages. Package installation depends on the local operating
+system; institutions should test a reproducible environment before
+teaching.</p>
+<div class="sourceCode" id="cb1" data-language="bash"
+data-caption="Basic reproduction commands from the source package directory."><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">-r</span> requirements.txt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/reproduce_chapters.py</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/reproduce_extensions.py</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/ch09_impact_evaluation.py</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/ch10_service_reliability.py</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/ch11_transport_audit.py</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/ch12_integrated_capstone.py</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> code/test_chapters_09_12.py</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">latexmk</span> <span class="at">-pdf</span> <span class="at">-interaction</span><span class="op">=</span>nonstopmode main.tex</span></code></pre></div>
+<p>For an offline installation, download approved installation files in
+advance and verify their provenance; install locally with the Python
+packaging tool’s offline options. A facility is not required to use a
+paid cloud platform or GPU for the supplied teaching scripts. Some
+live-data extensions require data access and separate permission; they
+are not prerequisites for the synthetic demonstrations.</p>
+<h2 id="expected-values-for-independent-checks">Expected values for
+independent checks</h2>
+<p>The new scripts print the word <code>SYNTHETIC</code> or
+<code>INVENTED</code> where appropriate. Their basic expected results
+include:</p>
+<div class="center">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Core check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Chapter 9</td>
+<td>Known simulated effect is 8; estimated DiD varies with seeded noise,
+and changes if untreated group trends differ</td>
+</tr>
+<tr class="even">
+<td>Chapter 10</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>240</mn><mo>,</mo><mn>12</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>0.952381</mn></mrow><annotation encoding="application/x-tex">A(240,12)\approx0.952381</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>240</mn><mo>,</mo><mn>3</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>0.987654</mn></mrow><annotation encoding="application/x-tex">A(240,3)\approx0.987654</annotation></semantics></math>;
+duplicate transaction replay does not change balance</td>
+</tr>
+<tr class="odd">
+<td>Chapter 11</td>
+<td>Source risk
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.14</mn><annotation encoding="application/x-tex">0.14</annotation></semantics></math>,
+target covariate-shift risk
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.24</mn><annotation encoding="application/x-tex">0.24</annotation></semantics></math>;
+conditional shift raises illustrated target risk to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.345</mn><annotation encoding="application/x-tex">0.345</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td>Chapter 12</td>
+<td>S1+S3: opening cost 83, travel 315; S2+S3: opening cost 76, travel
+395; S1+S2 exceeds budget</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The exact seeded output for Chapter 9 is recorded in generated CSV
+files; its sample estimate is not expected to equal the data-generating
+effect exactly. Chapter 10’s simulated availability values approximate,
+but need not exactly equal, the analytic values. The checks are designed
+to catch accidental changes and distinguish deterministic mathematical
+results from Monte Carlo estimates.</p>
+<h2 id="evidence-classification-in-filenames-and-captions">Evidence
+classification in filenames and captions</h2>
+<p>Do not name a synthetic results file <code>real_impact.csv</code> or
+describe it as field-tested in a figure caption. Suggested prefixes are
+<code>synthetic_</code>, <code>public_observed_</code>,
+<code>partner_restricted_</code> and <code>pilot_evaluated_</code>, used
+only when their meaning is actually supported. A filename is not
+evidence, but clear naming reduces confusion when tables are copied
+between drafts.</p>
+<p>When a real public dataset replaces a teaching fixture, record its
+source, licence, retrieval date, original checksum and transformation
+script. When protected institutional data are analysed, keep raw records
+in an authorised environment and distribute only permitted aggregates,
+synthetic fixtures and reproducible methods. A synthetic fixture
+generated to imitate a real system is still synthetic.</p>
+<h2 id="a-compact-reproducibility-report">A compact reproducibility
+report</h2>
+<p>For each computational result report:</p>
+<ol type="1">
+<li><p>the question, outcome and mathematical formulation;</p></li>
+<li><p>the provenance of all inputs and the reason each is
+admissible;</p></li>
+<li><p>software and dependency versions, machine characteristics where
+performance is claimed, and random seeds;</p></li>
+<li><p>an exact executable command and expected output file;</p></li>
+<li><p>comparisons with a hand calculation or independent
+implementation;</p></li>
+<li><p>sensitivity, missingness and failure-case checks;</p></li>
+<li><p>what is proved, measured, simulated or merely
+hypothesised;</p></li>
+<li><p>the limits on use in real service decisions.</p></li>
+</ol>
+<p>A result is reproducible when an independent reader can follow the
+steps and obtain the claimed output from authorised inputs. It is not
+necessarily accurate about the physical world. Verification of
+computation and validation of the underlying model remain distinct <span
+class="citation" data-cites="sandve2013 oberkampf2010">(Sandve et al.
+2013; Oberkampf and Roy 2010)</span>.</p>
+<h2 id="working-with-low-bandwidth-teaching-laboratories">Working with
+low-bandwidth teaching laboratories</h2>
+<p>A lecturer can distribute the source package by local storage,
+extract it on student computers and use the synthetic fixtures without
+internet. Begin with a printed table and a short hand calculation.
+Students should then run the script, compare outputs and explain a
+deliberate failure condition. This sequence remains educational even if
+a machine cannot install a large scientific library. More advanced work
+with live environmental or survey data can be an extension for
+institutions with appropriate access and permissions.</p>
+</article><div class="page-links"><a href="appendixA.html">← Appendix A — Printable records</a><a href="appendixC.html">Appendix C — Evidence &amp; failure modes →</a></div><p class="notice"><a href="reader.html">Open facing-page reader</a> · <a href="book.pdf">PDF edition</a> · <a href="resources.html">Teaching resources</a></p></main></div><script src="search.js"></script></body></html>

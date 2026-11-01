@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Machine Memory: Mathematics, Algorithms, Architectures and Reliable Computation by Ronald Katende.">
+<title>Machine Memory | Ronald Katende</title>
+<link rel="stylesheet" href="../books.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+  <a class="site-name" href="/">Ronald Katende</a>
+  <nav aria-label="Book navigation"><a href="../index.html">All books</a><a href="/">Research website</a></nav>
+</div></header>
+<main>
+<p class="eyebrow">Working manuscript · 2026</p>
+<h1>Machine Memory</h1>
+<p class="subtitle">Mathematics, Algorithms, Architectures and Reliable Computation</p>
+<p class="metadata">Ronald Katende · Seven chapters and two appendices · 308-page manuscript</p>
+
+<p class="lead">A machine receives information, keeps a state, and uses that state to answer a later question. What must survive between those moments? When can a smaller representation do the same work, and when does a change in memory destroy something a future computation needs?</p>
+
+<p>This book examines those questions across algorithms, numerical analysis, dynamical systems and machine learning. It starts with simple stored summaries and develops the mathematics needed to judge how much information must be retained. Later chapters investigate changes to internal representations and the costs of implementing and verifying them.</p>
+
+<div id="pdf-action" class="pdf-action">
+  <a href="machine-memory.pdf">Read or download the complete manuscript (PDF)</a>
+</div>
+<p id="pdf-missing" class="pdf-missing">The complete PDF will appear here when the manuscript file is added to this book directory.</p>
+
+<h2>Chapters</h2>
+<ol class="chapter-list">
+<li><i>What Must a Machine Remember?</i><span>Task-relative memory, minimal states, sufficiency and information limits.</span></li>
+<li><i>Streaming Memory, Sketches and Physical Cost</i><span>Online statistics, sketches, expiring data, parallel computation and resource measurement.</span></li>
+<li><i>Memory in Dynamical Systems, Filtering and Control</i><span>State-space models, observers, stochastic filtering, sensing and physical examples.</span></li>
+<li><i>Memory for Learning, Differentiation and Replay</i><span>Checkpoints, reversible computation, learned state, replay and verification.</span></li>
+<li><i>Hereditary Memory and Fractional Computation</i><span>Power-law histories, fast-history algorithms, error and stability guarantees.</span></li>
+<li><i>State Reconfiguration and the Complexity of Machine Memory</i><span>Transfer between state representations, adaptation and survival of future computations.</span></li>
+<li><i>Engineering, Measuring and Verifying Machine Memory</i><span>Executable memory contracts, operational costs, testing, evidence and failure modes.</span></li>
+</ol>
+
+<h2>How to use this book</h2>
+<p>Readers can begin with the short examples, work through the mathematical derivations, and then run the associated programs where available. The manuscript distinguishes controlled calculations from measured-data investigations. Some recorded results and external datasets still require independent reproduction before they can be considered independently verified.</p>
+
+<p class="note">This is a working academic manuscript, not a claim of final editorial or independent scholarly review. The chapter titles and page count above refer to the complete 308-page edition available in the author's files.</p>
+<hr class="rule">
+<p><a href="../index.html">Back to all books</a></p>
+</main>
+<footer>Ronald Katende · Machine Memory</footer>
+<script>
+(function () {
+  var available = document.getElementById('pdf-action');
+  var missing = document.getElementById('pdf-missing');
+  fetch('machine-memory.pdf', {method: 'HEAD'})
+    .then(function(r) {
+      if (r.ok && (r.headers.get('content-type') || '').toLowerCase().includes('pdf')) {
+        available.style.display = 'block';
+        missing.style.display = 'none';
+      }
+    })
+    .catch(function() {});
+})();
+</script>
+</body></html>
