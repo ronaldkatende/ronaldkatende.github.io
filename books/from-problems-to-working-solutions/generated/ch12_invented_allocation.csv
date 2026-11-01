@@ -1,4 +1,0 @@
-evidence,opened_sites,opening_cost_units,travel_person_km,feasibility
-INVENTED,S1+S2,89,,infeasible
-INVENTED,S1+S3,83,315.00,feasible
-INVENTED,S2+S3,76,395.00,feasible

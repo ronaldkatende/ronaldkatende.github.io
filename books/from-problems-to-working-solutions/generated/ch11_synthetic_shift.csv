@@ -1,6 +1,0 @@
-evidence,metric,value
-SYNTHETIC,source_risk,0.1400000
-SYNTHETIC,target_covariate_risk,0.2400000
-SYNTHETIC,weighted_source_risk,0.2400000
-SYNTHETIC,effective_sample_size_proxy,39.0243902
-SYNTHETIC,target_risk_after_conditional_shift,0.3450000
