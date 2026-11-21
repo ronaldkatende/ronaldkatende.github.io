@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Research in numerical PDEs, physics-informed learning, sparse sensing and mathematical reliability, with a focus on what information and computation are sufficient.">
+  <meta name="author" content="Ronald Katende">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Research | Ronald Katende">
+  <meta property="og:description" content="Research in numerical PDEs, physics-informed learning, sparse sensing and mathematical reliability, with a focus on what information and computation are sufficient.">
+  <link rel="canonical" href="https://ronaldkatende.github.io/research.html">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="assets/style.css">
+  <script defer src="assets/site.js"></script>
+  <title>Research | Ronald Katende</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Ronald Katende, home"><span class="brand-symbol" aria-hidden="true">RK<span class="brand-dot">.</span></span><span class="brand-text">Ronald Katende<small>Mathematics &amp; Scientific Computing</small></span></a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+      <nav id="site-nav" class="nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+<a href="research.html" aria-current="page" class="active">Research</a>
+<a href="publications.html">Publications</a>
+<a href="profile.html">Profile</a>
+<a href="contact.html">Contact</a>
+        <a class="nav-cv" href="cv/Ronald_Katende_CV_2026.pdf" target="_blank" rel="noopener">CV <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+  <section class="page-intro"><div class="container narrow"><div class="section-kicker">Research programme</div><h1>Mathematics for reliable scientific learning</h1><p class="intro-lead">My central question is what information, mathematical structure and computation are enough to support a reliable scientific conclusion—not merely a plausible numerical output.</p></div></section>
+  <section class="section"><div class="container research-layout"><aside class="side-note"><div class="aside-title">Research approach</div><p>Specify the task. State the assumptions. Prove what is possible. Test what fails. Report limitations.</p><a href="publications.html" class="text-link">See published work →</a></aside><div>
+    <article class="research-block" id="foundations"><div class="topic-index">01 / MATHEMATICAL FOUNDATIONS</div><h2>Approximation, stability and numerical PDEs</h2><p>My foundational work is in numerical analysis: how discretization, finite-dimensional approximation, learned representations and solver choices affect the correctness of a computed solution. My PhD investigated the numerical analysis of physics-informed neural networks for partial differential equations.</p><p>Published work includes operator-based stability and consistency analysis for PINNs, connections between one-dimensional finite elements and ReLU networks, and error-bounded matrix compression for scientific learning.</p><div class="chip-row"><span>Partial differential equations</span><span>PINNs</span><span>Finite elements</span><span>Error bounds</span><span>Numerical linear algebra</span></div><a class="text-link" href="https://doi.org/10.1016/j.cnsns.2026.109909" target="_blank" rel="noopener">Representative paper: PINN stability and consistency ↗</a></article>
+    <article class="research-block" id="information"><div class="topic-index">02 / INFORMATION &amp; OBSERVATION</div><h2>What can sparse measurements actually determine?</h2><p>A prediction may be precise yet unsupported by the measurements available. I study limitations on inference from incomplete observations, the role of task-relevant information, and methods that seek useful reconstructions without demanding full observation of a system.</p><p>Current publications address sparse-sensor full-field recovery for industrial digital twins, resource-aware forecasting and information-limited coverage in scientific machine learning.</p><div class="chip-row"><span>Sparse sensing</span><span>Inverse problems</span><span>Industrial digital twins</span><span>Resource-aware forecasting</span></div><a class="text-link" href="https://www.cambridge.org/core/journals/data-centric-engineering/article/stable-sparsesensor-fullfield-recovery-for-industrial-digital-twins/42F8D9AAF433E737692B5311C2335595" target="_blank" rel="noopener">Representative paper: sparse-sensor recovery ↗</a></article>
+    <article class="research-block" id="decisions"><div class="topic-index">03 / SCIENTIFIC DECISIONS</div><h2>When does a model justify action?</h2><p>Useful scientific computation often serves a particular decision: whether a model can be trusted, which measurement to collect, when to issue a warning, or whether a numerical approximation is sufficient. I am interested in mathematical and computational criteria for making these choices under resource constraints.</p><p>This includes prospective evaluation, uncertainty-aware prediction and the distinction between a demonstrated numerical result and a validated operational decision. Applications in infrastructure, health, climate and development provide motivating settings, not automatic evidence of field effectiveness.</p><div class="chip-row"><span>Task-dependent accuracy</span><span>Prospective validation</span><span>Uncertainty</span><span>Decision support</span></div><a class="text-link" href="https://doi.org/10.3934/acse.2026018" target="_blank" rel="noopener">Representative paper: prospective regime support ↗</a></article>
+  </div></div></section>
+  <section class="section pale-section"><div class="container"><div class="section-heading"><div><div class="section-kicker">Ongoing investigations</div><h2>Questions still being worked on</h2></div><p>These are active research directions, not claims of completed results.</p></div>
+  <div class="cards-three"><article class="topic-card"><div class="topic-index">OPEN QUESTION</div><h3>Information sufficiency</h3><p>How much of a system must be observed or retained to answer a specified scientific question reliably?</p></article><article class="topic-card"><div class="topic-index">OPEN QUESTION</div><h3>Changing PDE systems</h3><p>When can solver information or preconditioners be safely and cheaply reused as an operator changes?</p></article><article class="topic-card"><div class="topic-index">VALIDATION CHALLENGE</div><h3>Early-warning decisions</h3><p>How should limited measurements, false-alarm costs and real deployment constraints change early-warning design?</p></article></div>
+  </div></section>
+  <section class="section"><div class="container"><div class="section-kicker">Research integrity</div><div class="integrity-panel"><h2>The standard I aim for</h2><div class="integrity-cols"><p><strong>Theory.</strong> Assumptions, identifiability, error and stability bounds stated precisely, with counterexamples where needed.</p><p><strong>Computation.</strong> Transparent numerical experiments, competitive baselines, ablations and reproducibility checks.</p><p><strong>Evidence.</strong> Clear separation between simulation, retrospective tests, and prospective or field validation.</p></div></div></div></section>
+
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div><strong>Ronald Katende</strong><p>Applied and computational mathematics · Kabale University, Uganda</p></div>
+      <div class="footer-links"><a href="mailto:rkatende@kab.ac.ug">Email</a><a href="https://orcid.org/0000-0002-8545-1833" target="_blank" rel="noopener">ORCID</a><a href="https://github.com/ronaldkatende" target="_blank" rel="noopener">GitHub</a><a href="cv/Ronald_Katende_CV_2026.pdf" target="_blank" rel="noopener">Academic CV</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© <span id="current-year">2026</span> Ronald Katende</span><span>Research information updated 21 November 2026</span></div>
+  </footer>
+</body>
+</html>
